@@ -1,9 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 export default function Home() {
   return (
-    <main className="h-screen flex flex-col gap-2 justify-center items-center">
-      <Button variant="default">Hello world</Button>
+    <main>
+      <Header />
+      <Footer />
     </main>
+
   );
 }
