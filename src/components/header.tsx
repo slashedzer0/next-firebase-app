@@ -52,7 +52,9 @@ export function Header() {
             <div className="hidden md:block h-5 w-px bg-foreground/30"></div>
 
             {/* Buttons */}
-            <Button variant="secondary" className="h-10">Log in</Button>
+            <Link href="/login">
+              <Button variant="outline" className="h-10">Log in</Button>
+            </Link>
             <Button className="h-10">Check Your Score</Button>
           </div>
         </nav>
@@ -82,7 +84,7 @@ export function Header() {
                 </div>
                 <div className="py-6">
                   <Link
-                    href="#"
+                    href="/login"
                     className="-mx-3 block px-3 py-2.5 text-base font-semibold"
                   >
                     Log in

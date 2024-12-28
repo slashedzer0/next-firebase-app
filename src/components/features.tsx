@@ -1,4 +1,4 @@
-import { ScanLine, Zap, LineChart, ShieldCheck } from "lucide-react"
+import { ScanLine, Zap, LineChart, ShieldBan } from "lucide-react"
 import { InfoCard } from "@/components/card"
 
 export default function FeaturesSection() {
@@ -22,15 +22,15 @@ export default function FeaturesSection() {
         "Save all your scan results and track changes over time. Identify patterns and trends in your stress levels.",
     },
     {
-      icon: <ShieldCheck className="size-6" />,
-      title: "No Login Required",
+      icon: <ShieldBan className="size-6" />,
+      title: "Zero Setup",
       description:
         "Start measuring your stress levels immediately without creating an account. Quick and hassle-free access to core features.",
     },
   ]
 
   return (
-    <section className="py-32">
+    <section id="features" className="py-32">
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:max-w-3xl md:text-center">
