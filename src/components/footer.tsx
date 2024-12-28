@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t py-8">
+    <footer className="border-t py-6">
       <div className="max-w-screen-2xl mx-auto px-4 flex flex-col items-center gap-4">
         {/* Branding */}
         <Link href="#">

@@ -53,7 +53,7 @@ export default function SupportPage() {
               Get in touch
             </h1>
             <p className="text-lg text-muted-foreground">
-              Need help with stress tracking? Our support team is here to assist you with any questions or concerns you may have.
+              Need some academic assistant? The student affairs team is here to assist you with any questions or concerns you may have.
             </p>
           </div>
 

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Branding } from "./branding";
 
 const navigation = [
-  { name: "About", href: "#" },
+  { name: "About", href: "/about" },
   { name: "Support", href: "/support" },
 ];
 
