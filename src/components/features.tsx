@@ -1,27 +1,5 @@
 import { ScanLine, Zap, LineChart, ShieldCheck } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-
-interface FeatureCardProps {
-  icon: React.ReactNode
-  title: string
-  description: string
-}
-
-function FeatureCard({ icon, title, description }: FeatureCardProps) {
-  return (
-    <Card className="flex flex-col justify-between md:min-h-[300px]">
-      <CardContent className="p-6 md:p-8">
-        <span className="mb-6 flex size-11 items-center justify-center rounded-full bg-primary/10">
-          <div className="text-primary">{icon}</div>
-        </span>
-        <div>
-          <h3 className="text-xl font-semibold tracking-tight md:text-2xl">{title}</h3>
-          <p className="mt-2 text-base text-muted-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
+import { InfoCard } from "@/components/card"
 
 export default function FeaturesSection() {
   const features = [
@@ -61,8 +39,8 @@ export default function FeaturesSection() {
               Simple tools to manage your academic stress
             </h2>
             <p className="text-lg text-muted-foreground md:max-w-2xl">
-              Our app focuses on what matters most to students - 
-              easy tracking and monitoring of stress levels during your academic journey. 
+              Our app focuses on what matters most to students -
+              easy tracking and monitoring of stress levels during your academic journey.
               No complicated features, just the essentials you need.
             </p>
           </div>
@@ -70,7 +48,7 @@ export default function FeaturesSection() {
 
         <div className="mx-auto mt-20 grid max-w-5xl gap-6 md:grid-cols-2">
           {features.map((feature, index) => (
-            <FeatureCard
+            <InfoCard
               key={index}
               icon={feature.icon}
               title={feature.title}

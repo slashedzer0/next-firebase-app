@@ -8,7 +8,7 @@ import { Branding } from "./branding";
 
 const navigation = [
   { name: "About", href: "#" },
-  { name: "Support", href: "#" },
+  { name: "Support", href: "/support" },
 ];
 
 export function Header() {

@@ -13,8 +13,8 @@ export default function HeroSection() {
           <ArrowRight className="ml-2 inline size-4" />
         </a>
         
-        <h1 className="my-4 mb-6 text-center text-3xl font-semibold tracking-tight lg:text-5xl">
-          Track and manage your stress levels with ease.
+        <h1 className="my-4 mb-6 text-center text-3xl font-semibold tracking-tight md:text-5xl">
+          Track your stress levels with ease.
         </h1>
         
         <p className="mx-auto mb-8 max-w-2xl text-center text-lg text-muted-foreground">
@@ -23,7 +23,7 @@ export default function HeroSection() {
         
         <div className="flex justify-center">
           <Button size="lg" className="w-full sm:w-auto lg:mt-10">
-            Get Started
+            Getting Started
           </Button>
         </div>
         
