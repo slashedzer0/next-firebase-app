@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-interface ResultsProps {
+interface ScanResultsProps {
   score: number
 }
 
-export function Results({ score }: ResultsProps) {
+export function ScanResults({ score }: ScanResultsProps) {
   const roundedScore = Math.round(score * 10) / 10
 
   const getMessage = (score: number) => {

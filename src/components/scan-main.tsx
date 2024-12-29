@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Introduction } from "./introduction"
-import { QuestionForm } from "./question-form"
-import { Results } from "./results"
-import { LoadingScreen } from "./loading-screen"
+import { ScanIntro } from "./scan-intro"
+import { ScanQuestions } from "./scan-questions"
+import { ScanResults } from "./scan-results"
+import { ScanLoading } from "./scan-loading"
 import { questions } from "@/app/(site)/scan/page"
 
-export function StressTest() {
+export function ScanMain() {
   const [step, setStep] = useState<"intro" | "questions" | "results" | "loading">("intro")
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Array<{ questionId: number; value: number }>>([])
@@ -17,9 +17,9 @@ export function StressTest() {
   const handleAnswer = (value: number) => {
     // Update or add new answer
     const newAnswers = [...answers]
-    newAnswers[currentQuestion] = { 
-      questionId: questions[currentQuestion].id, 
-      value 
+    newAnswers[currentQuestion] = {
+      questionId: questions[currentQuestion].id,
+      value
     }
     setAnswers(newAnswers)
 
@@ -54,10 +54,10 @@ export function StressTest() {
 
   return (
     <>
-      {step === "loading" && <LoadingScreen />}
-      {step === "intro" && <Introduction onStart={handleStart} />}
+      {step === "loading" && <ScanLoading />}
+      {step === "intro" && <ScanIntro onStart={handleStart} />}
       {step === "questions" && (
-        <QuestionForm
+        <ScanQuestions
           question={questions[currentQuestion]}
           currentQuestion={currentQuestion + 1}
           totalQuestions={questions.length}
@@ -66,7 +66,7 @@ export function StressTest() {
           initialSelected={getCurrentAnswer()}
         />
       )}
-      {step === "results" && <Results score={calculateScore()} />}
+      {step === "results" && <ScanResults score={calculateScore()} />}
     </>
   )
 }

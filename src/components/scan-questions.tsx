@@ -12,7 +12,7 @@ import {
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { cn } from "@/lib/utils"
 
-interface QuestionFormProps {
+interface ScanQuestionsProps {
   question: { id: number; text: string }
   currentQuestion: number
   totalQuestions: number
@@ -21,7 +21,7 @@ interface QuestionFormProps {
   initialSelected: string
 }
 
-export function QuestionForm({
+export function ScanQuestions({
   question,
   currentQuestion,
   totalQuestions,
@@ -30,7 +30,7 @@ export function QuestionForm({
   initialSelected,
   className,
   ...props
-}: QuestionFormProps & React.ComponentPropsWithoutRef<"div">) {
+}: ScanQuestionsProps & React.ComponentPropsWithoutRef<"div">) {
   const [selected, setSelected] = useState(initialSelected)
 
   // Update selected when navigating between questions
@@ -71,11 +71,10 @@ export function QuestionForm({
                     <div
                       key={option.value}
                       onClick={() => setSelected(option.value.toString())}
-                      className={`relative flex items-center rounded-md border p-2 text-sm cursor-pointer transition-colors hover:bg-muted/50 ${
-                        selected === option.value.toString() 
-                          ? 'border-primary bg-primary/10' 
+                      className={`relative flex items-center rounded-md border p-2 text-sm cursor-pointer transition-colors hover:bg-muted/50 ${selected === option.value.toString()
+                          ? 'border-primary bg-primary/10'
                           : 'border-border'
-                      }`}
+                        }`}
                     >
                       <span className="flex-grow">{option.label}</span>
                       {selected === option.value.toString() && (
@@ -86,7 +85,7 @@ export function QuestionForm({
                 </div>
 
                 <div className="flex gap-4">
-                  <Button 
+                  <Button
                     onClick={onBack}
                     variant="outline"
                     className="flex-1"
@@ -94,7 +93,7 @@ export function QuestionForm({
                     <ArrowLeft className="size-4 mr-2" />
                     Back
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
                       onAnswer(Number(selected))
                       setSelected("")

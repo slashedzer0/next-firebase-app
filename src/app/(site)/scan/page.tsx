@@ -1,4 +1,4 @@
-import { StressTest } from "@/components/stress-test"
+import { ScanMain } from "@/components/scan-main"
 
 type Question = {
   id: number
@@ -24,6 +24,6 @@ export const questions: Question[] = [
 ]
 
 export default function Page() {
-  return <StressTest />
+  return <ScanMain />
 }
 

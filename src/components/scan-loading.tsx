@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react'
 
-export function LoadingScreen() {
+export function ScanLoading() {
   return (
     <section className="py-32">
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
