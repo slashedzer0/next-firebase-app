@@ -50,6 +50,15 @@ export function SignUpForm({
               </div>
               <div className="grid gap-6">
                 <div className="grid gap-2">
+                  <Label htmlFor="name">Full name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
                   <Label htmlFor="email">Email address</Label>
                   <Input
                     id="email"
@@ -61,10 +70,6 @@ export function SignUpForm({
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
                   <Input id="password" type="password" required />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="confirm-password">Confirm password</Label>
-                  <Input id="confirm-password" type="password" required />
                 </div>
                 <Button type="submit" className="w-full">
                   Sign up
