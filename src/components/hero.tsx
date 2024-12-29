@@ -6,13 +6,13 @@ export default function HeroSection() {
   return (
     <section className="py-32">
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
-        <a
-          href="#"
+        <Link
+          href="/scan"
           className="mx-auto mb-4 flex w-fit items-center rounded-full bg-secondary px-4 py-2 text-sm"
         >
           <span className="font-medium">How it works</span>
           <ArrowRight className="ml-2 inline size-4" />
-        </a>
+        </Link>
         
         <h1 className="my-4 mb-6 text-center text-3xl font-semibold tracking-tight md:text-5xl">
           Track your stress levels with ease.

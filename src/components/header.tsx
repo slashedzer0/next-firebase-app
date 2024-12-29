@@ -55,7 +55,9 @@ export function Header() {
             <Link href="/login">
               <Button variant="outline" className="h-10">Log in</Button>
             </Link>
-            <Button className="h-10">Check Your Score</Button>
+            <Link href="/scan">
+              <Button className="h-10">Check Your Score</Button>
+            </Link>
           </div>
         </nav>
 
@@ -90,7 +92,7 @@ export function Header() {
                     Log in
                   </Link>
                   <Link
-                    href="#"
+                    href="/scan"
                     className="-mx-3 block px-3 py-2.5 text-base font-semibold"
                   >
                     Check Your Score
