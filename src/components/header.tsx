@@ -79,6 +79,7 @@ export function Header() {
                       key={item.name}
                       href={item.href}
                       className="-mx-3 block px-3 py-2 text-base font-semibold"
+                      onClick={() => setIsOpen(false)}
                     >
                       {item.name}
                     </Link>
@@ -88,12 +89,14 @@ export function Header() {
                   <Link
                     href="/login"
                     className="-mx-3 block px-3 py-2.5 text-base font-semibold"
+                    onClick={() => setIsOpen(false)}
                   >
                     Log in
                   </Link>
                   <Link
                     href="/scan"
                     className="-mx-3 block px-3 py-2.5 text-base font-semibold"
+                    onClick={() => setIsOpen(false)}
                   >
                     Check Your Score
                   </Link>
