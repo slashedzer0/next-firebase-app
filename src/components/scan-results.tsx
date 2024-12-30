@@ -26,10 +26,10 @@ export function ScanResults({ score }: ScanResultsProps) {
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <div className="space-y-2">
-                <p className="text-8xl font-semibold text-foreground">{roundedScore}</p>
+                <p className="text-6xl sm:text-7xl md:text-8xl font-semibold text-foreground">{roundedScore}</p>
               </div>
               <p>{getMessage(roundedScore)}</p>
-              <p className="text-sm text-center text-muted-foreground italic">MindEase may make mistakes. Please use with discretion.</p>
+              <p className="text-sm text-center text-muted-foreground italic">MindEase may make mistakes, user discretion is strongly advised.</p>
               <div className="flex justify-center gap-4 pt-4">
                 <Link href="/">
                   <Button variant="outline">Back to Home</Button>

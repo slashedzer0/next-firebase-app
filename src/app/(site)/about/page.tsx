@@ -6,7 +6,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:max-w-3xl md:text-center">
             <p className="text-sm font-medium tracking-wider text-muted-foreground">About Us</p>
             <h2 className="text-3xl font-medium tracking-tight md:text-5xl">
-              Supporting Student <br /> Mental Health
+              Supporting student <br /> mental health
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <p>
@@ -19,7 +19,7 @@ export default function AboutPage() {
                 and empower students to better manage their mental well-being.
               </p>
               <p className="text-sm italic">
-              Please note that MindEase by no means replaces professional mental health support. 
+              MindEase by no means replaces professional mental health support. 
               For serious concerns, please seek help from qualified mental health professionals.
               </p>
             </div>

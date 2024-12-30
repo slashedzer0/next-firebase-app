@@ -15,7 +15,7 @@ export function ScanIntro({ onStart }: ScanIntroProps) {
               Stress Assessment
             </p>
             <h2 className="text-3xl font-medium tracking-tight md:text-5xl">
-              How the Scan Works
+              How the scan works
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <p>
