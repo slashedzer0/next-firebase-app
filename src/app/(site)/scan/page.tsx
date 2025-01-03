@@ -1,4 +1,4 @@
-import { ScanMain } from "@/components/scan-main"
+import { ScanMain } from "./_components/scan-main"
 
 type Question = {
   id: number
