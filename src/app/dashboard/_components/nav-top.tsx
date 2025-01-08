@@ -18,7 +18,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 
 export function TopNav() {
   return (
-    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
       <SheetNav />
       <div className="w-full flex-1">
         <form>
@@ -27,7 +27,7 @@ export function TopNav() {
             <Input
               type="search"
               placeholder="Search..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+              className="w-full appearance-none pl-8 shadow-none md:w-2/3 lg:w-1/3"
             />
           </div>
         </form>

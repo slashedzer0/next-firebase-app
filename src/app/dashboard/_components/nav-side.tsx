@@ -6,7 +6,7 @@ import { Branding } from "@/components/branding"
 
 export function SideNav() {
   return (
-    <div className="hidden border-r bg-muted/40 md:block">
+    <div className="hidden sticky top-0 h-screen border-r bg-background md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
         <div className="flex h-14 items-center justify-center border-b px-4 lg:h-[60px] lg:px-6">
           <Branding />
