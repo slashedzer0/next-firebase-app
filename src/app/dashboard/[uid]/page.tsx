@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, FolderDown, HeartPulse} from "lucide-react";
+import { Calendar, FolderDown, HeartPulse } from "lucide-react";
 import { Line, LineChart, CartesianGrid, XAxis } from "recharts";
 
 import {
@@ -106,7 +106,7 @@ export default function UserDashboardOverviewPage() {
               Stress Levels
             </CardTitle>
             <CardDescription>
-              Your stress levels compared to the average
+              Compared to the average by latest attempts
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
@@ -174,16 +174,31 @@ export default function UserDashboardOverviewPage() {
               </div>
               <div className="divide-y">
                 <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>30-11-2024</div>
-                  <div className="text-right font-medium">4.9</div>
+                  <div>
+                    <p className="text-sm font-medium leading-none">30-11-2024</p>
+                    <p className="text-xs text-muted-foreground">
+                      Saturday
+                    </p>
+                  </div>
+                  <div className="text-xl text-right font-medium">4.9</div>
                 </div>
                 <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>29-11-2024</div>
-                  <div className="text-right font-medium">4.2</div>
+                  <div>
+                    <p className="text-sm font-medium leading-none">29-11-2024</p>
+                    <p className="text-xs text-muted-foreground">
+                      Friday
+                    </p>
+                  </div>
+                  <div className="text-xl text-right font-medium">4.2</div>
                 </div>
                 <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>28-11-2024</div>
-                  <div className="text-right font-medium">4.7</div>
+                  <div>
+                    <p className="text-sm font-medium leading-none">28-11-2024</p>
+                    <p className="text-xs text-muted-foreground">
+                      Thursday
+                    </p>
+                  </div>
+                  <div className="text-xl text-right font-medium">4.7</div>
                 </div>
               </div>
             </div>
