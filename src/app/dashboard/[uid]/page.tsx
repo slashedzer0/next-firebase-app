@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Save, SearchCheck} from "lucide-react";
+import { Calendar, FolderDown, HeartPulse} from "lucide-react";
 import { Line, LineChart, CartesianGrid, XAxis } from "recharts";
 
 import {
@@ -71,20 +71,20 @@ export default function UserDashboardOverviewPage() {
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
-            <SearchCheck className="h-4 w-4 text-muted-foreground" />
+            <HeartPulse className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">37</div>
+            <div className="text-3xl font-bold">37</div>
             <p className="text-xs text-muted-foreground">+7% from last week</p>
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Saved Results</CardTitle>
-            <Save className="h-4 w-4 text-muted-foreground" />
+            <FolderDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">29</div>
+            <div className="text-3xl font-bold">29</div>
             <p className="text-xs text-muted-foreground">8 results not saved</p>
           </CardContent>
         </Card>
@@ -94,8 +94,8 @@ export default function UserDashboardOverviewPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">30</div>
-            <p className="text-xs text-muted-foreground">December 2024</p>
+            <div className="text-3xl font-bold">30</div>
+            <p className="text-xs text-muted-foreground">November 2024</p>
           </CardContent>
         </Card>
       </div>
