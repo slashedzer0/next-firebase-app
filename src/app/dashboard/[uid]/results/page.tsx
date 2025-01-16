@@ -172,14 +172,14 @@ export default function UserDashboardResultsPage() {
                         key={result.id}
                         className="group [&>td]:whitespace-nowrap"
                       >
-                        <TableCell className="pl-4 sticky left-0 bg-background group-">
+                        <TableCell className="pl-4 sticky left-0 bg-background font-medium">
                           {result.id}
                         </TableCell>
-                        <TableCell className="sticky left-[100px] bg-background group-">
+                        <TableCell className="sticky left-[100px] bg-background font-medium">
                           <LevelBadge level={result.level} />
                         </TableCell>
-                        <TableCell className="text-right">{result.score}</TableCell>
-                        <TableCell className="text-right">{result.date}</TableCell>
+                        <TableCell className="text-right font-medium">{result.score}</TableCell>
+                        <TableCell className="text-right font-medium">{result.date}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -203,7 +203,7 @@ export default function UserDashboardResultsPage() {
               />
             </PaginationItem>
             <PaginationItem>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 Page {currentPage} of {totalPages}
               </span>
             </PaginationItem>
