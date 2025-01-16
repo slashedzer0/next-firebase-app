@@ -14,8 +14,8 @@ export function Footer() {
 
         {/* Description */}
         <p className="text-center text-sm text-muted-foreground px-4">
-          This project was created for academic purposes.<br />
-          © 2024 Doni Wicaksono
+          This project is created for academic purposes<br />
+          © 2025 Doni Wicaksono
         </p>
 
         {/* Links */}

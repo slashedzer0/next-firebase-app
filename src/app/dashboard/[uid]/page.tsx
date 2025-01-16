@@ -166,43 +166,43 @@ export default function UserDashboardOverviewPage() {
               Your latest attempts and scores
             </CardDescription>
           </CardHeader>
-          <CardContent>
+            <CardContent>
             <div className="rounded-md">
-              <div className="grid grid-cols-2 p-4 text-sm font-medium">
-                <div>Date</div>
-                <div className="text-right">Score</div>
+              <div className="grid grid-cols-2 p-4 text-sm font-medium border-b text-muted-foreground">
+              <div>Date</div>
+              <div className="text-right">Score</div>
               </div>
               <div className="divide-y">
-                <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>
-                    <p className="text-sm font-medium leading-none">30-11-2024</p>
-                    <p className="text-xs text-muted-foreground">
-                      Saturday
-                    </p>
-                  </div>
-                  <div className="text-xl text-right font-medium">4.9</div>
-                </div>
-                <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>
-                    <p className="text-sm font-medium leading-none">29-11-2024</p>
-                    <p className="text-xs text-muted-foreground">
-                      Friday
-                    </p>
-                  </div>
-                  <div className="text-xl text-right font-medium">4.2</div>
-                </div>
-                <div className="grid grid-cols-2 p-4 text-sm">
-                  <div>
-                    <p className="text-sm font-medium leading-none">28-11-2024</p>
-                    <p className="text-xs text-muted-foreground">
-                      Thursday
-                    </p>
-                  </div>
-                  <div className="text-xl text-right font-medium">4.7</div>
-                </div>
+              <div className="grid grid-cols-2 p-4 text-sm">
+              <div>
+              <p className="text-sm font-medium leading-none">30-11-2024</p>
+              <p className="text-xs text-muted-foreground">
+                Saturday
+              </p>
+              </div>
+              <div className="text-xl text-right font-medium">4.9</div>
+              </div>
+              <div className="grid grid-cols-2 p-4 text-sm">
+              <div>
+              <p className="text-sm font-medium leading-none">29-11-2024</p>
+              <p className="text-xs text-muted-foreground">
+                Friday
+              </p>
+              </div>
+              <div className="text-xl text-right font-medium">4.2</div>
+              </div>
+              <div className="grid grid-cols-2 p-4 text-sm">
+              <div>
+              <p className="text-sm font-medium leading-none">28-11-2024</p>
+              <p className="text-xs text-muted-foreground">
+                Thursday
+              </p>
+              </div>
+              <div className="text-xl text-right font-medium">4.7</div>
+              </div>
               </div>
             </div>
-          </CardContent>
+            </CardContent>
         </Card>
       </div>
     </>

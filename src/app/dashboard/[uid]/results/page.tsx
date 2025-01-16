@@ -155,28 +155,37 @@ export default function UserDashboardResultsPage() {
         <Card className="bg-background">
           <CardHeader></CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">ID</TableHead>
-                  <TableHead>Level</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedResults.map((result) => (
-                  <TableRow key={result.id}>
-                    <TableCell>{result.id}</TableCell>
-                    <TableCell>
-                      <LevelBadge level={result.level} />
-                    </TableCell>
-                    <TableCell>{result.date}</TableCell>
-                    <TableCell className="text-right">{result.score}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="grid w-full md:block">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="[&>*]:whitespace-nowrap hover:bg-background">
+                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">ID</TableHead>
+                      <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
+                      <TableHead className="text-right">Score</TableHead>
+                      <TableHead className="text-right">Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedResults.map((result) => (
+                      <TableRow 
+                        key={result.id}
+                        className="group [&>td]:whitespace-nowrap"
+                      >
+                        <TableCell className="pl-4 sticky left-0 bg-background group-">
+                          {result.id}
+                        </TableCell>
+                        <TableCell className="sticky left-[100px] bg-background group-">
+                          <LevelBadge level={result.level} />
+                        </TableCell>
+                        <TableCell className="text-right">{result.score}</TableCell>
+                        <TableCell className="text-right">{result.date}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
