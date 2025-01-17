@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,94 +19,95 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useState } from "react";
+import { Info, Trash2 } from "lucide-react";
 
 const scanResults = [
   {
-    id: "SCAN001",
+    id: "Budi",
     level: "Severe",
     date: "2024-01-15",
     score: "4.8",
   },
   {
-    id: "SCAN002",
+    id: "Siti",
     level: "Moderate",
     date: "2024-01-10",
     score: "3.2",
   },
   {
-    id: "SCAN003",
+    id: "Ahmad",
     level: "Mild",
     date: "2024-01-05",
     score: "1.8",
   },
   {
-    id: "SCAN004",
+    id: "Dewi",
     level: "Severe",
     date: "2024-01-03",
     score: "4.5",
   },
   {
-    id: "SCAN005",
+    id: "Rina",
     level: "Moderate",
     date: "2023-12-28",
     score: "3.4",
   },
   {
-    id: "SCAN006",
+    id: "Joko",
     level: "Mild",
     date: "2023-12-25",
     score: "1.5",
   },
   {
-    id: "SCAN007",
+    id: "Agus",
     level: "Severe",
     date: "2023-12-20",
     score: "4.7",
   },
   {
-    id: "SCAN008",
+    id: "Wati",
     level: "Moderate",
     date: "2023-12-15",
     score: "3.1",
   },
   {
-    id: "SCAN009",
+    id: "Bambang",
     level: "Mild",
     date: "2023-12-10",
     score: "2.0",
   },
   {
-    id: "SCAN010",
+    id: "Sri",
     level: "Severe",
     date: "2023-12-05",
     score: "4.9",
   },
   {
-    id: "SCAN011",
+    id: "Yanto",
     level: "Moderate",
     date: "2023-11-30",
     score: "3.6",
   },
   {
-    id: "SCAN012",
+    id: "Adi",
     level: "Mild",
     date: "2023-11-25",
     score: "1.9",
   },
   {
-    id: "SCAN013",
+    id: "Putri",
     level: "Severe",
     date: "2023-11-20",
     score: "4.6",
   },
   {
-    id: "SCAN014",
+    id: "Rini",
     level: "Moderate",
     date: "2023-11-15",
     score: "3.3",
   },
   {
-    id: "SCAN015",
+    id: "Dian",
     level: "Mild",
     date: "2023-11-10",
     score: "1.7",
@@ -149,7 +151,7 @@ export default function UserDashboardResultsPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Scan Results</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Scan Reports</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4">
         <Card className="bg-background">
@@ -159,11 +161,12 @@ export default function UserDashboardResultsPage() {
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="[&>*]:whitespace-nowrap [&>td]:py-4">
-                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">ID</TableHead>
+                    <TableRow className="[&>*]:whitespace-nowrap">
+                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">Name</TableHead>
                       <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
                       <TableHead className="text-right">Score</TableHead>
                       <TableHead className="text-right">Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -180,6 +183,26 @@ export default function UserDashboardResultsPage() {
                         </TableCell>
                         <TableCell className="text-right font-medium">{result.score}</TableCell>
                         <TableCell className="text-right font-medium">{result.date}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8"
+                              onClick={() => console.log("Clicked info for " + result.id)}
+                            >
+                              <Info />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              className="h-8 w-8 text-destructive"
+                              onClick={() => console.log("Delete " + result.id)}
+                            >
+                              <Trash2 />
+                            </Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
