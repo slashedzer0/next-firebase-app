@@ -138,7 +138,7 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
-export default function UserDashboardResultsPage() {
+export default function AdminDashboardReportsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const totalPages = Math.ceil(scanResults.length / itemsPerPage);

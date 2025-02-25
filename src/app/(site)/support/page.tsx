@@ -27,7 +27,7 @@ export default function SupportPage() {
       title: "Instagram",
       contactInfo: {
         type: 'website' as const,
-        value: 'https://bit.ly/KemahasiswaaanTUP'
+        value: 'https://bit.ly/KemahasiswaanTUP'
       },
       description: "Available during business hours",
     },
