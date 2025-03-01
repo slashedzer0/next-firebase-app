@@ -10,12 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -26,10 +21,10 @@ import {
 import { useState } from "react";
 import { Copy, Trash2 } from "lucide-react";
 
-const users = [
+const fakeUsers = [
   {
     id: 1,
-    name: "John Doe",
+    name: "John D.",
     status: "active",
     nim: "12345678",
     phone: "+62812345678",
@@ -37,11 +32,19 @@ const users = [
   },
   {
     id: 2,
-    name: "Jane Smith",
+    name: "Jane S.",
     status: "inactive",
     nim: "87654321",
     phone: "+62887654321",
     email: "jane.smith@example.com",
+  },
+  {
+    id: 3,
+    name: "Doni W.",
+    status: "active",
+    nim: "21104062",
+    phone: "+628198987447",
+    email: "doni.wicaksono@example.com",
   },
 ];
 
@@ -60,9 +63,9 @@ function StatusBadge({ status }: { status: string }) {
 export default function AdminDashboardUsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const totalPages = Math.ceil(fakeUsers.length / itemsPerPage);
 
-  const paginatedUsers = users.slice(
+  const paginatedUsers = fakeUsers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -125,7 +128,7 @@ export default function AdminDashboardUsersPage() {
                               className="h-8 w-8"
                               onClick={() => copyToClipboard(user.email)}
                             >
-                              <Copy className="h-4 w-4" />
+                              <Copy />
                             </Button>
                             <Button
                               size="icon"
@@ -135,7 +138,7 @@ export default function AdminDashboardUsersPage() {
                                 console.log("Delete user:", user.id)
                               }
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 />
                             </Button>
                           </div>
                         </TableCell>
