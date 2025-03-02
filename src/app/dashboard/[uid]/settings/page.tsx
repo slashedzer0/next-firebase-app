@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { settingsFormSchema, type SettingsFormValues } from "@/schemas/settings";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,19 +21,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const formSchema = z.object({
-  firstName: z.string().min(0).optional(),
-  lastName: z.string().min(0).optional(),
-  email: z.string().optional(),
-  nim: z.string().min(0).min(8).optional(),
-  phone: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function UserDashboardSettingsPage() {
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsFormSchema),
     defaultValues: {
       firstName: "John",
       lastName: "Doe",
@@ -43,7 +33,7 @@ export default function UserDashboardSettingsPage() {
     },
   });
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: SettingsFormValues) {
     try {
       console.log(values);
       // Simple alert instead of toast

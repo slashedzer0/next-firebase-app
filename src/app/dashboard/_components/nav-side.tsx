@@ -1,10 +1,29 @@
+"use client";
+
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Users, LogOut, LayoutGrid, CircleGauge, FileChartColumn, Settings, ScanText } from 'lucide-react'
+import { useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Branding } from "@/components/branding"
+import { useRoute } from "@/stores/use-route"
 
 export function SideNav() {
+  const pathname = usePathname()
+  const { activeRoute, setActiveRoute } = useRoute()
+
+  useEffect(() => {
+    setActiveRoute(pathname)
+  }, [pathname, setActiveRoute])
+
+  const linkClass = (href: string) =>
+    `flex items-center gap-3 rounded-lg ${
+      activeRoute === href
+        ? "bg-muted px-3 py-2 text-primary"
+        : "px-3 py-2 text-muted-foreground"
+    } transition-all hover:text-primary`
+
   return (
     <div className="hidden sticky top-0 h-screen border-r bg-background md:block">
       <div className="flex h-full max-h-screen flex-col gap-2">
@@ -14,43 +33,44 @@ export function SideNav() {
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+              href="/dashboard/uid"
+              className={linkClass("/dashboard/uid")}
             >
               <LayoutGrid className="h-4 w-4" />
               Dashboard
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              href="/scan"
+              className={linkClass("/scan")}
+              target="_blank"
             >
               <CircleGauge className="h-4 w-4" />
               Start Scan
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              href="/dashboard/uid/results"
+              className={linkClass("/dashboard/uid/results")}
             >
               <FileChartColumn className="h-4 w-4" />
               Scan Results
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              href="/dashboard/admin/reports"
+              className={linkClass("/dashboard/admin/reports")}
             >
               <ScanText className="h-4 w-4" />
               Scan Reports
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              href="/dashboard/admin/users"
+              className={linkClass("/dashboard/admin/users")}
             >
               <Users className="h-4 w-4" />
               Users
             </Link>
             <Link
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              href="/dashboard/uid/settings"
+              className={linkClass("/dashboard/uid/settings")}
             >
               <Settings className="h-4 w-4" />
               Settings
@@ -67,4 +87,3 @@ export function SideNav() {
     </div>
   )
 }
-
