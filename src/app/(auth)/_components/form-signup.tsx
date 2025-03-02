@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -10,7 +12,9 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Image from "next/image";
+import Image from "next/image"
+import { Eye, EyeOff } from "lucide-react"
+import { usePasswordVisibility } from "@/stores/use-password-visibility"
 
 export function SignUpForm({
   className,
@@ -69,7 +73,27 @@ export function SignUpForm({
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={usePasswordVisibility((state) => state.isVisible) ? "text" : "password"}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => usePasswordVisibility.getState().toggleVisibility()}
+                    >
+                      {usePasswordVisibility((state) => state.isVisible) ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                      <span className="sr-only">Toggle password visibility</span>
+                    </Button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full">
                   Sign up
