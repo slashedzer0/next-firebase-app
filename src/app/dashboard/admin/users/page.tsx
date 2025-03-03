@@ -18,8 +18,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState } from "react";
 import { Copy, Trash2 } from "lucide-react";
+import { usePagination } from "@/stores/use-pagination";
 
 const fakeUsers = [
   {
@@ -61,8 +61,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function AdminDashboardUsersPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
   const totalPages = Math.ceil(fakeUsers.length / itemsPerPage);
 
   const paginatedUsers = fakeUsers.slice(

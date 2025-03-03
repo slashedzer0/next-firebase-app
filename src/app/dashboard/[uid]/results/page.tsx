@@ -17,7 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useState } from "react";
+import { usePagination } from "@/stores/use-pagination";
 
 const scanResults = [
   {
@@ -137,8 +137,7 @@ function LevelBadge({ level }: { level: string }) {
 }
 
 export default function UserDashboardResultsPage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
   const totalPages = Math.ceil(scanResults.length / itemsPerPage);
 
   const paginatedResults = scanResults.slice(
