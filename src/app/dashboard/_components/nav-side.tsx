@@ -8,8 +8,18 @@ import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Branding } from "@/components/branding"
 import { useRoute } from "@/stores/use-route"
+import { useAuth } from "@/stores/use-auth"
+import { useRouter } from "next/navigation"
 
 export function SideNav() {
+  const router = useRouter()
+  const { signOut } = useAuth()
+
+  const handleSignOut = async () => {
+    await signOut()
+    router.push("/login")
+  }
+
   const pathname = usePathname()
   const { activeRoute, setActiveRoute } = useRoute()
 
@@ -78,7 +88,11 @@ export function SideNav() {
           </nav>
         </div>
         <div className="mt-auto p-4">
-          <Button variant="outline" className="w-full flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2"
+            onClick={handleSignOut}
+          >
             <LogOut size="icon" className="h-5 w-5" />
             Sign out
           </Button>

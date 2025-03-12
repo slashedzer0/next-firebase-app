@@ -23,8 +23,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useRoute } from "@/stores/use-route";
+import { useAuth } from "@/stores/use-auth";
+import { useRouter } from "next/navigation";
 
 export function SheetNav() {
+  const router = useRouter();
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  };
+
   const pathname = usePathname();
   const { activeRoute, setActiveRoute } = useRoute();
   const [open, setOpen] = useState(false);
@@ -116,6 +126,7 @@ export function SheetNav() {
             variant="outline"
             size="lg"
             className="w-full flex items-center gap-2"
+            onClick={handleSignOut}
           >
             <LogOut size="icon" className="h-5 w-5" />
             Sign out
