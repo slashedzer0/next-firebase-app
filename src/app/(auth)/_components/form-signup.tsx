@@ -40,13 +40,13 @@ export function SignUpForm({
     loading: { email: emailLoading, google: googleLoading },
     error,
     clearError,
+    user,
   } = useAuth();
 
-  const handleGoogleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    clearError();
-    await signInWithGoogle();
-  };
+  const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
+  const togglePasswordVisibility = usePasswordVisibility(
+    (state) => state.toggleVisibility
+  );
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -57,23 +57,22 @@ export function SignUpForm({
     },
   });
 
-  const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
-  const togglePasswordVisibility = usePasswordVisibility(
-    (state) => state.toggleVisibility
-  );
+  React.useEffect(() => {
+    if (user?.username) {
+      router.push(`/dashboard/${user.username}`);
+    }
+  }, [user?.username, router]);
 
   async function onSubmit(data: SignupFormData) {
     clearError();
     await signUp(data.name, data.email, data.password);
   }
 
-  // Redirect to dashboard if sign up is successful
-  const user = useAuth((state) => state.user);
-  React.useEffect(() => {
-    if (user?.username) {
-      router.push(`/dashboard/${user.username}`);
-    }
-  }, [user?.username, router]);
+  const handleGoogleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    clearError();
+    await signInWithGoogle();
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -183,7 +182,7 @@ export function SignUpForm({
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent hover:text-foreground"
                           onClick={togglePasswordVisibility}
                         >
                           {isPasswordVisible ? (

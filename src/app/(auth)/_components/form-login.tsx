@@ -40,7 +40,6 @@ export function LoginForm({
     loading: {
       email: emailLoading,
       google: googleLoading,
-      overall: overallLoading,
     },
     error,
     clearError,
@@ -70,7 +69,8 @@ export function LoginForm({
     await signInWithEmail(data.email, data.password);
   }
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     clearError();
     await signInWithGoogle();
   };
@@ -95,38 +95,44 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Google Sign-in Button - OUTSIDE the form */}
+          <div className="flex flex-col gap-4 mb-6">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading}
+            >
+              <Image
+                src="/google.svg"
+                alt="Log in with Google"
+                width={20}
+                height={20}
+                className="inline-block mr-2"
+              />
+              {googleLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Log in with Google"
+              )}
+            </Button>
+          </div>
+
+          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+            <span className="relative z-10 bg-card px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-              <div className="flex flex-col gap-4">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={handleGoogleSignIn}
-                  disabled={overallLoading}
-                  type="button"
-                >
-                  <Image
-                    src="/google.svg"
-                    alt="Log in with Google"
-                    width={20}
-                    height={20}
-                    className="inline-block mr-2"
-                  />
-                  {googleLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    "Log in with Google"
-                  )}
-                </Button>
-              </div>
-              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-card px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid gap-6 mt-6"
+            >
               <div className="grid gap-6">
                 <FormField
                   control={form.control}
@@ -151,9 +157,7 @@ export function LoginForm({
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex items-center">
-                        <Label htmlFor="password">Password</Label>
-                      </div>
+                      <Label htmlFor="password">Password</Label>
                       <div className="relative">
                         <FormControl>
                           <Input
@@ -166,7 +170,7 @@ export function LoginForm({
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent hover:text-foreground"
                           onClick={togglePasswordVisibility}
                         >
                           {isPasswordVisible ? (
@@ -186,7 +190,7 @@ export function LoginForm({
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={overallLoading}
+                  disabled={emailLoading}
                 >
                   {emailLoading ? (
                     <>
