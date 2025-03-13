@@ -1,6 +1,4 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+// COMPATIBILITY FILE: This file re-exports from the new location
+// Consider updating your imports to use '@/utils' directly
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export { cn, generateUsername } from "@/utils";

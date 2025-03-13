@@ -1,42 +1,55 @@
 "use client";
 
-import React from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/stores/use-auth"
-import { useRouter } from "next/navigation"
+import React from "react";
+import { cn } from "@/utils";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/stores/use-auth";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { usePasswordVisibility } from "@/stores/use-password-visibility"
-import Link from "next/link"
-import Image from "next/image"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { loginSchema, type LoginFormData } from "@/schemas/auth"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { usePasswordVisibility } from "@/stores/use-password-visibility";
+import Link from "next/link";
+import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginFormData } from "@/schemas/auth";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const router = useRouter()
-  const { signInWithEmail, signInWithGoogle, loading: { email: emailLoading, google: googleLoading, overall: overallLoading }, error, clearError, user } = useAuth()
-  const isPasswordVisible = usePasswordVisibility((state) => state.isVisible)
-  const togglePasswordVisibility = usePasswordVisibility((state) => state.toggleVisibility)
+  const router = useRouter();
+  const {
+    signInWithEmail,
+    signInWithGoogle,
+    loading: {
+      email: emailLoading,
+      google: googleLoading,
+      overall: overallLoading,
+    },
+    error,
+    clearError,
+    user,
+  } = useAuth();
+  const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
+  const togglePasswordVisibility = usePasswordVisibility(
+    (state) => state.toggleVisibility
+  );
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -44,23 +57,23 @@ export function LoginForm({
       email: "",
       password: "",
     },
-  })
+  });
 
   React.useEffect(() => {
-    if (user) {
-      router.push("/dashboard/uid")
+    if (user?.username) {
+      router.push(`/dashboard/${user.username}`);
     }
-  }, [user, router])
+  }, [user?.username, router]);
 
   async function onSubmit(data: LoginFormData) {
-    clearError()
-    await signInWithEmail(data.email, data.password)
+    clearError();
+    await signInWithEmail(data.email, data.password);
   }
 
   const handleGoogleSignIn = async () => {
-    clearError()
-    await signInWithGoogle()
-  }
+    clearError();
+    await signInWithGoogle();
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -161,14 +174,20 @@ export function LoginForm({
                           ) : (
                             <Eye className="h-4 w-4" />
                           )}
-                          <span className="sr-only">Toggle password visibility</span>
+                          <span className="sr-only">
+                            Toggle password visibility
+                          </span>
                         </Button>
                       </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={overallLoading}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={overallLoading}
+                >
                   {emailLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -188,5 +207,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }
