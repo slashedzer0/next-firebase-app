@@ -258,29 +258,45 @@ export const useAuth = create<AuthState>((set) => ({
 
 // Set up auth state listener
 auth.onAuthStateChanged(async (user) => {
+  // Set loading to true if it was false and we're potentially fetching Firestore data
+  if (user && useAuth.getState().loading.initial === false) {
+    useAuth.setState((state) => ({
+      loading: { ...state.loading, initial: true },
+    }));
+  }
+
   if (user) {
-    // Get user data from Firestore
-    const userDoc = await getDoc(doc(db, "users", user.uid));
+    try {
+      // Get user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", user.uid));
 
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-      // Combine auth user with Firestore data
-      const customUser: CustomUser = {
-        ...user,
-        username: userData.username,
-        fullName: userData.fullName,
-        role: userData.role, // Include role in user state
-      };
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        // Combine auth user with Firestore data
+        const customUser: CustomUser = {
+          ...user,
+          username: userData.username,
+          fullName: userData.fullName,
+          role: userData.role,
+        };
 
-      useAuth.setState((state) => ({
-        user: customUser,
-        loading: { ...state.loading, initial: false },
-      }));
-    } else {
-      // If Firestore document doesn't exist yet (during signup process)
+        useAuth.setState((state) => ({
+          user: customUser,
+          loading: { ...state.loading, initial: false },
+        }));
+      } else {
+        // If Firestore document doesn't exist yet (during signup process)
+        useAuth.setState((state) => ({
+          user: { ...user },
+          loading: { ...state.loading, initial: false },
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
       useAuth.setState((state) => ({
         user: { ...user },
         loading: { ...state.loading, initial: false },
+        error: "Failed to fetch user data",
       }));
     }
   } else {
