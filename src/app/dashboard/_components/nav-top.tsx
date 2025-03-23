@@ -1,7 +1,9 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, Users, LayoutGrid, CircleGauge, FileChartColumn, Settings, ScanText, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/stores/use-auth";
@@ -15,14 +17,90 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { db } from "@/services/firebase";
 
 import { SheetNav } from "./nav-sheet";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+interface UserData {
+  fullName: string;
+  email: string;
+  photoURL?: string;
+}
 
 export function TopNav() {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  
+  // Get username and role from auth store
+  const username = user?.username || "uid";
+  const userRole = user?.role || "student";
+  
+  // Use "admin" as path for admin users, username for students
+  const userPath = userRole === "admin" ? "admin" : username;
+  
+  // Define navigation items based on user role
+  const navItems = [
+    {
+      href: `/dashboard/${userPath}`,
+      label: "Dashboard",
+      icon: <LayoutGrid className="h-4 w-4" />,
+      roles: ["student", "admin"],
+    },
+    {
+      href: "/scan",
+      label: "Start Scan",
+      icon: <CircleGauge className="h-4 w-4" />,
+      roles: ["student"],
+    },
+    {
+      href: `/dashboard/${userPath}/results`,
+      label: "Scan Results",
+      icon: <FileChartColumn className="h-4 w-4" />,
+      roles: ["student"],
+    },
+    {
+      href: "/dashboard/admin/reports",
+      label: "Scan Reports",
+      icon: <ScanText className="h-4 w-4" />,
+      roles: ["admin"],
+    },
+    {
+      href: "/dashboard/admin/users",
+      label: "Users",
+      icon: <Users className="h-4 w-4" />,
+      roles: ["admin"],
+    },
+    {
+      href: `/dashboard/${userPath}/settings`,
+      label: "Settings",
+      icon: <Settings className="h-4 w-4" />,
+      roles: ["student"],
+    },
+  ];
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data() as UserData);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  const getInitials = (name: string) => {
+    return name.substring(0, 2).toUpperCase();
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -48,28 +126,57 @@ export function TopNav() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="relative h-8 w-8 rounded-full">
-            <Avatar>
-              <AvatarImage src="/avatars/03.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+            <Avatar className="h-8 w-8">
+              {userData && (
+                <>
+                  <AvatarImage
+                    src={userData.photoURL}
+                    alt={userData.fullName}
+                    className="object-cover"
+                  />
+                  <AvatarFallback>
+                    {getInitials(userData.fullName)}
+                  </AvatarFallback>
+                </>
+              )}
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">shadcn</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                m@example.com
-              </p>
+              {userData && (
+                <>
+                  <p className="text-sm font-medium leading-none">
+                    {userData.fullName}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {userData.email}
+                  </p>
+                </>
+              )}
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>Dashboard</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            {navItems
+              .filter((item) => item.roles.includes(userRole))
+              .map((item, index) => (
+                <DropdownMenuItem
+                  key={index}
+                  onClick={() => router.push(item.href)}
+                  className="flex items-center gap-2"
+                >
+                  {item.icon}
+                  {item.label}
+                </DropdownMenuItem>
+              ))}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            Sign out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
