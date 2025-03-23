@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRoute } from "@/utils/route-student";
+import { UserRoute } from "@/components/auth/route-student";
 
 export default function UserLayout({
   children,

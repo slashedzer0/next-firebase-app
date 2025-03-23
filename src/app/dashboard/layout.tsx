@@ -2,7 +2,7 @@
 
 import { SideNav } from "./_components/nav-side";
 import { TopNav } from "./_components/nav-top";
-import { AuthenticatedRoute } from "@/utils/route-protection";
+import { AuthenticatedRoute } from "@/components/auth/route-protection";
 
 export default function DashboardLayout({
   children,
