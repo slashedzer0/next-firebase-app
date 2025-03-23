@@ -8,8 +8,9 @@ import {
   signOut as firebaseSignOut,
   createUserWithEmailAndPassword,
   AuthError,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from "firebase/firestore";
 import { generateUsername } from "@/utils";
 
 interface LoadingState {
@@ -23,7 +24,17 @@ interface LoadingState {
 interface CustomUser extends User {
   username?: string;
   fullName?: string;
-  role?: string; // Added role field
+  role?: string;
+  nim?: string;
+  phone?: string;
+}
+
+// Data type for the updateProfile function
+interface UpdateProfileData {
+  firstName?: string;
+  lastName?: string;
+  nim?: string;
+  phone?: string;
 }
 
 interface AuthState {
@@ -35,9 +46,10 @@ interface AuthState {
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
+  updateProfile: (data: UpdateProfileData) => Promise<void>;
 }
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set, get) => ({
   user: null,
   loading: {
     email: false,
@@ -58,16 +70,9 @@ export const useAuth = create<AuthState>((set) => ({
       const authError = error as AuthError;
       set({ error: authError.code });
     } finally {
-      // Set email loading to false immediately
       set((state) => ({
-        loading: { ...state.loading, email: false },
+        loading: { ...state.loading, email: false, overall: false },
       }));
-      // Reset overall loading after a brief delay
-      setTimeout(() => {
-        set((state) => ({
-          loading: { ...state.loading, overall: false },
-        }));
-      }, 500);
     }
   },
 
@@ -84,58 +89,49 @@ export const useAuth = create<AuthState>((set) => ({
       const userDoc = await getDoc(doc(db, "users", user.uid));
 
       if (userDoc.exists()) {
-        // User exists, update state with Firestore data
         const userData = userDoc.data();
-        set({
+        set({ 
           user: {
             ...user,
             username: userData.username,
             fullName: userData.fullName,
-            role: userData.role, // Include role in user state
+            role: userData.role,
           },
         });
       } else {
         // User doesn't exist in Firestore yet, create profile
         try {
-          // Get name from Google account or use email as fallback
-          const fullName =
-            user.displayName || user.email?.split("@")[0] || "User";
-
-          // Generate unique username
+          const fullName = user.displayName || user.email?.split("@")[0] || "User";
           const username = await generateUsername(fullName);
 
-          // Store user data in Firestore
           await setDoc(doc(db, "users", user.uid), {
-            fullName: fullName,
-            username: username,
+            fullName,
+            username,
             email: user.email,
             createdAt: serverTimestamp(),
             userId: user.uid,
             photoURL: user.photoURL,
-            role: "student", // Add role field
+            role: "student",
           });
 
-          // Create username reference document
           await setDoc(doc(db, "usernames", username), {
             userId: user.uid,
           });
 
-          // Update user state with new data
           set({
             user: {
               ...user,
               username,
               fullName,
-              role: "student", // Include role in user state
+              role: "student",
             },
           });
         } catch (error) {
           console.error("Error saving Google user data to Firestore:", error);
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : "Failed to save user data. Please try again.",
+            error: error instanceof Error
+              ? error.message
+              : "Failed to save user data. Please try again.",
           });
         }
       }
@@ -143,16 +139,9 @@ export const useAuth = create<AuthState>((set) => ({
       const authError = error as AuthError;
       set({ error: authError.code });
     } finally {
-      // Set google loading to false immediately
       set((state) => ({
-        loading: { ...state.loading, google: false },
+        loading: { ...state.loading, google: false, overall: false },
       }));
-      // Reset overall loading after a brief delay
-      setTimeout(() => {
-        set((state) => ({
-          loading: { ...state.loading, overall: false },
-        }));
-      }, 500);
     }
   },
 
@@ -163,84 +152,48 @@ export const useAuth = create<AuthState>((set) => ({
         error: null,
       }));
 
-      // Create auth user
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
       try {
-        // Generate username from full name
-        const baseUsername = name
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-zA-Z0-9]/g, "");
-        let username = baseUsername;
-        let counter = 1;
+        const username = await generateUsername(name);
 
-        // Check for username availability after auth
-        while (true) {
-          const usernameDoc = await getDoc(doc(db, "usernames", username));
-          if (!usernameDoc.exists()) {
-            break;
-          }
-          username = `${baseUsername}${counter}`;
-          counter++;
-          if (counter > 100) {
-            throw new Error("Unable to generate unique username");
-          }
-        }
-
-        // Store additional user data in Firestore
         await setDoc(doc(db, "users", user.uid), {
           fullName: name,
-          username: username,
-          email: email,
+          username,
+          email,
           createdAt: serverTimestamp(),
           userId: user.uid,
-          role: "student", // Add role field
+          role: "student",
         });
 
-        // Create username reference document
         await setDoc(doc(db, "usernames", username), {
           userId: user.uid,
         });
 
-        // Immediately update user state with the new data
         set({
           user: {
             ...user,
             username,
             fullName: name,
-            role: "student", // Include role in user state
+            role: "student",
           },
         });
       } catch (error) {
-        // If Firestore save fails, delete the auth user to maintain consistency
         await user.delete();
         console.error("Firestore error:", error);
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to save user data. Please try again.",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to save user data. Please try again.",
         });
       }
     } catch (error) {
       const authError = error as AuthError;
       set({ error: authError.code });
     } finally {
-      // Set email loading to false immediately
       set((state) => ({
-        loading: { ...state.loading, email: false },
+        loading: { ...state.loading, email: false, overall: false },
       }));
-      // Reset overall loading after a brief delay
-      setTimeout(() => {
-        set((state) => ({
-          loading: { ...state.loading, overall: false },
-        }));
-      }, 500);
     }
   },
 
@@ -254,55 +207,85 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  updateProfile: async (data: UpdateProfileData) => {
+    try {
+      const { user } = get();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      set((state) => ({
+        loading: { ...state.loading, overall: true },
+        error: null,
+      }));
+
+      const updateData: Partial<CustomUser> = {};
+      
+      if (data.firstName || data.lastName) {
+        const currentFullName = user.fullName || '';
+        const [currentFirst = '', currentLast = ''] = currentFullName.split(' ');
+        
+        const newFirstName = data.firstName !== undefined ? data.firstName : currentFirst;
+        const newLastName = data.lastName !== undefined ? data.lastName : currentLast;
+        
+        updateData.fullName = `${newFirstName} ${newLastName}`.trim();
+      }
+
+      if (data.nim !== undefined) updateData.nim = data.nim;
+      if (data.phone !== undefined) updateData.phone = data.phone;
+
+      await updateDoc(doc(db, "users", user.uid), updateData);
+
+      set((state) => ({
+        user: {
+          ...state.user!,
+          ...updateData
+        },
+        loading: { ...state.loading, overall: false },
+      }));
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      set((state) => ({
+        error: error instanceof Error ? error.message : "Failed to update profile",
+        loading: { ...state.loading, overall: false },
+      }));
+    }
+  },
 }));
 
 // Set up auth state listener
-auth.onAuthStateChanged(async (user) => {
-  // Set loading to true if it was false and we're potentially fetching Firestore data
-  if (user && useAuth.getState().loading.initial === false) {
-    useAuth.setState((state) => ({
-      loading: { ...state.loading, initial: true },
-    }));
-  }
-
+onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
-      // Get user data from Firestore
+      // Get additional user data from Firestore
       const userDoc = await getDoc(doc(db, "users", user.uid));
-
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        // Combine auth user with Firestore data
-        const customUser: CustomUser = {
-          ...user,
-          username: userData.username,
-          fullName: userData.fullName,
-          role: userData.role,
-        };
-
-        useAuth.setState((state) => ({
-          user: customUser,
-          loading: { ...state.loading, initial: false },
-        }));
-      } else {
-        // If Firestore document doesn't exist yet (during signup process)
-        useAuth.setState((state) => ({
-          user: { ...user },
-          loading: { ...state.loading, initial: false },
-        }));
+        useAuth.setState({
+          user: {
+            ...user,
+            username: userData.username,
+            fullName: userData.fullName,
+            role: userData.role,
+            nim: userData.nim,
+            phone: userData.phone,
+          },
+          loading: { ...useAuth.getState().loading, initial: false },
+        });
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
-      useAuth.setState((state) => ({
-        user: { ...user },
-        loading: { ...state.loading, initial: false },
+      useAuth.setState({
+        loading: { ...useAuth.getState().loading, initial: false },
         error: "Failed to fetch user data",
-      }));
+      });
     }
   } else {
-    useAuth.setState((state) => ({
+    useAuth.setState({
       user: null,
-      loading: { ...state.loading, initial: false },
-    }));
+      loading: { ...useAuth.getState().loading, initial: false },
+    });
   }
 });
