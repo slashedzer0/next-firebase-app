@@ -10,7 +10,13 @@ import {
   AuthError,
   onAuthStateChanged,
 } from "firebase/auth";
-import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  serverTimestamp,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { generateUsername } from "@/utils";
 
 interface LoadingState {
@@ -27,6 +33,9 @@ interface CustomUser extends User {
   role?: string;
   nim?: string;
   phone?: string;
+  assessmentCount?: number; // Add assessment counter
+  status?: string; // Add status field
+  lastActive?: Date | string; // Add lastActive field
 }
 
 // Data type for the updateProfile function
@@ -90,7 +99,7 @@ export const useAuth = create<AuthState>((set, get) => ({
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        set({ 
+        set({
           user: {
             ...user,
             username: userData.username,
@@ -101,7 +110,8 @@ export const useAuth = create<AuthState>((set, get) => ({
       } else {
         // User doesn't exist in Firestore yet, create profile
         try {
-          const fullName = user.displayName || user.email?.split("@")[0] || "User";
+          const fullName =
+            user.displayName || user.email?.split("@")[0] || "User";
           const username = await generateUsername(fullName);
 
           await setDoc(doc(db, "users", user.uid), {
@@ -109,9 +119,11 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             email: user.email,
             createdAt: serverTimestamp(),
+            lastActive: serverTimestamp(), // Add lastActive timestamp
             userId: user.uid,
             photoURL: user.photoURL,
             role: "student",
+            status: "active", // Set initial status to active
           });
 
           await setDoc(doc(db, "usernames", username), {
@@ -124,14 +136,16 @@ export const useAuth = create<AuthState>((set, get) => ({
               username,
               fullName,
               role: "student",
+              status: "active", // Include status in state
             },
           });
         } catch (error) {
           console.error("Error saving Google user data to Firestore:", error);
           set({
-            error: error instanceof Error
-              ? error.message
-              : "Failed to save user data. Please try again.",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to save user data. Please try again.",
           });
         }
       }
@@ -152,7 +166,11 @@ export const useAuth = create<AuthState>((set, get) => ({
         error: null,
       }));
 
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
       try {
         const username = await generateUsername(name);
@@ -162,8 +180,10 @@ export const useAuth = create<AuthState>((set, get) => ({
           username,
           email,
           createdAt: serverTimestamp(),
+          lastActive: serverTimestamp(), // Add lastActive timestamp
           userId: user.uid,
           role: "student",
+          status: "active", // Set initial status to active
         });
 
         await setDoc(doc(db, "usernames", username), {
@@ -176,15 +196,17 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             fullName: name,
             role: "student",
+            status: "active", // Include status in state
           },
         });
       } catch (error) {
         await user.delete();
         console.error("Firestore error:", error);
         set({
-          error: error instanceof Error
-            ? error.message
-            : "Failed to save user data. Please try again.",
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to save user data. Please try again.",
         });
       }
     } catch (error) {
@@ -199,6 +221,18 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     try {
+      // Update lastActive before signing out
+      const { user } = get();
+      if (user?.uid) {
+        try {
+          await updateDoc(doc(db, "users", user.uid), {
+            lastActive: serverTimestamp(),
+          });
+        } catch (e) {
+          console.error("Error updating lastActive on logout:", e);
+        }
+      }
+
       await firebaseSignOut(auth);
     } catch (error) {
       const authError = error as AuthError;
@@ -211,7 +245,7 @@ export const useAuth = create<AuthState>((set, get) => ({
   updateProfile: async (data: UpdateProfileData) => {
     try {
       const { user } = get();
-      
+
       if (!user) {
         throw new Error("User not authenticated");
       }
@@ -222,33 +256,41 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
 
       const updateData: Partial<CustomUser> = {};
-      
+
       if (data.firstName || data.lastName) {
-        const currentFullName = user.fullName || '';
-        const [currentFirst = '', currentLast = ''] = currentFullName.split(' ');
-        
-        const newFirstName = data.firstName !== undefined ? data.firstName : currentFirst;
-        const newLastName = data.lastName !== undefined ? data.lastName : currentLast;
-        
+        const currentFullName = user.fullName || "";
+        const [currentFirst = "", currentLast = ""] =
+          currentFullName.split(" ");
+
+        const newFirstName =
+          data.firstName !== undefined ? data.firstName : currentFirst;
+        const newLastName =
+          data.lastName !== undefined ? data.lastName : currentLast;
+
         updateData.fullName = `${newFirstName} ${newLastName}`.trim();
       }
 
       if (data.nim !== undefined) updateData.nim = data.nim;
       if (data.phone !== undefined) updateData.phone = data.phone;
 
-      await updateDoc(doc(db, "users", user.uid), updateData);
+      // Update user data and lastActive simultaneously
+      await updateDoc(doc(db, "users", user.uid), {
+        ...updateData,
+        lastActive: serverTimestamp(), // Update lastActive on profile changes
+      });
 
       set((state) => ({
         user: {
           ...state.user!,
-          ...updateData
+          ...updateData,
         },
         loading: { ...state.loading, overall: false },
       }));
     } catch (error) {
       console.error("Error updating profile:", error);
       set((state) => ({
-        error: error instanceof Error ? error.message : "Failed to update profile",
+        error:
+          error instanceof Error ? error.message : "Failed to update profile",
         loading: { ...state.loading, overall: false },
       }));
     }
@@ -263,6 +305,14 @@ onAuthStateChanged(auth, async (user) => {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
+
+        // Update lastActive timestamp for student users
+        if (userData.role === "student") {
+          await updateDoc(doc(db, "users", user.uid), {
+            lastActive: serverTimestamp(),
+          });
+        }
+
         useAuth.setState({
           user: {
             ...user,
@@ -271,6 +321,8 @@ onAuthStateChanged(auth, async (user) => {
             role: userData.role,
             nim: userData.nim,
             phone: userData.phone,
+            assessmentCount: userData.assessmentCount || 0, // Include assessment count
+            status: userData.status || "active", // Include status
           },
           loading: { ...useAuth.getState().loading, initial: false },
         });

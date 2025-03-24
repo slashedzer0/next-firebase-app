@@ -1,6 +1,10 @@
 // Export utility functions
 export { cn } from "./styling";
 export { generateUsername } from "./username";
+export { calculateCF } from "./certainty-factor";
+export { saveAssessmentResult } from "./save-assessment";
+export { incrementAssessmentCount } from "./count-assessment";
+export { updateUserActivity } from "./update-activity";
 
 // Export route protection components
 export {

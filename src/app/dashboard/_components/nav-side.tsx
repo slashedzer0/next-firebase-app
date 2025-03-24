@@ -74,8 +74,12 @@ export function SideNav() {
   ];
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push("/login");
+    try {
+      await signOut();
+      router.push("/login");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
   useEffect(() => {
@@ -117,6 +121,7 @@ export function SideNav() {
             variant="outline"
             className="w-full flex items-center gap-2"
             onClick={handleSignOut}
+            title="Sign out (your last activity will be recorded)"
           >
             <LogOut size="icon" className="h-5 w-5" />
             Sign out
