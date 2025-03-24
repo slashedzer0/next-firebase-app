@@ -1,5 +1,5 @@
 import { db } from "@/services/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { Answer, AssessmentResult } from "@/types/assessment";
 import { Assessment, assessmentSchema } from "@/schemas/assessment";
 
@@ -28,12 +28,13 @@ export async function saveAssessmentResult(
       answers,
       date: formattedDate, // Store as DD-MM-YYYY string
       day: now.toLocaleDateString("en-US", { weekday: "long" }),
+      createdAt: serverTimestamp(), // Add serverTimestamp for precise ordering
     };
 
     // Validate with zod schema
     assessmentSchema.parse(assessment);
 
-    // Save to Firestore (no need to convert date to serverTimestamp)
+    // Save to Firestore
     const docRef = await addDoc(collection(db, "assessments"), assessment);
     return docRef.id;
   } catch (error) {

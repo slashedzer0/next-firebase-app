@@ -7,6 +7,7 @@ export const assessmentSchema = z.object({
   confidence: z.number().int().min(1).max(100), // CF percentage (1-100)
   date: z.string(), // Date in DD-MM-YYYY format
   day: z.string().optional(),
+  createdAt: z.any(), // To support both Timestamp and Date objects
   answers: z.array(
     z.object({
       questionId: z.string(),
