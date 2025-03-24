@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Branding } from "./branding";
+import { useAuth } from "@/stores/use-auth";
 
 const navigation = [
   { name: "About", href: "/about" },
@@ -13,6 +14,21 @@ const navigation = [
 
 export function Header() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {
+    user,
+    loading: { initial },
+  } = useAuth();
+
+  // Generate dynamic dashboard path based on user role and username
+  const getDashboardPath = () => {
+    if (!user) return "/dashboard/uid";
+
+    const username = user.username || "uid";
+    const userRole = user.role || "student";
+
+    // Use "admin" as path for admin users, username for students
+    return `/dashboard/${userRole === "admin" ? "admin" : username}`;
+  };
 
   // useBodyScrollLock - prevents body from scrolling when mobile menu is open
   useEffect(() => {
@@ -52,9 +68,23 @@ export function Header() {
             <div className="hidden md:block h-5 w-px bg-foreground/30"></div>
 
             {/* Buttons */}
-            <Link href="/login">
-              <Button variant="outline" className="h-10">Log in</Button>
-            </Link>
+            {!initial && (
+              <>
+                {user ? (
+                  <Link href={getDashboardPath()}>
+                    <Button variant="outline" className="h-10">
+                      Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/login">
+                    <Button variant="outline" className="h-10">
+                      Log in
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
             <Link href="/scan">
               <Button className="h-10">Check Your Score</Button>
             </Link>
@@ -86,13 +116,27 @@ export function Header() {
                   ))}
                 </div>
                 <div className="py-6">
-                  <Link
-                    href="/login"
-                    className="-mx-3 block px-3 py-2.5 text-base font-semibold"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Log in
-                  </Link>
+                  {!initial && (
+                    <>
+                      {user ? (
+                        <Link
+                          href={getDashboardPath()}
+                          className="-mx-3 block px-3 py-2.5 text-base font-semibold"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Dashboard
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/login"
+                          className="-mx-3 block px-3 py-2.5 text-base font-semibold"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Log in
+                        </Link>
+                      )}
+                    </>
+                  )}
                   <Link
                     href="/scan"
                     className="-mx-3 block px-3 py-2.5 text-base font-semibold"

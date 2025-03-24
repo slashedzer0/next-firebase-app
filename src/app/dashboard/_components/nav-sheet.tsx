@@ -23,11 +23,68 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useRoute } from "@/stores/use-route";
+import { useAuth } from "@/stores/use-auth";
+import { useRouter } from "next/navigation";
 
 export function SheetNav() {
+  const router = useRouter();
   const pathname = usePathname();
   const { activeRoute, setActiveRoute } = useRoute();
+  const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+
+  // Get username and role from auth store
+  const username = user?.username || "uid";
+  const userRole = user?.role || "student";
+
+  // Use "admin" as path for admin users, username for students
+  const userPath = userRole === "admin" ? "admin" : username;
+
+  // Define navigation items based on user role
+  const navItems = [
+    {
+      href: `/dashboard/${userPath}`,
+      label: "Dashboard",
+      icon: <LayoutGrid className="h-5 w-5" />,
+      roles: ["student", "admin"],
+    },
+    {
+      href: "/scan",
+      label: "Start Scan",
+      icon: <CircleGauge className="h-5 w-5" />,
+      roles: ["student"], // Removed admin access
+      target: "_blank",
+    },
+    {
+      href: `/dashboard/${userPath}/results`,
+      label: "Scan Results",
+      icon: <FileChartColumn className="h-5 w-5" />,
+      roles: ["student"], // Removed admin access
+    },
+    {
+      href: "/dashboard/admin/reports",
+      label: "Scan Reports",
+      icon: <ScanText className="h-5 w-5" />,
+      roles: ["admin"],
+    },
+    {
+      href: "/dashboard/admin/users",
+      label: "Users",
+      icon: <Users className="h-5 w-5" />,
+      roles: ["admin"],
+    },
+    {
+      href: `/dashboard/${userPath}/settings`,
+      label: "Settings",
+      icon: <Settings className="h-5 w-5" />,
+      roles: ["student"], // Removed admin access
+    },
+  ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push("/login");
+  };
 
   useEffect(() => {
     setActiveRoute(pathname);
@@ -61,61 +118,27 @@ export function SheetNav() {
         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         <nav className="grid gap-2 text-lg font-medium">
           <Branding />
-          <Link
-            href="/dashboard/uid"
-            className={linkClass("/dashboard/uid")}
-            onClick={handleLinkClick}
-          >
-            <LayoutGrid className="h-5 w-5" />
-            Dashboard
-          </Link>
-          <Link
-            href="/scan"
-            className={linkClass("/scan")}
-            target="_blank"
-            onClick={handleLinkClick}
-          >
-            <CircleGauge className="h-5 w-5" />
-            Start Scan
-          </Link>
-          <Link
-            href="/dashboard/uid/results"
-            className={linkClass("/dashboard/uid/results")}
-            onClick={handleLinkClick}
-          >
-            <FileChartColumn className="h-5 w-5" />
-            Scan Results
-          </Link>
-          <Link
-            href="/dashboard/admin/reports"
-            className={linkClass("/dashboard/admin/reports")}
-            onClick={handleLinkClick}
-          >
-            <ScanText className="h-5 w-5" />
-            Scan Reports
-          </Link>
-          <Link
-            href="/dashboard/admin/users"
-            className={linkClass("/dashboard/admin/users")}
-            onClick={handleLinkClick}
-          >
-            <Users className="h-5 w-5" />
-            Users
-          </Link>
-          <Link
-            href="/dashboard/uid/settings"
-            className={linkClass("/dashboard/uid/settings")}
-            onClick={handleLinkClick}
-          >
-            <Settings className="h-5 w-5" />
-            Settings
-          </Link>
+          {navItems
+            .filter((item) => item.roles.includes(userRole))
+            .map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                className={linkClass(item.href)}
+                target={item.target}
+                onClick={handleLinkClick}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            ))}
         </nav>
         <div className="mt-auto">
           <Button
             variant="outline"
             size="lg"
             className="w-full flex items-center gap-2"
+            onClick={handleSignOut}
           >
             <LogOut size="icon" className="h-5 w-5" />
             Sign out
