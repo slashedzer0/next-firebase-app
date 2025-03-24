@@ -1,56 +1,101 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ScanIntro } from "./scan-intro"
-import { ScanQuestions } from "./scan-questions"
-import { ScanResults } from "./scan-results"
-import { ScanLoading } from "./scan-loading"
-import { questions } from "@/app/(site)/scan/page"
+import { useState } from "react";
+import { ScanIntro } from "./scan-intro";
+import { ScanQuestions } from "./scan-questions";
+import { ScanResults } from "./scan-results";
+import { ScanLoading } from "./scan-loading";
+import { questions } from "@/app/(site)/scan/page";
+import { Answer, AssessmentResult } from "@/types/assessment";
+import { calculateCF, saveAssessmentResult } from "@/utils";
+import { useAuth } from "@/stores/use-auth";
+import { useRouter } from "next/navigation";
+
+const LOADING_DURATION = 3000; // 3 seconds
 
 export function ScanMain() {
-  const [step, setStep] = useState<"intro" | "questions" | "results" | "loading">("intro")
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [answers, setAnswers] = useState<Array<{ questionId: number; value: number }>>([])
+  const [step, setStep] = useState<
+    "intro" | "questions" | "results" | "loading"
+  >("intro");
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [result, setResult] = useState<AssessmentResult | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const user = useAuth((state) => state.user); // Access user from Zustand store
+  const router = useRouter();
 
-  const handleStart = () => setStep("questions")
+  const handleStart = () => setStep("questions");
 
   const handleAnswer = (value: number) => {
     // Update or add new answer
-    const newAnswers = [...answers]
+    const newAnswers = [...answers];
+    const answerValue = value as Answer["value"]; // Type cast to our limited set of values
+
     newAnswers[currentQuestion] = {
       questionId: questions[currentQuestion].id,
-      value
-    }
-    setAnswers(newAnswers)
+      value: answerValue,
+    };
+    setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      setStep("loading")
+      setStep("loading");
       setTimeout(() => {
-        setStep("results")
-      }, 3000)
+        const calculatedResult = calculateCF(newAnswers);
+        setResult(calculatedResult);
+        setStep("results");
+      }, LOADING_DURATION);
     } else {
-      setCurrentQuestion(currentQuestion + 1)
+      setCurrentQuestion(currentQuestion + 1);
     }
-  }
+  };
 
   const handleBack = () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1)
+      setCurrentQuestion(currentQuestion - 1);
     } else {
-      setStep("intro")
+      setStep("intro");
     }
-  }
+  };
 
-  const calculateScore = () => {
-    const total = answers.reduce((sum, answer) => sum + answer.value, 0)
-    return (total / (questions.length * 4)) * 10
-  }
+  const handleSaveResult = async () => {
+    if (!result) return;
+
+    // Check if user is authenticated
+    if (!user) {
+      // Redirect to login page if not authenticated
+      router.push("/login?redirect=/scan");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const userId = user.uid;
+      await saveAssessmentResult(userId, answers, result);
+
+      // Use alert instead of toast
+      alert(`Assessment saved successfully!`);
+
+      // Correctly redirect based on user role and username
+      if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      } else {
+        // Use the username for the dynamic route
+        const username = user.username || userId;
+        router.push(`/dashboard/${username}`);
+      }
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      alert("Failed to save assessment result");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Get previous answer for current question if it exists
   const getCurrentAnswer = () => {
-    const answer = answers[currentQuestion]
-    return answer ? answer.value.toString() : ""
-  }
+    const answer = answers[currentQuestion];
+    return answer ? answer.value.toString() : "";
+  };
 
   return (
     <>
@@ -66,8 +111,13 @@ export function ScanMain() {
           initialSelected={getCurrentAnswer()}
         />
       )}
-      {step === "results" && <ScanResults score={calculateScore()} />}
+      {step === "results" && result && (
+        <ScanResults
+          result={result}
+          onSaveResult={handleSaveResult}
+          isSaving={isSaving}
+        />
+      )}
     </>
-  )
+  );
 }
-
