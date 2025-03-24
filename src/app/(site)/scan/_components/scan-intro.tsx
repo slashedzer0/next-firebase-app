@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/stores/use-auth";
-import { incrementAssessmentCount } from "@/utils";
+import { incrementAssessmentCount, updateUserActivity } from "@/utils";
 
 interface ScanIntroProps {
   onStart: () => void;
@@ -11,9 +11,10 @@ export function ScanIntro({ onStart }: ScanIntroProps) {
   const user = useAuth((state) => state.user);
 
   const handleStart = () => {
-    // Increment counter if user is authenticated
+    // Increment counter and update lastActive if user is authenticated
     if (user?.uid) {
       incrementAssessmentCount(user.uid);
+      updateUserActivity(user.uid);
     }
 
     // Call the original onStart function

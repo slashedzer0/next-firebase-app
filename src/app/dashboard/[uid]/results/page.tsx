@@ -159,9 +159,9 @@ export default function UserDashboardResultsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="[&>*]:whitespace-nowrap [&>td]:py-4">
-                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">ID</TableHead>
+                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">Attempt</TableHead>
                       <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
-                      <TableHead className="text-right">Score</TableHead>
+                      <TableHead className="text-right">Confidence</TableHead>
                       <TableHead className="text-right">Date</TableHead>
                     </TableRow>
                   </TableHeader>

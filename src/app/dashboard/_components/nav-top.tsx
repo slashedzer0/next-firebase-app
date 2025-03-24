@@ -1,6 +1,15 @@
 "use client";
 
-import { Search, Users, LayoutGrid, CircleGauge, FileChartColumn, Settings, ScanText, LogOut } from "lucide-react";
+import {
+  Search,
+  Users,
+  LayoutGrid,
+  CircleGauge,
+  FileChartColumn,
+  Settings,
+  ScanText,
+  LogOut,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
@@ -33,14 +42,14 @@ export function TopNav() {
   const router = useRouter();
   const { user, signOut } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);
-  
+
   // Get username and role from auth store
   const username = user?.username || "uid";
   const userRole = user?.role || "student";
-  
+
   // Use "admin" as path for admin users, username for students
   const userPath = userRole === "admin" ? "admin" : username;
-  
+
   // Define navigation items based on user role
   const navItems = [
     {
@@ -173,7 +182,11 @@ export function TopNav() {
               ))}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2">
+          <DropdownMenuItem
+            onClick={handleSignOut}
+            className="flex items-center gap-2"
+            title="Sign out (your last activity will be recorded)"
+          >
             <LogOut className="h-4 w-4" />
             Sign out
           </DropdownMenuItem>

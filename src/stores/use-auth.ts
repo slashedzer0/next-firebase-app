@@ -34,6 +34,8 @@ interface CustomUser extends User {
   nim?: string;
   phone?: string;
   assessmentCount?: number; // Add assessment counter
+  status?: string; // Add status field
+  lastActive?: Date | string; // Add lastActive field
 }
 
 // Data type for the updateProfile function
@@ -117,9 +119,11 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             email: user.email,
             createdAt: serverTimestamp(),
+            lastActive: serverTimestamp(), // Add lastActive timestamp
             userId: user.uid,
             photoURL: user.photoURL,
             role: "student",
+            status: "active", // Set initial status to active
           });
 
           await setDoc(doc(db, "usernames", username), {
@@ -132,6 +136,7 @@ export const useAuth = create<AuthState>((set, get) => ({
               username,
               fullName,
               role: "student",
+              status: "active", // Include status in state
             },
           });
         } catch (error) {
@@ -175,8 +180,10 @@ export const useAuth = create<AuthState>((set, get) => ({
           username,
           email,
           createdAt: serverTimestamp(),
+          lastActive: serverTimestamp(), // Add lastActive timestamp
           userId: user.uid,
           role: "student",
+          status: "active", // Set initial status to active
         });
 
         await setDoc(doc(db, "usernames", username), {
@@ -189,6 +196,7 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             fullName: name,
             role: "student",
+            status: "active", // Include status in state
           },
         });
       } catch (error) {
@@ -213,6 +221,18 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     try {
+      // Update lastActive before signing out
+      const { user } = get();
+      if (user?.uid) {
+        try {
+          await updateDoc(doc(db, "users", user.uid), {
+            lastActive: serverTimestamp(),
+          });
+        } catch (e) {
+          console.error("Error updating lastActive on logout:", e);
+        }
+      }
+
       await firebaseSignOut(auth);
     } catch (error) {
       const authError = error as AuthError;
@@ -253,7 +273,11 @@ export const useAuth = create<AuthState>((set, get) => ({
       if (data.nim !== undefined) updateData.nim = data.nim;
       if (data.phone !== undefined) updateData.phone = data.phone;
 
-      await updateDoc(doc(db, "users", user.uid), updateData);
+      // Update user data and lastActive simultaneously
+      await updateDoc(doc(db, "users", user.uid), {
+        ...updateData,
+        lastActive: serverTimestamp(), // Update lastActive on profile changes
+      });
 
       set((state) => ({
         user: {
@@ -281,6 +305,14 @@ onAuthStateChanged(auth, async (user) => {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
+
+        // Update lastActive timestamp for student users
+        if (userData.role === "student") {
+          await updateDoc(doc(db, "users", user.uid), {
+            lastActive: serverTimestamp(),
+          });
+        }
+
         useAuth.setState({
           user: {
             ...user,
@@ -290,6 +322,7 @@ onAuthStateChanged(auth, async (user) => {
             nim: userData.nim,
             phone: userData.phone,
             assessmentCount: userData.assessmentCount || 0, // Include assessment count
+            status: userData.status || "active", // Include status
           },
           loading: { ...useAuth.getState().loading, initial: false },
         });

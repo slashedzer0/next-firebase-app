@@ -103,7 +103,11 @@ export default function UserDashboardSettingsPage() {
         nim: values.nim,
         phone: values.phone,
       });
-      alert("Profile updated successfully!");
+
+      // More informative success message
+      alert(
+        "Profile updated successfully! Your account status is now marked as active."
+      );
     } catch (error) {
       console.error("Form submission error", error);
       alert("Failed to update profile. Please try again.");
