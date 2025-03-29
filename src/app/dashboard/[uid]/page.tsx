@@ -310,7 +310,7 @@ export default function UserDashboardOverviewPage() {
               Stress Levels
             </CardTitle>
             <CardDescription>
-              Compared to the average by latest attempts
+              Compared to other students by latest attempts
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
