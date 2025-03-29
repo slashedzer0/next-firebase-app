@@ -172,7 +172,7 @@ export default function UserDashboardResultsPage() {
                   <TableHeader>
                     <TableRow className="[&>*]:whitespace-nowrap [&>td]:py-4">
                       <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
-                        Attempt
+                        No
                       </TableHead>
                       <TableHead className="sticky left-[100px] bg-background">
                         Level

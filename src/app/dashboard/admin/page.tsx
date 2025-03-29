@@ -1,7 +1,18 @@
 "use client";
 
-import { Percent, TriangleAlert, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Percent, TriangleAlert, Users, Loader2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "@/services/firebase";
 
 import {
   Card,
@@ -26,7 +37,7 @@ const chartData = [
   { month: "April", highest: 73, lowest: 190 },
   { month: "May", highest: 209, lowest: 130 },
   { month: "June", highest: 214, lowest: 140 },
-]
+];
 
 const chartConfig = {
   highest: {
@@ -39,7 +50,81 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+interface RecentAssessment {
+  id: string;
+  userName: string;
+  userEmail: string;
+  confidence: number;
+}
+
 export default function AdminDashboardOverviewPage() {
+  const [recentAssessments, setRecentAssessments] = useState<
+    RecentAssessment[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRecentAssessments() {
+      try {
+        setLoading(true);
+
+        // Create a query to get the 3 most recent assessments
+        const assessmentsRef = collection(db, "assessments");
+
+        // We can't combine complex queries with orderBy without an index,
+        // so we'll fetch more records and filter after
+        const q = query(
+          assessmentsRef,
+          orderBy("createdAt", "desc"),
+          limit(20)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const assessmentsWithUserData: RecentAssessment[] = [];
+
+        // Process each assessment and get user data
+        for (const assessmentDoc of querySnapshot.docs) {
+          const assessmentData = assessmentDoc.data();
+          const userId = assessmentData.userId;
+
+          // Skip assessments without user ID or non-student users
+          if (!userId) continue;
+
+          // Get user data
+          try {
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+
+              // Only include assessments from student users
+              if (userData.role === "student") {
+                assessmentsWithUserData.push({
+                  id: assessmentDoc.id,
+                  userName: userData.fullName || "Unknown User",
+                  userEmail: userData.email || "no-email@example.com",
+                  confidence: assessmentData.confidence || 0,
+                });
+
+                // Break once we have 3 student assessments
+                if (assessmentsWithUserData.length === 3) break;
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+        }
+
+        setRecentAssessments(assessmentsWithUserData);
+      } catch (error) {
+        console.error("Error fetching recent assessments:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRecentAssessments();
+  }, []);
+
   return (
     <>
       <div className="flex items-center">
@@ -48,22 +133,30 @@ export default function AdminDashboardOverviewPage() {
       <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Students</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Students
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">144</div>
-            <p className="text-xs text-muted-foreground">Including new accounts</p>
+            <p className="text-xs text-muted-foreground">
+              Including new accounts
+            </p>
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Scores</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Scores
+            </CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">3.7</div>
-            <p className="text-xs text-muted-foreground">-19% from last month</p>
+            <p className="text-xs text-muted-foreground">
+              -19% from last month
+            </p>
           </CardContent>
         </Card>
         <Card className="bg-background">
@@ -73,7 +166,9 @@ export default function AdminDashboardOverviewPage() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Students need attention</p>
+            <p className="text-xs text-muted-foreground">
+              Students need attention
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -126,50 +221,40 @@ export default function AdminDashboardOverviewPage() {
             <CardTitle className="text-lg font-semibold md:text-xl">
               Recent Attempts
             </CardTitle>
-            <CardDescription>
-              Sorted from latest to oldest
-            </CardDescription>
+            <CardDescription>Latest assessment submissions</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="rounded-md">
               <div className="grid grid-cols-2 p-4 text-sm font-medium">
                 <div>Student</div>
-                <div className="text-right">Score</div>
+                <div className="text-right">Confidence</div>
               </div>
               <div className="divide-y">
-                <div className="grid grid-cols-2 p-4">
-                  <div>
-                    <p className="text-sm font-medium leading-none">
-                      Oliver Smith
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      oliversmith@email.com
-                    </p>
+                {loading ? (
+                  <div className="flex justify-center items-center py-8">
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   </div>
-                  <div className="text-xl text-right font-medium">4.9</div>
-                </div>
-                <div className="grid grid-cols-2 p-4">
-                  <div>
-                    <p className="text-sm font-medium leading-none">
-                      Sofia Davis
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      sofiadavis@email.com
-                    </p>
+                ) : recentAssessments.length > 0 ? (
+                  recentAssessments.map((assessment) => (
+                    <div key={assessment.id} className="grid grid-cols-2 p-4">
+                      <div>
+                        <p className="text-sm font-medium leading-none">
+                          {assessment.userName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {assessment.userEmail}
+                        </p>
+                      </div>
+                      <div className="text-xl text-right font-medium">
+                        {assessment.confidence}%
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    No recent assessments found.
                   </div>
-                  <div className="text-xl text-right font-medium">4.2</div>
-                </div>
-                <div className="grid grid-cols-2 p-4">
-                  <div>
-                    <p className="text-sm font-medium leading-none">
-                      Emma Wilson
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      emmawilson@email.com
-                    </p>
-                  </div>
-                  <div className="text-xl text-right font-medium">4.7</div>
-                </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -178,4 +263,3 @@ export default function AdminDashboardOverviewPage() {
     </>
   );
 }
-
