@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Percent, TriangleAlert, Users, Loader2 } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   collection,
   query,
@@ -30,15 +30,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "January", highest: 186, lowest: 80 },
-  { month: "February", highest: 305, lowest: 200 },
-  { month: "March", highest: 237, lowest: 120 },
-  { month: "April", highest: 73, lowest: 190 },
-  { month: "May", highest: 209, lowest: 130 },
-  { month: "June", highest: 214, lowest: 140 },
-];
 
 const chartConfig = {
   highest: {
@@ -69,6 +60,13 @@ export default function AdminDashboardOverviewPage() {
     score: 0,
     change: 0,
   });
+  const [chartData, setChartData] = useState<
+    Array<{
+      month: string;
+      highest: number;
+      lowest: number;
+    }>
+  >([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -194,6 +192,109 @@ export default function AdminDashboardOverviewPage() {
           change: percentChange,
         });
 
+        // Fetch and process assessments for chart data
+        const monthlyStats: { [key: string]: { values: number[] } } = {};
+
+        // Current date to determine month order
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        // Process each assessment
+        assessmentsSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!data.date || !data.confidence) return;
+
+          // Parse date from DD-MM-YYYY format
+          const dateParts = data.date.split("-");
+          if (dateParts.length !== 3) return;
+
+          const day = parseInt(dateParts[0]);
+          const month = parseInt(dateParts[1]) - 1; // JS months are 0-indexed
+          const year = parseInt(dateParts[2]);
+
+          // Skip invalid dates
+          if (
+            isNaN(day) ||
+            isNaN(month) ||
+            isNaN(year) ||
+            day < 1 ||
+            day > 31 ||
+            month < 0 ||
+            month > 11
+          )
+            return;
+
+          // Create a sortable key for the month (YYYY-MM format)
+          const monthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+          // Initialize month data if it doesn't exist
+          if (!monthlyStats[monthKey]) {
+            monthlyStats[monthKey] = { values: [] };
+          }
+
+          // Add confidence value to the month's data
+          monthlyStats[monthKey].values.push(data.confidence);
+        });
+
+        // Get list of months to display (5 previous months + current month)
+        const monthsToDisplay = [];
+        for (let i = 5; i >= 0; i--) {
+          // Changed loop to start from 5 and go backwards
+          let monthIndex = currentMonth - i;
+          let yearIndex = currentYear;
+
+          // Handle wrapping around to previous year
+          if (monthIndex < 0) {
+            monthIndex += 12;
+            yearIndex -= 1;
+          }
+
+          const monthKey = `${yearIndex}-${String(monthIndex).padStart(
+            2,
+            "0"
+          )}`;
+          monthsToDisplay.push({
+            key: monthKey,
+            monthIndex,
+            year: yearIndex,
+          });
+        }
+
+        // Create chart data array with month names and min/max values
+        const monthNames = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        const chartDataArray = monthsToDisplay.map(({ key, monthIndex }) => {
+          const values = monthlyStats[key]?.values || [];
+          const monthName = monthNames[monthIndex];
+
+          // Find min and max confidence values, defaulting to null if no data
+          const highest = values.length > 0 ? Math.max(...values) : null;
+          const lowest = values.length > 0 ? Math.min(...values) : null;
+
+          return {
+            month: monthName,
+            monthYear: monthName.slice(0, 3), // Only use abbreviated month name, no year
+            highest: highest !== null ? highest : 0,
+            lowest: lowest !== null ? lowest : 0,
+            hasData: values.length > 0,
+          };
+        });
+
+        setChartData(chartDataArray);
+
         // Also fetch recent assessments (existing code)
         // We can't combine complex queries with orderBy without an index,
         // so we'll fetch more records and filter after
@@ -279,9 +380,7 @@ export default function AdminDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Average Score
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -334,37 +433,47 @@ export default function AdminDashboardOverviewPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
-            <ChartContainer
-              config={chartConfig}
-              className="w-full md:h-[200px]"
-            >
-              <BarChart
-                accessibilityLayer
-                data={chartData}
-                margin={{
-                  top: 5,
-                  right: 10,
-                  left: 10,
-                  bottom: 0,
-                }}
+            {loading ? (
+              <div className="flex justify-center items-center py-16">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <ChartContainer
+                config={chartConfig}
+                className="w-full md:h-[200px]"
               >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Bar dataKey="highest" fill="var(--color-highest)" radius={4} />
-                <Bar dataKey="lowest" fill="var(--color-lowest)" radius={4} />
-              </BarChart>
-            </ChartContainer>
+                <BarChart
+                  accessibilityLayer
+                  data={chartData}
+                  margin={{
+                    top: 5,
+                    right: 10,
+                    left: 10,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="monthYear"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                  />
+                  <YAxis domain={[0, 100]} hide />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent />}
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar
+                    dataKey="highest"
+                    fill="var(--color-highest)"
+                    radius={4}
+                  />
+                  <Bar dataKey="lowest" fill="var(--color-lowest)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-background">
