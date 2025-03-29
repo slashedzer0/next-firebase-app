@@ -11,6 +11,7 @@ import {
   getDocs,
   getDoc,
   doc,
+  where,
 } from "firebase/firestore";
 import { db } from "@/services/firebase";
 
@@ -58,23 +59,81 @@ interface RecentAssessment {
 }
 
 export default function AdminDashboardOverviewPage() {
-  const [recentAssessments, setRecentAssessments] = useState<
-    RecentAssessment[]
-  >([]);
+  const [recentAssessments, setRecentAssessments] = useState<RecentAssessment[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
+  const [highRiskCount, setHighRiskCount] = useState(0);
+  const [activeStudentsCount, setActiveStudentsCount] = useState(0);
 
   useEffect(() => {
-    async function fetchRecentAssessments() {
+    async function fetchData() {
       try {
         setLoading(true);
 
-        // Create a query to get the 3 most recent assessments
-        const assessmentsRef = collection(db, "assessments");
+        // Fetch active students count
+        const usersRef = collection(db, "users");
+        const activeStudentsQuery = query(
+          usersRef,
+          where("role", "==", "student"),
+          where("status", "==", "active")
+        );
 
+        const activeStudentsSnapshot = await getDocs(activeStudentsQuery);
+        setActiveStudentsCount(activeStudentsSnapshot.size);
+
+        // Create a query to get assessments
+        const assessmentsRef = collection(db, "assessments");
+        const assessmentsQuery = query(assessmentsRef, limit(1000));
+        const assessmentsSnapshot = await getDocs(assessmentsQuery);
+
+        // Group assessments by userId
+        const userAssessments: { [userId: string]: { stressLevel: string }[] } =
+          {};
+
+        // Process assessments
+        assessmentsSnapshot.forEach((doc) => {
+          const data = doc.data();
+          const userId = data.userId;
+
+          if (!userId) return;
+
+          if (!userAssessments[userId]) {
+            userAssessments[userId] = [];
+          }
+
+          userAssessments[userId].push({
+            stressLevel: data.stressLevel,
+          });
+        });
+
+        // Count high risk students (all assessments are severe)
+        let highRiskStudents = 0;
+
+        // For each student, check if they only have severe assessments
+        for (const userId in userAssessments) {
+          const assessments = userAssessments[userId];
+
+          // Skip users with no assessments
+          if (assessments.length === 0) continue;
+
+          // Check if all assessments are severe
+          const allSevere = assessments.every(
+            (assessment) => assessment.stressLevel === "severe"
+          );
+
+          if (allSevere) {
+            highRiskStudents++;
+          }
+        }
+
+        setHighRiskCount(highRiskStudents);
+
+        // Also fetch recent assessments (existing code)
         // We can't combine complex queries with orderBy without an index,
         // so we'll fetch more records and filter after
         const q = query(
-          assessmentsRef,
+          collection(db, "assessments"),
           orderBy("createdAt", "desc"),
           limit(20)
         );
@@ -116,13 +175,13 @@ export default function AdminDashboardOverviewPage() {
 
         setRecentAssessments(assessmentsWithUserData);
       } catch (error) {
-        console.error("Error fetching recent assessments:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchRecentAssessments();
+    fetchData();
   }, []);
 
   return (
@@ -133,30 +192,32 @@ export default function AdminDashboardOverviewPage() {
       <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Students
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Active Students</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">144</div>
-            <p className="text-xs text-muted-foreground">
-              Including new accounts
-            </p>
+            {loading ? (
+              <div className="flex flex-col h-[52px] justify-center items-center">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-bold">{activeStudentsCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  Including new accounts
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Average Scores
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Average Scores</CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">3.7</div>
-            <p className="text-xs text-muted-foreground">
-              -19% from last month
-            </p>
+            <p className="text-xs text-muted-foreground">-19% from last month</p>
           </CardContent>
         </Card>
         <Card className="bg-background">
@@ -165,10 +226,18 @@ export default function AdminDashboardOverviewPage() {
             <TriangleAlert className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">
-              Students need attention
-            </p>
+            {loading ? (
+              <div className="flex flex-col h-[52px] justify-center items-center">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-bold">{highRiskCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  Students in crisis
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -183,10 +252,7 @@ export default function AdminDashboardOverviewPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
-            <ChartContainer
-              config={chartConfig}
-              className="w-full md:h-[200px]"
-            >
+            <ChartContainer config={chartConfig} className="w-full md:h-[200px]">
               <BarChart
                 accessibilityLayer
                 data={chartData}
@@ -205,10 +271,7 @@ export default function AdminDashboardOverviewPage() {
                   axisLine={false}
                   tickFormatter={(value) => value.slice(0, 3)}
                 />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
                 <Bar dataKey="highest" fill="var(--color-highest)" radius={4} />
                 <Bar dataKey="lowest" fill="var(--color-lowest)" radius={4} />
