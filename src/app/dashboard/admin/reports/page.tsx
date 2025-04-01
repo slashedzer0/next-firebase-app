@@ -393,9 +393,9 @@ export default function AdminDashboardReportsPage() {
               <AlertDialogDescription>
                 This action cannot be undone. This will permanently delete{" "}
                 <span className="font-semibold">
-                  {deletingAssessment?.userName}&apos;s
-                </span>{" "}
-                assessment record from the database.
+                  {deletingAssessment?.userName}&apos;
+                </span>
+                s assessment record from the database.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -28,6 +28,16 @@ import { Copy, Trash2, Loader2 } from "lucide-react";
 import { usePagination } from "@/stores/use-pagination";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/services/firebase";
+import { deleteUserData } from "@/utils/delete-user";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { doc, getDoc } from "firebase/firestore";
 
 interface UserData {
   id: string;
@@ -54,6 +64,13 @@ export default function AdminDashboardUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingUser, setDeletingUser] = useState<{
+    id: string;
+    fullName: string;
+    email: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
@@ -109,6 +126,69 @@ export default function AdminDashboardUsersPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     alert(`Copied to clipboard: ${text}`);
+  };
+
+  // Function to handle clicking the delete button
+  const handleDeleteClick = async (userId: string) => {
+    try {
+      // Get full user data before showing dialog
+      const userDoc = await getDoc(doc(db, "users", userId));
+
+      if (!userDoc.exists()) {
+        alert("User not found");
+        return;
+      }
+
+      const userData = userDoc.data();
+
+      setDeletingUser({
+        id: userId,
+        fullName: userData.fullName || "Unknown User",
+        email: userData.email || "No email",
+      });
+      setDeleteDialogOpen(true);
+    } catch (error) {
+      console.error("Error preparing user deletion:", error);
+      alert("Could not prepare user for deletion");
+    }
+  };
+
+  // Function to handle confirming deletion
+  const handleDeleteConfirm = async () => {
+    if (!deletingUser) return;
+
+    setIsDeleting(true);
+    try {
+      // Delete all user data and auth account
+      await deleteUserData(deletingUser.id);
+
+      // Update UI by filtering out the deleted user
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== deletingUser.id)
+      );
+
+      // Success message
+      alert(
+        `User ${deletingUser.fullName} has been successfully deleted from the system.`
+      );
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert(
+        `Failed to delete user: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setDeleteDialogOpen(false);
+      setDeletingUser(null);
+      setIsDeleting(false);
+    }
+  };
+
+  // Function to handle canceling deletion
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDeletingUser(null);
   };
 
   if (loading) {
@@ -181,10 +261,8 @@ export default function AdminDashboardUsersPage() {
                               size="icon"
                               variant="outline"
                               className="h-8 w-8 text-destructive"
-                              onClick={() =>
-                                console.log("Delete user:", user.id)
-                              }
-                              title="Delete user (not implemented yet)"
+                              onClick={() => handleDeleteClick(user.id)}
+                              title="Delete user account permanently"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -241,6 +319,47 @@ export default function AdminDashboardUsersPage() {
           </Pagination>
         )}
       </div>
+
+      {/* Delete User Account Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete{" "}
+              <span className="font-semibold">
+                {deletingUser?.fullName}&apos;
+              </span>
+              s account from the database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <div className="flex justify-end gap-2 w-full">
+              <Button
+                variant="outline"
+                onClick={handleDeleteCancel}
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete Account"
+                )}
+              </Button>
+            </div>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

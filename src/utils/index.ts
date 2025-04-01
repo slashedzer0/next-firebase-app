@@ -5,6 +5,7 @@ export { calculateCF } from "./certainty-factor";
 export { saveAssessmentResult } from "./save-assessment";
 export { incrementAssessmentCount } from "./count-assessment";
 export { updateUserActivity } from "./update-activity";
+export { deleteUserData } from "./delete-user";
 
 // Export route protection components
 export {
