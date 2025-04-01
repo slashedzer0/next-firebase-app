@@ -18,6 +18,15 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -44,6 +53,12 @@ interface ReportData {
   level: string;
   confidence: number;
   date: string;
+}
+
+interface UserDetails {
+  email: string;
+  nim: string;
+  phone: string;
 }
 
 function LevelBadge({ level }: { level: string }) {
@@ -81,6 +96,44 @@ export default function AdminDashboardReportsPage() {
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+
+  // Add state for the dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [loadingUserDetails, setLoadingUserDetails] = useState(false);
+
+  // Function to handle clicking the info button
+  const handleInfoClick = async (userId: string) => {
+    setLoadingUserDetails(true);
+    setDialogOpen(true);
+
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserDetails({
+          email: userData.email || "Not provided",
+          nim: userData.nim || "Not provided",
+          phone: userData.phone || "Not provided",
+        });
+      } else {
+        setUserDetails({
+          email: "User not found",
+          nim: "User not found",
+          phone: "User not found",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      setUserDetails({
+        email: "Error loading data",
+        nim: "Error loading data",
+        phone: "Error loading data",
+      });
+    } finally {
+      setLoadingUserDetails(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchReports() {
@@ -206,9 +259,7 @@ export default function AdminDashboardReportsPage() {
                                   size="icon"
                                   variant="outline"
                                   className="h-8 w-8"
-                                  onClick={() =>
-                                    console.log("Clicked info for " + report.id)
-                                  }
+                                  onClick={() => handleInfoClick(report.userId)}
                                 >
                                   <Info className="h-4 w-4" />
                                 </Button>
@@ -282,6 +333,61 @@ export default function AdminDashboardReportsPage() {
             </PaginationContent>
           </Pagination>
         )}
+
+        {/* User Details Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Student Details</DialogTitle>
+              <DialogDescription>
+                Contact information for this student.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {loadingUserDetails ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      value={userDetails?.email || ""}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="nim" className="text-right">
+                      NIM
+                    </Label>
+                    <Input
+                      id="nim"
+                      value={userDetails?.nim || ""}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="phone" className="text-right">
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      value={userDetails?.phone || ""}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );
