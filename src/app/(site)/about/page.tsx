@@ -10,22 +10,23 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <p>
-                Students commonly experience stress during their academic journey,
-                especially during exam periods and assignment deadlines. Many students don&apos;t have a systematic way
-                to track their stress levels over time.
+                Students commonly experience stress during their academic journey, especially during
+                exam periods and assignment deadlines. Many students don&apos;t have a systematic
+                way to track their stress levels over time.
               </p>
               <p>
-                This project aims to provide students with a simple tool for tracking their stress levels. Through our easy-to-use platform, we may help identify stress patterns
-                and empower students to better manage their mental well-being.
+                This project aims to provide students with a simple tool for tracking their stress
+                levels. Through our easy-to-use platform, we may help identify stress patterns and
+                empower students to better manage their mental well-being.
               </p>
               <p className="text-sm italic">
-              MindEase by no means replaces professional mental health support. 
-              For serious concerns, please seek help from qualified mental health professionals.
+                MindEase by no means replaces professional mental health support. For serious
+                concerns, please seek help from qualified mental health professionals.
               </p>
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

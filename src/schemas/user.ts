@@ -1,12 +1,12 @@
-import * as z from "zod";
+import * as z from 'zod';
 
 export const userSchema = z.object({
   userId: z.string(),
   username: z.string(),
   fullName: z.string(),
   email: z.string().email(),
-  role: z.enum(["admin", "student"]).default("student"),
-  status: z.enum(["active", "inactive"]).default("active"),
+  role: z.enum(['admin', 'student']).default('student'),
+  status: z.enum(['active', 'inactive']).default('active'),
   nim: z.string().optional(),
   phone: z.string().optional(),
   photoURL: z.string().optional(),

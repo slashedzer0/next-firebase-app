@@ -1,4 +1,4 @@
-import { Answer, AssessmentResult } from "@/types/assessment";
+import { Answer, AssessmentResult } from '@/types/assessment';
 
 /**
  * Kategori gejala stres dengan bobot relatifnya
@@ -6,19 +6,19 @@ import { Answer, AssessmentResult } from "@/types/assessment";
  */
 const symptomCategories = {
   physical: {
-    ids: ["q3", "q4", "q8"], // Gejala fisik: ketegangan, pola tidur, energi rendah
+    ids: ['q3', 'q4', 'q8'], // Gejala fisik: ketegangan, pola tidur, energi rendah
     weight: 1.0,
   },
   cognitive: {
-    ids: ["q5", "q9"], // Gejala kognitif: sulit berkonsentrasi, sulit membuat keputusan
+    ids: ['q5', 'q9'], // Gejala kognitif: sulit berkonsentrasi, sulit membuat keputusan
     weight: 1.2,
   },
   emotional: {
-    ids: ["q2", "q6", "q7"], // Gejala emosional: sulit rileks, mudah kesal, khawatir
+    ids: ['q2', 'q6', 'q7'], // Gejala emosional: sulit rileks, mudah kesal, khawatir
     weight: 1.3,
   },
   behavioral: {
-    ids: ["q1", "q10"], // Gejala perilaku: kewalahan dengan tugas, tekanan waktu
+    ids: ['q1', 'q10'], // Gejala perilaku: kewalahan dengan tugas, tekanan waktu
     weight: 0.9,
   },
 };
@@ -29,7 +29,7 @@ const symptomCategories = {
  */
 export function calculateCF(answers: Answer[]): AssessmentResult {
   if (answers.length === 0) {
-    return { stressLevel: "mild", confidence: 0 };
+    return { stressLevel: 'mild', confidence: 0 };
   }
 
   // 1. Hitung CF untuk setiap kategori gejala
@@ -91,9 +91,7 @@ function calculateCategoryCFs(answers: Answer[]): {
  * Menggabungkan nilai CF dari berbagai kategori
  * Menggunakan metode kombinasi CF yang lebih canggih
  */
-function combineCategoryValues(categoryCFs: {
-  [category: string]: number;
-}): number {
+function combineCategoryValues(categoryCFs: { [category: string]: number }): number {
   // Implementasi Aturan Kombinasi CF yang lebih kompleks
   // CF(A,B) = CF(A) + CF(B) - CF(A) * CF(B) untuk nilai positif
   // CF(A,B) = CF(A) + CF(B) + CF(A) * CF(B) untuk nilai negatif
@@ -137,8 +135,7 @@ function calculateConsistency(answers: Answer[]): number {
   const values = answers.map((a) => a.value);
   const mean = values.reduce((sum: number, val) => sum + val, 0) / values.length;
   const variance =
-    values.reduce((sum: number, val) => sum + Math.pow(val - mean, 2), 0) /
-    values.length;
+    values.reduce((sum: number, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
   // Transformasi standar deviasi ke nilai konsistensi (1 = sangat konsisten, 0 = tidak konsisten)
@@ -162,9 +159,9 @@ function calculateConfidence(cf: number, consistency: number): number {
 /**
  * Menentukan tingkat stres berdasarkan nilai CF
  */
-function determineStressLevel(cf: number): "mild" | "moderate" | "severe" {
+function determineStressLevel(cf: number): 'mild' | 'moderate' | 'severe' {
   // Threshold values untuk klasifikasi stres
-  if (cf < -0.25) return "mild";
-  if (cf < 0.4) return "moderate";
-  return "severe";
+  if (cf < -0.25) return 'mild';
+  if (cf < 0.4) return 'moderate';
+  return 'severe';
 }

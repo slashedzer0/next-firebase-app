@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { Branding } from "./branding";
-import { useAuth } from "@/stores/use-auth";
+import { Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { Branding } from './branding';
+import { useAuth } from '@/stores/use-auth';
 
 const navigation = [
-  { name: "About", href: "/about" },
-  { name: "Support", href: "/support" },
+  { name: 'About', href: '/about' },
+  { name: 'Support', href: '/support' },
 ];
 
 export function Header() {
@@ -21,25 +21,25 @@ export function Header() {
 
   // Generate dynamic dashboard path based on user role and username
   const getDashboardPath = () => {
-    if (!user) return "/dashboard/uid";
+    if (!user) return '/dashboard/uid';
 
-    const username = user.username || "uid";
-    const userRole = user.role || "student";
+    const username = user.username || 'uid';
+    const userRole = user.role || 'student';
 
     // Use "admin" as path for admin users, username for students
-    return `/dashboard/${userRole === "admin" ? "admin" : username}`;
+    return `/dashboard/${userRole === 'admin' ? 'admin' : username}`;
   };
 
   // useBodyScrollLock - prevents body from scrolling when mobile menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
 

@@ -1,5 +1,5 @@
-import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
-import { db } from "@/services/firebase";
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { db } from '@/services/firebase';
 
 /**
  * Increments the assessment count for a user by 1
@@ -9,7 +9,7 @@ export async function incrementAssessmentCount(userId: string): Promise<void> {
   if (!userId) return;
 
   try {
-    const userRef = doc(db, "users", userId);
+    const userRef = doc(db, 'users', userId);
 
     // Check if the user document exists
     const userDoc = await getDoc(userRef);
@@ -24,6 +24,6 @@ export async function incrementAssessmentCount(userId: string): Promise<void> {
       console.error(`User document not found for: ${userId}`);
     }
   } catch (error) {
-    console.error("Error incrementing assessment count:", error);
+    console.error('Error incrementing assessment count:', error);
   }
 }

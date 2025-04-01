@@ -1,11 +1,7 @@
-"use client";
+'use client';
 
-import { UserRoute } from "@/components/auth/route-student";
+import { UserRoute } from '@/middleware/route-student';
 
-export default function UserLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function UserLayout({ children }: { children: React.ReactNode }) {
   return <UserRoute>{children}</UserRoute>;
 }

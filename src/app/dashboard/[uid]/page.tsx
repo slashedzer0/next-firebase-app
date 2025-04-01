@@ -1,20 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Calendar, FolderDown, HeartPulse } from "lucide-react";
-import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { collection, query, where, getDocs, limit } from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { useAuth } from "@/stores/use-auth";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { Calendar, FolderDown, HeartPulse } from 'lucide-react';
+import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { useAuth } from '@/stores/use-auth';
+import { Loader2 } from 'lucide-react';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
@@ -22,20 +16,20 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from '@/components/ui/chart';
 
 const chartConfig = {
   you: {
-    label: "You",
-    color: "hsl(var(--chart-1))",
+    label: 'You',
+    color: 'hsl(var(--chart-1))',
   },
   average: {
-    label: "Others",
-    color: "hsl(var(--chart-2))",
+    label: 'Others',
+    color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
 
-import type { Timestamp } from "firebase/firestore";
+import type { Timestamp } from 'firebase/firestore';
 
 interface AssessmentData {
   createdAt: Timestamp;
@@ -51,9 +45,7 @@ interface ChartDataPoint {
 
 export default function UserDashboardOverviewPage() {
   const { user } = useAuth();
-  const [recentAssessments, setRecentAssessments] = useState<AssessmentData[]>(
-    []
-  );
+  const [recentAssessments, setRecentAssessments] = useState<AssessmentData[]>([]);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [savedCount, setSavedCount] = useState(0);
@@ -65,14 +57,10 @@ export default function UserDashboardOverviewPage() {
 
       try {
         setLoading(true);
-        const assessmentsRef = collection(db, "assessments");
+        const assessmentsRef = collection(db, 'assessments');
 
         // Get all assessments for the current user
-        const userQuery = query(
-          assessmentsRef,
-          where("userId", "==", user.uid),
-          limit(100)
-        );
+        const userQuery = query(assessmentsRef, where('userId', '==', user.uid), limit(100));
         const userSnapshot = await getDocs(userQuery);
 
         const userAssessments: Array<{
@@ -89,8 +77,8 @@ export default function UserDashboardOverviewPage() {
             userAssessments.push({
               confidence: data.confidence,
               createdAt: data.createdAt,
-              date: data.date || "",
-              day: data.day || "",
+              date: data.date || '',
+              day: data.day || '',
             });
           }
         });
@@ -117,7 +105,7 @@ export default function UserDashboardOverviewPage() {
         // Get all other users' assessments for comparison data
         const otherAssessmentsQuery = query(
           assessmentsRef,
-          where("userId", "!=", user.uid),
+          where('userId', '!=', user.uid),
           limit(100)
         );
         const otherAssessmentsSnapshot = await getDocs(otherAssessmentsQuery);
@@ -149,7 +137,7 @@ export default function UserDashboardOverviewPage() {
         const last7UserAssessments = userAssessments
           .slice(-7)
           .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
-        
+
         const last7OtherAssessments = otherAssessments
           .slice(-7)
           .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
@@ -157,14 +145,14 @@ export default function UserDashboardOverviewPage() {
         // Initialize array with 7 null data points
         const chartPoints: ChartDataPoint[] = Array.from({ length: 7 }, () => ({
           you: null,
-          average: null
+          average: null,
         }));
 
         // Fill in user's data points
         last7UserAssessments.forEach((assessment, index) => {
           chartPoints[index] = {
             ...chartPoints[index],
-            you: assessment.confidence
+            you: assessment.confidence,
           };
         });
 
@@ -172,7 +160,7 @@ export default function UserDashboardOverviewPage() {
         last7OtherAssessments.forEach((assessment, index) => {
           chartPoints[index] = {
             ...chartPoints[index],
-            average: assessment.confidence
+            average: assessment.confidence,
           };
         });
 
@@ -187,7 +175,7 @@ export default function UserDashboardOverviewPage() {
         const notSaved = Math.max(0, totalAttempts - totalSaved);
         setUnsavedCount(notSaved);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
       } finally {
         setLoading(false);
       }
@@ -198,22 +186,22 @@ export default function UserDashboardOverviewPage() {
 
   // Format date from DD-MM-YYYY to display format
   const formatLastAttemptDate = (dateStr: string) => {
-    if (!dateStr) return { day: "--", month: "No data" };
+    if (!dateStr) return { day: '--', month: 'No data' };
 
-    const [day, month, year] = dateStr.split("-");
+    const [day, month, year] = dateStr.split('-');
     const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     // Convert month string to number (subtract 1 as array is zero-indexed)
@@ -230,7 +218,7 @@ export default function UserDashboardOverviewPage() {
   const lastAttempt =
     recentAssessments.length > 0
       ? formatLastAttemptDate(recentAssessments[0].date)
-      : { day: "-", month: "No saved results" };
+      : { day: '-', month: 'No saved results' };
 
   return (
     <>
@@ -250,12 +238,8 @@ export default function UserDashboardOverviewPage() {
               </div>
             ) : (
               <>
-                <div className="text-3xl font-bold">
-                  {user?.assessmentCount || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Assessment attempts
-                </p>
+                <div className="text-3xl font-bold">{user?.assessmentCount || 0}</div>
+                <p className="text-xs text-muted-foreground">Assessment attempts</p>
               </>
             )}
           </CardContent>
@@ -274,9 +258,7 @@ export default function UserDashboardOverviewPage() {
               <>
                 <div className="text-3xl font-bold">{savedCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  {unsavedCount > 0
-                    ? `${unsavedCount} results not saved`
-                    : "All results saved"}
+                  {unsavedCount > 0 ? `${unsavedCount} results not saved` : 'All results saved'}
                 </p>
               </>
             )}
@@ -295,9 +277,7 @@ export default function UserDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{lastAttempt.day}</div>
-                <p className="text-xs text-muted-foreground">
-                  {lastAttempt.month}
-                </p>
+                <p className="text-xs text-muted-foreground">{lastAttempt.month}</p>
               </>
             )}
           </CardContent>
@@ -306,12 +286,8 @@ export default function UserDashboardOverviewPage() {
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Stress Levels
-            </CardTitle>
-            <CardDescription>
-              Compared to other students by latest attempts
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">Stress Levels</CardTitle>
+            <CardDescription>Compared to other students by latest attempts</CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
             {loading ? (
@@ -319,10 +295,7 @@ export default function UserDashboardOverviewPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <ChartContainer
-                config={chartConfig}
-                className="w-full md:h-[200px]"
-              >
+              <ChartContainer config={chartConfig} className="w-full md:h-[200px]">
                 <LineChart
                   data={chartData}
                   margin={{
@@ -342,7 +315,7 @@ export default function UserDashboardOverviewPage() {
                     stroke="var(--color-you)"
                     activeDot={{
                       r: 8,
-                      style: { fill: "var(--color-you)" },
+                      style: { fill: 'var(--color-you)' },
                     }}
                     // Allow null values (gaps in data)
                     connectNulls={false}
@@ -356,7 +329,7 @@ export default function UserDashboardOverviewPage() {
                     strokeOpacity={0.5}
                     activeDot={{
                       r: 6,
-                      fill: "var(--color-average)",
+                      fill: 'var(--color-average)',
                     }}
                     // Allow null values (gaps in data)
                     connectNulls={false}
@@ -371,12 +344,8 @@ export default function UserDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Recent Attempts
-            </CardTitle>
-            <CardDescription>
-              Your latest assessments and confidence levels
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">Recent Attempts</CardTitle>
+            <CardDescription>Your latest assessments and confidence levels</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="rounded-md">
@@ -396,16 +365,10 @@ export default function UserDashboardOverviewPage() {
                       className="grid grid-cols-2 p-4 text-sm"
                     >
                       <div>
-                        <p className="text-sm font-medium leading-none">
-                          {assessment.date}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {assessment.day}
-                        </p>
+                        <p className="text-sm font-medium leading-none">{assessment.date}</p>
+                        <p className="text-xs text-muted-foreground">{assessment.day}</p>
                       </div>
-                      <div className="text-xl text-right font-medium">
-                        {assessment.confidence}%
-                      </div>
+                      <div className="text-xl text-right font-medium">{assessment.confidence}%</div>
                     </div>
                   ))
                 ) : (

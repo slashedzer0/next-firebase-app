@@ -1,22 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  settingsFormSchema,
-  type SettingsFormValues,
-} from "@/schemas/settings";
-import { useAuth } from "@/stores/use-auth";
-import { cn } from "@/utils";
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { settingsFormSchema, type SettingsFormValues } from '@/schemas/settings';
+import { useAuth } from '@/stores/use-auth';
+import { cn } from '@/utils';
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -24,8 +16,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 
 export default function UserDashboardSettingsPage() {
   const { user, updateProfile, loading } = useAuth();
@@ -33,60 +25,53 @@ export default function UserDashboardSettingsPage() {
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      nim: "",
-      phone: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      nim: '',
+      phone: '',
     },
-    mode: "onChange", // Enable live validation
+    mode: 'onChange', // Enable live validation
   });
 
   // Live validation helper
-  const getFieldStatus = (
-    value: string,
-    pattern: RegExp
-  ): "valid" | "invalid" | "" => {
-    if (!value) return "";
-    return pattern.test(value) ? "valid" : "invalid";
+  const getFieldStatus = (value: string, pattern: RegExp): 'valid' | 'invalid' | '' => {
+    if (!value) return '';
+    return pattern.test(value) ? 'valid' : 'invalid';
   };
 
   // Live validation messages
-  const getNameValidationMessage = (
-    value: string,
-    fieldName: string
-  ): string => {
+  const getNameValidationMessage = (value: string, fieldName: string): string => {
     if (!value) return `${fieldName} is required`;
-    if (!/^[a-zA-Z\s]*$/.test(value))
-      return `${fieldName} must only contain letters and spaces`;
-    return "";
+    if (!/^[a-zA-Z\s]*$/.test(value)) return `${fieldName} must only contain letters and spaces`;
+    return '';
   };
 
   const getNimValidationMessage = (value: string): string => {
-    if (!value) return "";
-    if (!/^\d+$/.test(value)) return "NIM must only contain numbers";
-    if (value.length < 8) return "NIM must be at least 8 characters";
-    if (value.length > 20) return "NIM must not exceed 20 characters";
-    return "";
+    if (!value) return '';
+    if (!/^\d+$/.test(value)) return 'NIM must only contain numbers';
+    if (value.length < 8) return 'NIM must be at least 8 characters';
+    if (value.length > 20) return 'NIM must not exceed 20 characters';
+    return '';
   };
 
   const getPhoneValidationMessage = (value: string): string => {
-    if (!value) return "";
-    if (!/^\d+$/.test(value)) return "Phone number must only contain numbers";
-    if (value.length < 10) return "Phone number must be at least 10 characters";
-    if (value.length > 20) return "Phone number must not exceed 20 characters";
-    return "";
+    if (!value) return '';
+    if (!/^\d+$/.test(value)) return 'Phone number must only contain numbers';
+    if (value.length < 10) return 'Phone number must be at least 10 characters';
+    if (value.length > 20) return 'Phone number must not exceed 20 characters';
+    return '';
   };
 
   const resetForm = () => {
     if (user) {
-      const [firstName = "", lastName = ""] = (user.fullName || "").split(" ");
+      const [firstName = '', lastName = ''] = (user.fullName || '').split(' ');
       form.reset({
         firstName,
         lastName,
-        email: user.email || "",
-        nim: user.nim || "",
-        phone: user.phone || "",
+        email: user.email || '',
+        nim: user.nim || '',
+        phone: user.phone || '',
       });
     }
   };
@@ -105,12 +90,10 @@ export default function UserDashboardSettingsPage() {
       });
 
       // More informative success message
-      alert(
-        "Profile updated successfully! Your account status is now marked as active."
-      );
+      alert('Profile updated successfully! Your account status is now marked as active.');
     } catch (error) {
-      console.error("Form submission error", error);
-      alert("Failed to update profile. Please try again.");
+      console.error('Form submission error', error);
+      alert('Failed to update profile. Please try again.');
     }
   }
 
@@ -143,10 +126,7 @@ export default function UserDashboardSettingsPage() {
           <CardContent>
             <div className="grid w-full md:block">
               <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8 md:w-2/3"
-                >
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 md:w-2/3">
                   <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-6">
                       <FormField
@@ -160,20 +140,15 @@ export default function UserDashboardSettingsPage() {
                                 type="text"
                                 placeholder="Enter your first name"
                                 className={cn(
-                                  getFieldStatus(
-                                    field.value,
-                                    /^[a-zA-Z\s]*$/
-                                  ) === "invalid" && "border-red-500"
+                                  getFieldStatus(field.value, /^[a-zA-Z\s]*$/) === 'invalid' &&
+                                    'border-red-500'
                                 )}
                                 {...field}
                               />
                             </FormControl>
                             {field.value && (
                               <FormMessage>
-                                {getNameValidationMessage(
-                                  field.value,
-                                  "First name"
-                                )}
+                                {getNameValidationMessage(field.value, 'First name')}
                               </FormMessage>
                             )}
                           </FormItem>
@@ -192,20 +167,15 @@ export default function UserDashboardSettingsPage() {
                                 type="text"
                                 placeholder="Enter your last name"
                                 className={cn(
-                                  getFieldStatus(
-                                    field.value || "",
-                                    /^[a-zA-Z\s]*$/
-                                  ) === "invalid" && "border-red-500"
+                                  getFieldStatus(field.value || '', /^[a-zA-Z\s]*$/) ===
+                                    'invalid' && 'border-red-500'
                                 )}
                                 {...field}
                               />
                             </FormControl>
                             {field.value && (
                               <FormMessage>
-                                {getNameValidationMessage(
-                                  field.value,
-                                  "Last name"
-                                )}
+                                {getNameValidationMessage(field.value, 'Last name')}
                               </FormMessage>
                             )}
                           </FormItem>
@@ -243,16 +213,14 @@ export default function UserDashboardSettingsPage() {
                             type="text"
                             placeholder="Enter your NIM"
                             className={cn(
-                              getFieldStatus(field.value || "", /^\d+$/) ===
-                                "invalid" && "border-red-500"
+                              getFieldStatus(field.value || '', /^\d+$/) === 'invalid' &&
+                                'border-red-500'
                             )}
                             {...field}
                           />
                         </FormControl>
                         {field.value && (
-                          <FormMessage>
-                            {getNimValidationMessage(field.value)}
-                          </FormMessage>
+                          <FormMessage>{getNimValidationMessage(field.value)}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -269,16 +237,14 @@ export default function UserDashboardSettingsPage() {
                             type="tel"
                             placeholder="+62"
                             className={cn(
-                              getFieldStatus(field.value || "", /^\d+$/) ===
-                                "invalid" && "border-red-500"
+                              getFieldStatus(field.value || '', /^\d+$/) === 'invalid' &&
+                                'border-red-500'
                             )}
                             {...field}
                           />
                         </FormControl>
                         {field.value && (
-                          <FormMessage>
-                            {getPhoneValidationMessage(field.value)}
-                          </FormMessage>
+                          <FormMessage>{getPhoneValidationMessage(field.value)}</FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -288,11 +254,8 @@ export default function UserDashboardSettingsPage() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Reset
                     </Button>
-                    <Button
-                      type="submit"
-                      disabled={loading.overall || !form.formState.isValid}
-                    >
-                      {loading.overall ? "Saving..." : "Save changes"}
+                    <Button type="submit" disabled={loading.overall || !form.formState.isValid}>
+                      {loading.overall ? 'Saving...' : 'Save changes'}
                     </Button>
                   </div>
                 </form>

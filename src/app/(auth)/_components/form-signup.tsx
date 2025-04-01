@@ -1,38 +1,23 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { cn } from "@/utils";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/stores/use-auth";
-import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
-import React from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { usePasswordVisibility } from "@/stores/use-password-visibility";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, type SignupFormData } from "@/schemas/auth";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import Link from 'next/link';
+import { cn } from '@/utils';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/stores/use-auth';
+import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Image from 'next/image';
+import React from 'react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { usePasswordVisibility } from '@/stores/use-password-visibility';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema, type SignupFormData } from '@/schemas/auth';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
-export function SignUpForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter();
   const {
     signUp,
@@ -44,16 +29,14 @@ export function SignUpForm({
   } = useAuth();
 
   const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
-  const togglePasswordVisibility = usePasswordVisibility(
-    (state) => state.toggleVisibility
-  );
+  const togglePasswordVisibility = usePasswordVisibility((state) => state.toggleVisibility);
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      name: '',
+      email: '',
+      password: '',
     },
   });
 
@@ -75,19 +58,19 @@ export function SignUpForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         {error && (
           <div className="mx-6 mt-6 rounded-md bg-destructive/15 p-4 text-sm text-destructive">
-            {error === "auth/email-already-in-use"
-              ? "An account with this email already exists"
-              : "An error occurred. Please try again."}
+            {error === 'auth/email-already-in-use'
+              ? 'An account with this email already exists'
+              : 'An error occurred. Please try again.'}
           </div>
         )}
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Join today</CardTitle>
           <CardDescription>
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href="/login" className="text-primary underline">
               Log in
             </Link>
@@ -116,7 +99,7 @@ export function SignUpForm({
                   Signing up...
                 </>
               ) : (
-                "Sign up with Google"
+                'Sign up with Google'
               )}
             </Button>
           </div>
@@ -128,10 +111,7 @@ export function SignUpForm({
           </div>
 
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="grid gap-6 mt-6"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6 mt-6">
               <div className="grid gap-6">
                 <FormField
                   control={form.control}
@@ -153,12 +133,7 @@ export function SignUpForm({
                     <FormItem>
                       <Label htmlFor="email">Email address</Label>
                       <FormControl>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="name@example.com"
-                          {...field}
-                        />
+                        <Input id="email" type="email" placeholder="name@example.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -174,7 +149,7 @@ export function SignUpForm({
                         <FormControl>
                           <Input
                             id="password"
-                            type={isPasswordVisible ? "text" : "password"}
+                            type={isPasswordVisible ? 'text' : 'password'}
                             {...field}
                           />
                         </FormControl>
@@ -190,27 +165,21 @@ export function SignUpForm({
                           ) : (
                             <Eye className="h-4 w-4" />
                           )}
-                          <span className="sr-only">
-                            Toggle password visibility
-                          </span>
+                          <span className="sr-only">Toggle password visibility</span>
                         </Button>
                       </div>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={emailLoading}
-                >
+                <Button type="submit" className="w-full" disabled={emailLoading}>
                   {emailLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Signing up...
                     </>
                   ) : (
-                    "Sign up"
+                    'Sign up'
                   )}
                 </Button>
               </div>
@@ -219,8 +188,8 @@ export function SignUpForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
+        <a href="#">Privacy Policy</a>.
       </div>
     </div>
   );

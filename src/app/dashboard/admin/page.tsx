@@ -1,27 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Percent, TriangleAlert, Users, Loader2 } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-  getDoc,
-  doc,
-  where,
-} from "firebase/firestore";
-import { db } from "@/services/firebase";
+import { useEffect, useState } from 'react';
+import { Percent, TriangleAlert, Users, Loader2 } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { collection, query, orderBy, limit, getDocs, getDoc, doc, where } from 'firebase/firestore';
+import { db } from '@/services/firebase';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,
@@ -29,16 +14,16 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from '@/components/ui/chart';
 
 const chartConfig = {
   highest: {
-    label: "Highest",
-    color: "hsl(var(--chart-1))",
+    label: 'Highest',
+    color: 'hsl(var(--chart-1))',
   },
   lowest: {
-    label: "Lowest",
-    color: "hsl(var(--chart-2))",
+    label: 'Lowest',
+    color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
 
@@ -50,9 +35,7 @@ interface RecentAssessment {
 }
 
 export default function AdminDashboardOverviewPage() {
-  const [recentAssessments, setRecentAssessments] = useState<
-    RecentAssessment[]
-  >([]);
+  const [recentAssessments, setRecentAssessments] = useState<RecentAssessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [highRiskCount, setHighRiskCount] = useState(0);
   const [activeStudentsCount, setActiveStudentsCount] = useState(0);
@@ -74,24 +57,23 @@ export default function AdminDashboardOverviewPage() {
         setLoading(true);
 
         // Fetch active students count
-        const usersRef = collection(db, "users");
+        const usersRef = collection(db, 'users');
         const activeStudentsQuery = query(
           usersRef,
-          where("role", "==", "student"),
-          where("status", "==", "active")
+          where('role', '==', 'student'),
+          where('status', '==', 'active')
         );
 
         const activeStudentsSnapshot = await getDocs(activeStudentsQuery);
         setActiveStudentsCount(activeStudentsSnapshot.size);
 
         // Create a query to get assessments
-        const assessmentsRef = collection(db, "assessments");
+        const assessmentsRef = collection(db, 'assessments');
         const assessmentsQuery = query(assessmentsRef, limit(1000));
         const assessmentsSnapshot = await getDocs(assessmentsQuery);
 
         // Group assessments by userId
-        const userAssessments: { [userId: string]: { stressLevel: string }[] } =
-          {};
+        const userAssessments: { [userId: string]: { stressLevel: string }[] } = {};
 
         // Process assessments
         assessmentsSnapshot.forEach((doc) => {
@@ -120,9 +102,7 @@ export default function AdminDashboardOverviewPage() {
           if (assessments.length === 0) continue;
 
           // Check if all assessments are severe
-          const allSevere = assessments.every(
-            (assessment) => assessment.stressLevel === "severe"
-          );
+          const allSevere = assessments.every((assessment) => assessment.stressLevel === 'severe');
 
           if (allSevere) {
             highRiskStudents++;
@@ -167,24 +147,16 @@ export default function AdminDashboardOverviewPage() {
         });
 
         // Calculate overall average - use Math.ceil to round up to whole number
-        const avgScore =
-          assessmentCount > 0
-            ? Math.ceil(totalConfidence / assessmentCount)
-            : 0;
+        const avgScore = assessmentCount > 0 ? Math.ceil(totalConfidence / assessmentCount) : 0;
 
         // Calculate month-over-month change
         const currentMonthAvg =
-          currentMonthCount > 0
-            ? Math.ceil(currentMonthTotal / currentMonthCount)
-            : 0;
-        const prevMonthAvg =
-          prevMonthCount > 0 ? Math.ceil(prevMonthTotal / prevMonthCount) : 0;
+          currentMonthCount > 0 ? Math.ceil(currentMonthTotal / currentMonthCount) : 0;
+        const prevMonthAvg = prevMonthCount > 0 ? Math.ceil(prevMonthTotal / prevMonthCount) : 0;
 
         let percentChange = 0;
         if (prevMonthAvg > 0) {
-          percentChange = Math.ceil(
-            ((currentMonthAvg - prevMonthAvg) / prevMonthAvg) * 100
-          );
+          percentChange = Math.ceil(((currentMonthAvg - prevMonthAvg) / prevMonthAvg) * 100);
         }
 
         setAverageConfidence({
@@ -205,7 +177,7 @@ export default function AdminDashboardOverviewPage() {
           if (!data.date || !data.confidence) return;
 
           // Parse date from DD-MM-YYYY format
-          const dateParts = data.date.split("-");
+          const dateParts = data.date.split('-');
           if (dateParts.length !== 3) return;
 
           const day = parseInt(dateParts[0]);
@@ -225,7 +197,7 @@ export default function AdminDashboardOverviewPage() {
             return;
 
           // Create a sortable key for the month (YYYY-MM format)
-          const monthKey = `${year}-${String(month).padStart(2, "0")}`;
+          const monthKey = `${year}-${String(month).padStart(2, '0')}`;
 
           // Initialize month data if it doesn't exist
           if (!monthlyStats[monthKey]) {
@@ -249,10 +221,7 @@ export default function AdminDashboardOverviewPage() {
             yearIndex -= 1;
           }
 
-          const monthKey = `${yearIndex}-${String(monthIndex).padStart(
-            2,
-            "0"
-          )}`;
+          const monthKey = `${yearIndex}-${String(monthIndex).padStart(2, '0')}`;
           monthsToDisplay.push({
             key: monthKey,
             monthIndex,
@@ -262,18 +231,18 @@ export default function AdminDashboardOverviewPage() {
 
         // Create chart data array with month names and min/max values
         const monthNames = [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
         ];
 
         const chartDataArray = monthsToDisplay.map(({ key, monthIndex }) => {
@@ -298,11 +267,7 @@ export default function AdminDashboardOverviewPage() {
         // Also fetch recent assessments (existing code)
         // We can't combine complex queries with orderBy without an index,
         // so we'll fetch more records and filter after
-        const q = query(
-          collection(db, "assessments"),
-          orderBy("createdAt", "desc"),
-          limit(20)
-        );
+        const q = query(collection(db, 'assessments'), orderBy('createdAt', 'desc'), limit(20));
 
         const querySnapshot = await getDocs(q);
         const assessmentsWithUserData: RecentAssessment[] = [];
@@ -317,16 +282,16 @@ export default function AdminDashboardOverviewPage() {
 
           // Get user data
           try {
-            const userDoc = await getDoc(doc(db, "users", userId));
+            const userDoc = await getDoc(doc(db, 'users', userId));
             if (userDoc.exists()) {
               const userData = userDoc.data();
 
               // Only include assessments from student users
-              if (userData.role === "student") {
+              if (userData.role === 'student') {
                 assessmentsWithUserData.push({
                   id: assessmentDoc.id,
-                  userName: userData.fullName || "Unknown User",
-                  userEmail: userData.email || "no-email@example.com",
+                  userName: userData.fullName || 'Unknown User',
+                  userEmail: userData.email || 'no-email@example.com',
                   confidence: assessmentData.confidence || 0,
                 });
 
@@ -335,13 +300,13 @@ export default function AdminDashboardOverviewPage() {
               }
             }
           } catch (error) {
-            console.error("Error fetching user data:", error);
+            console.error('Error fetching user data:', error);
           }
         }
 
         setRecentAssessments(assessmentsWithUserData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
@@ -358,9 +323,7 @@ export default function AdminDashboardOverviewPage() {
       <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Students
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Active Students</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -371,9 +334,7 @@ export default function AdminDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{activeStudentsCount}</div>
-                <p className="text-xs text-muted-foreground">
-                  Including new accounts
-                </p>
+                <p className="text-xs text-muted-foreground">Including new accounts</p>
               </>
             )}
           </CardContent>
@@ -390,11 +351,9 @@ export default function AdminDashboardOverviewPage() {
               </div>
             ) : (
               <>
-                <div className="text-3xl font-bold">
-                  {averageConfidence.score}
-                </div>
+                <div className="text-3xl font-bold">{averageConfidence.score}</div>
                 <p className="text-xs text-muted-foreground">
-                  {averageConfidence.change > 0 ? "+" : ""}
+                  {averageConfidence.change > 0 ? '+' : ''}
                   {averageConfidence.change}% from last month
                 </p>
               </>
@@ -414,9 +373,7 @@ export default function AdminDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{highRiskCount}</div>
-                <p className="text-xs text-muted-foreground">
-                  Students in crisis
-                </p>
+                <p className="text-xs text-muted-foreground">Students in crisis</p>
               </>
             )}
           </CardContent>
@@ -425,12 +382,8 @@ export default function AdminDashboardOverviewPage() {
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Stress Levels
-            </CardTitle>
-            <CardDescription>
-              Highest and lowest stress levels per month
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">Stress Levels</CardTitle>
+            <CardDescription>Highest and lowest stress levels per month</CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
             {loading ? (
@@ -438,10 +391,7 @@ export default function AdminDashboardOverviewPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <ChartContainer
-                config={chartConfig}
-                className="w-full md:h-[200px]"
-              >
+              <ChartContainer config={chartConfig} className="w-full md:h-[200px]">
                 <BarChart
                   accessibilityLayer
                   data={chartData}
@@ -453,23 +403,11 @@ export default function AdminDashboardOverviewPage() {
                   }}
                 >
                   <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="monthYear"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
+                  <XAxis dataKey="monthYear" tickLine={false} tickMargin={10} axisLine={false} />
                   <YAxis domain={[0, 100]} hide />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent />}
-                  />
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
-                  <Bar
-                    dataKey="highest"
-                    fill="var(--color-highest)"
-                    radius={4}
-                  />
+                  <Bar dataKey="highest" fill="var(--color-highest)" radius={4} />
                   <Bar dataKey="lowest" fill="var(--color-lowest)" radius={4} />
                 </BarChart>
               </ChartContainer>
@@ -478,9 +416,7 @@ export default function AdminDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Recent Attempts
-            </CardTitle>
+            <CardTitle className="text-lg font-semibold md:text-xl">Recent Attempts</CardTitle>
             <CardDescription>Latest assessment submissions</CardDescription>
           </CardHeader>
           <CardContent>
@@ -498,16 +434,10 @@ export default function AdminDashboardOverviewPage() {
                   recentAssessments.map((assessment) => (
                     <div key={assessment.id} className="grid grid-cols-2 p-4">
                       <div>
-                        <p className="text-sm font-medium leading-none">
-                          {assessment.userName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {assessment.userEmail}
-                        </p>
+                        <p className="text-sm font-medium leading-none">{assessment.userName}</p>
+                        <p className="text-xs text-muted-foreground">{assessment.userEmail}</p>
                       </div>
-                      <div className="text-xl text-right font-medium">
-                        {assessment.confidence}%
-                      </div>
+                      <div className="text-xl text-right font-medium">{assessment.confidence}%</div>
                     </div>
                   ))
                 ) : (

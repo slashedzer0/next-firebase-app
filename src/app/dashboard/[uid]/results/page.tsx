@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,32 +8,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { usePagination } from "@/stores/use-pagination";
-import { useAuth } from "@/stores/use-auth";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  DocumentData,
-} from "firebase/firestore";
-import { db } from "@/services/firebase";
-import { Loader2 } from "lucide-react";
+} from '@/components/ui/pagination';
+import { usePagination } from '@/stores/use-pagination';
+import { useAuth } from '@/stores/use-auth';
+import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { Loader2 } from 'lucide-react';
 
 interface AssessmentResult {
   id: string;
@@ -46,21 +35,21 @@ function LevelBadge({ level }: { level: string }) {
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
 
   switch (formattedLevel) {
-    case "Mild":
+    case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
           {formattedLevel}
         </Badge>
       );
-    case "Moderate":
+    case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" />
           {formattedLevel}
         </Badge>
       );
-    case "Severe":
+    case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" />
@@ -86,8 +75,8 @@ export default function UserDashboardResultsPage() {
         setLoading(true);
 
         // Query assessments for the current user
-        const assessmentsRef = collection(db, "assessments");
-        const q = query(assessmentsRef, where("userId", "==", user.uid));
+        const assessmentsRef = collection(db, 'assessments');
+        const q = query(assessmentsRef, where('userId', '==', user.uid));
 
         const querySnapshot = await getDocs(q);
 
@@ -115,25 +104,23 @@ export default function UserDashboardResultsPage() {
           }
 
           // Fallback to date string if createdAt is not available
-          const dateA = a.data.date.split("-").reverse().join("-");
-          const dateB = b.data.date.split("-").reverse().join("-");
+          const dateA = a.data.date.split('-').reverse().join('-');
+          const dateB = b.data.date.split('-').reverse().join('-');
           return dateA.localeCompare(dateB); // Ascending order (oldest first)
         });
 
         // Create the assessment data with correct numbering (oldest is #1)
-        const assessmentData: AssessmentResult[] = unsortedResults.map(
-          (item, index) => ({
-            id: String(index + 1), // Sequential numbering (oldest is #1)
-            level: item.data.stressLevel,
-            confidence: item.data.confidence,
-            date: item.data.date,
-          })
-        );
+        const assessmentData: AssessmentResult[] = unsortedResults.map((item, index) => ({
+          id: String(index + 1), // Sequential numbering (oldest is #1)
+          level: item.data.stressLevel,
+          confidence: item.data.confidence,
+          date: item.data.date,
+        }));
 
         // Reverse the array so newest (highest number) appears first in table
         setAssessments(assessmentData.reverse());
       } catch (error) {
-        console.error("Error fetching assessments:", error);
+        console.error('Error fetching assessments:', error);
       } finally {
         setLoading(false);
       }
@@ -174,9 +161,7 @@ export default function UserDashboardResultsPage() {
                       <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
                         No
                       </TableHead>
-                      <TableHead className="sticky left-[100px] bg-background">
-                        Level
-                      </TableHead>
+                      <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
                       <TableHead className="text-right">Confidence</TableHead>
                       <TableHead className="text-right">Date</TableHead>
                     </TableRow>
@@ -184,10 +169,7 @@ export default function UserDashboardResultsPage() {
                   <TableBody>
                     {paginatedResults.length > 0 ? (
                       paginatedResults.map((result) => (
-                        <TableRow
-                          key={result.id}
-                          className="group [&>td]:whitespace-nowrap"
-                        >
+                        <TableRow key={result.id} className="group [&>td]:whitespace-nowrap">
                           <TableCell className="pl-4 sticky left-0 bg-background font-medium">
                             #{result.id}
                           </TableCell>
@@ -197,17 +179,12 @@ export default function UserDashboardResultsPage() {
                           <TableCell className="text-right font-medium">
                             {result.confidence}%
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {result.date}
-                          </TableCell>
+                          <TableCell className="text-right font-medium">{result.date}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell
-                          colSpan={4}
-                          className="h-24 text-center text-muted-foreground"
-                        >
+                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                           No assessment results found.
                         </TableCell>
                       </TableRow>
@@ -226,9 +203,7 @@ export default function UserDashboardResultsPage() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  className={`border ${
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }`}
+                  className={`border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
                   onClick={(e) => {
                     e.preventDefault();
                     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -245,14 +220,11 @@ export default function UserDashboardResultsPage() {
                 <PaginationNext
                   href="#"
                   className={`border ${
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage < totalPages)
-                      setCurrentPage(currentPage + 1);
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
                   }}
                   aria-disabled={currentPage === totalPages}
                 />

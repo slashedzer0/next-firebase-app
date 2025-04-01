@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Search,
@@ -9,13 +9,13 @@ import {
   Settings,
   ScanText,
   LogOut,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
 
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/stores/use-auth";
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/stores/use-auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +24,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { db } from "@/services/firebase";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { db } from '@/services/firebase';
 
-import { SheetNav } from "./nav-sheet";
-import { ModeToggle } from "@/components/mode-toggle";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { SheetNav } from './nav-sheet';
+import { ModeToggle } from '@/components/mode-toggle';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 interface UserData {
   fullName: string;
@@ -44,49 +44,49 @@ export function TopNav() {
   const [userData, setUserData] = useState<UserData | null>(null);
 
   // Get username and role from auth store
-  const username = user?.username || "uid";
-  const userRole = user?.role || "student";
+  const username = user?.username || 'uid';
+  const userRole = user?.role || 'student';
 
   // Use "admin" as path for admin users, username for students
-  const userPath = userRole === "admin" ? "admin" : username;
+  const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: "Dashboard",
+      label: 'Dashboard',
       icon: <LayoutGrid className="h-4 w-4" />,
-      roles: ["student", "admin"],
+      roles: ['student', 'admin'],
     },
     {
-      href: "/scan",
-      label: "Start Scan",
+      href: '/scan',
+      label: 'Start Scan',
       icon: <CircleGauge className="h-4 w-4" />,
-      roles: ["student"],
+      roles: ['student'],
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: "Scan Results",
+      label: 'Scan Results',
       icon: <FileChartColumn className="h-4 w-4" />,
-      roles: ["student"],
+      roles: ['student'],
     },
     {
-      href: "/dashboard/admin/reports",
-      label: "Scan Reports",
+      href: '/dashboard/admin/reports',
+      label: 'Scan Reports',
       icon: <ScanText className="h-4 w-4" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
-      href: "/dashboard/admin/users",
-      label: "Users",
+      href: '/dashboard/admin/users',
+      label: 'Users',
       icon: <Users className="h-4 w-4" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: "Settings",
+      label: 'Settings',
       icon: <Settings className="h-4 w-4" />,
-      roles: ["student"],
+      roles: ['student'],
     },
   ];
 
@@ -94,12 +94,12 @@ export function TopNav() {
     const fetchUserData = async () => {
       if (user?.uid) {
         try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             setUserData(userDoc.data() as UserData);
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error('Error fetching user data:', error);
         }
       }
     };
@@ -113,7 +113,7 @@ export function TopNav() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/login");
+    router.push('/login');
   };
 
   return (
@@ -143,9 +143,7 @@ export function TopNav() {
                     alt={userData.fullName}
                     className="object-cover"
                   />
-                  <AvatarFallback>
-                    {getInitials(userData.fullName)}
-                  </AvatarFallback>
+                  <AvatarFallback>{getInitials(userData.fullName)}</AvatarFallback>
                 </>
               )}
             </Avatar>
@@ -156,12 +154,8 @@ export function TopNav() {
             <div className="flex flex-col space-y-1">
               {userData && (
                 <>
-                  <p className="text-sm font-medium leading-none">
-                    {userData.fullName}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {userData.email}
-                  </p>
+                  <p className="text-sm font-medium leading-none">{userData.fullName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
                 </>
               )}
             </div>

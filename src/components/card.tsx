@@ -1,17 +1,17 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from '@/components/ui/card';
 
 export interface FeatureCardProps {
-  icon: React.ReactNode
-  title: string
-  description: string
+  icon: React.ReactNode;
+  title: string;
+  description: string;
 }
 
 export interface ContactCardProps extends Omit<FeatureCardProps, 'description'> {
   contactInfo: {
-    type: 'email' | 'phone' | 'website'
-    value: string
-  }
-  description: string
+    type: 'email' | 'phone' | 'website';
+    value: string;
+  };
+  description: string;
 }
 
 export function InfoCard({ icon, title, description }: FeatureCardProps) {
@@ -27,30 +27,30 @@ export function InfoCard({ icon, title, description }: FeatureCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export function ContactCard({ icon, title, contactInfo, description }: ContactCardProps) {
   const getContactLink = () => {
     switch (contactInfo.type) {
       case 'email':
-        return `mailto:${contactInfo.value}`
+        return `mailto:${contactInfo.value}`;
       case 'phone':
-        return `tel:${contactInfo.value}`
+        return `tel:${contactInfo.value}`;
       case 'website':
-        return contactInfo.value
+        return contactInfo.value;
       default:
-        return '#'
+        return '#';
     }
-  }
+  };
 
   const getDisplayValue = (value: string) => {
     if (contactInfo.type === 'website' && value.startsWith('https://')) {
       // Remove 'https://' and any trailing '/'
-      return value.replace(/^https:\/\//i, '').replace(/\/$/,'');
+      return value.replace(/^https:\/\//i, '').replace(/\/$/, '');
     }
     return value;
-  }
+  };
 
   return (
     <Card className="h-full">
@@ -60,8 +60,8 @@ export function ContactCard({ icon, title, contactInfo, description }: ContactCa
         </span>
         <div className="flex flex-col space-y-2">
           <h3 className="text-xl font-semibold tracking-tight md:text-2xl">{title}</h3>
-          <a 
-            href={getContactLink()} 
+          <a
+            href={getContactLink()}
             className="inline-block text-primary hover:underline break-all"
             target={contactInfo.type === 'website' ? '_blank' : undefined}
             rel={contactInfo.type === 'website' ? 'noopener noreferrer' : undefined}
@@ -72,5 +72,5 @@ export function ContactCard({ icon, title, contactInfo, description }: ContactCa
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ScanIntro } from "./scan-intro";
-import { ScanQuestions } from "./scan-questions";
-import { ScanResults } from "./scan-results";
-import { ScanLoading } from "./scan-loading";
-import { questions as originalQuestions } from "@/app/(site)/scan/page";
-import { Answer, AssessmentResult, Question } from "@/types/assessment";
-import { calculateCF, saveAssessmentResult } from "@/utils";
-import { useAuth } from "@/stores/use-auth";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { ScanIntro } from './scan-intro';
+import { ScanQuestions } from './scan-questions';
+import { ScanResults } from './scan-results';
+import { ScanLoading } from './scan-loading';
+import { questions as originalQuestions } from '@/app/(site)/scan/page';
+import { Answer, AssessmentResult, Question } from '@/types/assessment';
+import { calculateCF, saveAssessmentResult } from '@/utils';
+import { useAuth } from '@/stores/use-auth';
+import { useRouter } from 'next/navigation';
 
 const LOADING_DURATION = 3000; // 3 seconds
 
@@ -24,9 +24,7 @@ const shuffleQuestions = (array: Question[]): Question[] => {
 };
 
 export function ScanMain() {
-  const [step, setStep] = useState<
-    "intro" | "questions" | "results" | "loading"
-  >("intro");
+  const [step, setStep] = useState<'intro' | 'questions' | 'results' | 'loading'>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [result, setResult] = useState<AssessmentResult | null>(null);
@@ -40,13 +38,13 @@ export function ScanMain() {
     setQuestions(shuffleQuestions(originalQuestions));
     setCurrentQuestion(0);
     setAnswers([]);
-    setStep("questions");
+    setStep('questions');
   };
 
   const handleAnswer = (value: number) => {
     // Update or add new answer
     const newAnswers = [...answers];
-    const answerValue = value as Answer["value"];
+    const answerValue = value as Answer['value'];
 
     newAnswers[currentQuestion] = {
       questionId: questions[currentQuestion].id, // Use shuffled questions array
@@ -55,11 +53,11 @@ export function ScanMain() {
     setAnswers(newAnswers);
 
     if (currentQuestion === questions.length - 1) {
-      setStep("loading");
+      setStep('loading');
       setTimeout(() => {
         const calculatedResult = calculateCF(newAnswers);
         setResult(calculatedResult);
-        setStep("results");
+        setStep('results');
       }, LOADING_DURATION);
     } else {
       setCurrentQuestion(currentQuestion + 1);
@@ -70,7 +68,7 @@ export function ScanMain() {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     } else {
-      setStep("intro");
+      setStep('intro');
     }
   };
 
@@ -79,7 +77,7 @@ export function ScanMain() {
 
     // Check if user is authenticated
     if (!user) {
-      router.push("/login?redirect=/scan");
+      router.push('/login?redirect=/scan');
       return;
     }
 
@@ -90,15 +88,15 @@ export function ScanMain() {
       alert(`Assessment saved successfully!`);
 
       // Correctly redirect based on user role and username
-      if (user.role === "admin") {
-        router.push("/dashboard/admin");
+      if (user.role === 'admin') {
+        router.push('/dashboard/admin');
       } else {
         const username = user.username || userId;
         router.push(`/dashboard/${username}`);
       }
     } catch (error) {
-      console.error("Error saving assessment:", error);
-      alert("Failed to save assessment result");
+      console.error('Error saving assessment:', error);
+      alert('Failed to save assessment result');
     } finally {
       setIsSaving(false);
     }
@@ -106,14 +104,14 @@ export function ScanMain() {
 
   const getCurrentAnswer = () => {
     const answer = answers[currentQuestion];
-    return answer ? answer.value.toString() : "";
+    return answer ? answer.value.toString() : '';
   };
 
   return (
     <>
-      {step === "loading" && <ScanLoading />}
-      {step === "intro" && <ScanIntro onStart={handleStart} />}
-      {step === "questions" && questions.length > 0 && (
+      {step === 'loading' && <ScanLoading />}
+      {step === 'intro' && <ScanIntro onStart={handleStart} />}
+      {step === 'questions' && questions.length > 0 && (
         <ScanQuestions
           question={questions[currentQuestion]}
           currentQuestion={currentQuestion + 1}
@@ -123,12 +121,8 @@ export function ScanMain() {
           initialSelected={getCurrentAnswer()}
         />
       )}
-      {step === "results" && result && (
-        <ScanResults
-          result={result}
-          onSaveResult={handleSaveResult}
-          isSaving={isSaving}
-        />
+      {step === 'results' && result && (
+        <ScanResults result={result} onSaveResult={handleSaveResult} isSaving={isSaving} />
       )}
     </>
   );

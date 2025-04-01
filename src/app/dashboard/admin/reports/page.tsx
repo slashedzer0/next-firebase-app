@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -9,42 +9,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Info, Trash2, Loader2 } from "lucide-react";
-import { usePagination } from "@/stores/use-pagination";
-import {
-  collection,
-  query,
-  getDocs,
-  limit,
-  doc,
-  getDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { db } from "@/services/firebase";
+} from '@/components/ui/pagination';
+import { Info, Trash2, Loader2 } from 'lucide-react';
+import { usePagination } from '@/stores/use-pagination';
+import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/services/firebase';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -52,7 +39,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 // Define report data interface
 interface ReportData {
@@ -75,25 +62,22 @@ function LevelBadge({ level }: { level: string }) {
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
 
   switch (formattedLevel) {
-    case "Mild":
+    case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />{" "}
-          {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> {formattedLevel}
         </Badge>
       );
-    case "Moderate":
+    case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" />{" "}
-          {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" /> {formattedLevel}
         </Badge>
       );
-    case "Severe":
+    case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" />{" "}
-          {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {formattedLevel}
         </Badge>
       );
     default:
@@ -123,27 +107,27 @@ export default function AdminDashboardReportsPage() {
     setDialogOpen(true);
 
     try {
-      const userDoc = await getDoc(doc(db, "users", userId));
+      const userDoc = await getDoc(doc(db, 'users', userId));
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserDetails({
-          email: userData.email || "Not provided",
-          nim: userData.nim || "Not provided",
-          phone: userData.phone || "Not provided",
+          email: userData.email || '-',
+          nim: userData.nim || '-',
+          phone: userData.phone || '-',
         });
       } else {
         setUserDetails({
-          email: "User not found",
-          nim: "User not found",
-          phone: "User not found",
+          email: 'User not found',
+          nim: 'User not found',
+          phone: 'User not found',
         });
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      console.error('Error fetching user details:', error);
       setUserDetails({
-        email: "Error loading data",
-        nim: "Error loading data",
-        phone: "Error loading data",
+        email: 'Error loading data',
+        nim: 'Error loading data',
+        phone: 'Error loading data',
       });
     } finally {
       setLoadingUserDetails(false);
@@ -161,7 +145,7 @@ export default function AdminDashboardReportsPage() {
     if (!deletingAssessment) return;
 
     try {
-      await deleteDoc(doc(db, "assessments", deletingAssessment.id));
+      await deleteDoc(doc(db, 'assessments', deletingAssessment.id));
 
       // Update the UI by filtering out the deleted assessment
       setReports((prevReports) =>
@@ -172,8 +156,8 @@ export default function AdminDashboardReportsPage() {
       setDeleteDialogOpen(false);
       setDeletingAssessment(null);
     } catch (error) {
-      console.error("Error deleting assessment:", error);
-      alert("Failed to delete assessment. Please try again.");
+      console.error('Error deleting assessment:', error);
+      alert('Failed to delete assessment. Please try again.');
     }
   };
 
@@ -189,54 +173,52 @@ export default function AdminDashboardReportsPage() {
         setLoading(true);
 
         // Fetch assessments from Firestore
-        const assessmentsRef = collection(db, "assessments");
+        const assessmentsRef = collection(db, 'assessments');
         const assessmentsQuery = query(assessmentsRef, limit(100)); // Limit to avoid large queries
         const assessmentsSnapshot = await getDocs(assessmentsQuery);
 
         // Process assessments and fetch user data
-        const reportPromises = assessmentsSnapshot.docs.map(
-          async (assessmentDoc) => {
-            const assessmentData = assessmentDoc.data();
-            const userId = assessmentData.userId;
+        const reportPromises = assessmentsSnapshot.docs.map(async (assessmentDoc) => {
+          const assessmentData = assessmentDoc.data();
+          const userId = assessmentData.userId;
 
-            // Get user data to display name
-            let userName = "Unknown User";
-            try {
-              const userDoc = await getDoc(doc(db, "users", userId));
-              if (userDoc.exists()) {
-                const userData = userDoc.data();
-                // Extract first name from full name
-                const fullName = userData.fullName || "";
-                userName = fullName.split(" ")[0] || "Unknown";
-              }
-            } catch (error) {
-              console.error(`Error fetching user data for ${userId}:`, error);
+          // Get user data to display name
+          let userName = 'Unknown User';
+          try {
+            const userDoc = await getDoc(doc(db, 'users', userId));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              // Extract first name from full name
+              const fullName = userData.fullName || '';
+              userName = fullName.split(' ')[0] || 'Unknown';
             }
-
-            return {
-              id: assessmentDoc.id,
-              userId,
-              userName,
-              level: assessmentData.stressLevel,
-              confidence: assessmentData.confidence,
-              date: assessmentData.date || "",
-            };
+          } catch (error) {
+            console.error(`Error fetching user data for ${userId}:`, error);
           }
-        );
+
+          return {
+            id: assessmentDoc.id,
+            userId,
+            userName,
+            level: assessmentData.stressLevel,
+            confidence: assessmentData.confidence,
+            date: assessmentData.date || '',
+          };
+        });
 
         const reportData = await Promise.all(reportPromises);
 
         // Sort by date (most recent first)
         reportData.sort((a, b) => {
           // Convert DD-MM-YYYY to sortable format
-          const dateA = a.date.split("-").reverse().join("-");
-          const dateB = b.date.split("-").reverse().join("-");
+          const dateA = a.date.split('-').reverse().join('-');
+          const dateB = b.date.split('-').reverse().join('-');
           return dateB.localeCompare(dateA);
         });
 
         setReports(reportData);
       } catch (error) {
-        console.error("Error fetching reports:", error);
+        console.error('Error fetching reports:', error);
       } finally {
         setLoading(false);
       }
@@ -274,9 +256,7 @@ export default function AdminDashboardReportsPage() {
                         <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
                           Name
                         </TableHead>
-                        <TableHead className="sticky left-[100px] bg-background">
-                          Level
-                        </TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
                         <TableHead className="text-right">Confidence</TableHead>
                         <TableHead className="text-right">Date</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
@@ -285,10 +265,7 @@ export default function AdminDashboardReportsPage() {
                     <TableBody>
                       {paginatedReports.length > 0 ? (
                         paginatedReports.map((report) => (
-                          <TableRow
-                            key={report.id}
-                            className="group [&>td]:whitespace-nowrap"
-                          >
+                          <TableRow key={report.id} className="group [&>td]:whitespace-nowrap">
                             <TableCell className="pl-4 sticky left-0 bg-background font-medium">
                               {report.userName}
                             </TableCell>
@@ -298,9 +275,7 @@ export default function AdminDashboardReportsPage() {
                             <TableCell className="text-right font-medium">
                               {report.confidence}%
                             </TableCell>
-                            <TableCell className="text-right font-medium">
-                              {report.date}
-                            </TableCell>
+                            <TableCell className="text-right font-medium">{report.date}</TableCell>
                             <TableCell className="text-right">
                               <div className="flex justify-end gap-2">
                                 <Button
@@ -315,12 +290,7 @@ export default function AdminDashboardReportsPage() {
                                   size="icon"
                                   variant="outline"
                                   className="h-8 w-8 text-destructive"
-                                  onClick={() =>
-                                    handleDeleteClick(
-                                      report.id,
-                                      report.userName
-                                    )
-                                  }
+                                  onClick={() => handleDeleteClick(report.id, report.userName)}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -350,9 +320,7 @@ export default function AdminDashboardReportsPage() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  className={`border ${
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }`}
+                  className={`border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
                   onClick={(e) => {
                     e.preventDefault();
                     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -369,14 +337,11 @@ export default function AdminDashboardReportsPage() {
                 <PaginationNext
                   href="#"
                   className={`border ${
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage < totalPages)
-                      setCurrentPage(currentPage + 1);
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
                   }}
                   aria-disabled={currentPage === totalPages}
                 />
@@ -391,15 +356,13 @@ export default function AdminDashboardReportsPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete{" "}
-                <span className="font-semibold">
-                  {deletingAssessment?.userName}&apos;
-                </span>
-                s assessment record from the database.
+                This action cannot be undone. This will permanently delete{' '}
+                <span className="font-semibold">{deletingAssessment?.userName}</span>&apos;s
+                assessment record from the database.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <div className="flex justify-end gap-2 w-full">
+              <div className="flex justify-center md:justify-end gap-2 w-full">
                 <Button variant="outline" onClick={handleDeleteCancel}>
                   Cancel
                 </Button>
@@ -416,9 +379,7 @@ export default function AdminDashboardReportsPage() {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Student Details</DialogTitle>
-              <DialogDescription>
-                Contact information for this student.
-              </DialogDescription>
+              <DialogDescription>Contact information for this student.</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               {loadingUserDetails ? (
@@ -433,7 +394,7 @@ export default function AdminDashboardReportsPage() {
                     </Label>
                     <Input
                       id="email"
-                      value={userDetails?.email || ""}
+                      value={userDetails?.email || ''}
                       readOnly
                       className="col-span-3 bg-muted"
                     />
@@ -444,7 +405,7 @@ export default function AdminDashboardReportsPage() {
                     </Label>
                     <Input
                       id="nim"
-                      value={userDetails?.nim || ""}
+                      value={userDetails?.nim || ''}
                       readOnly
                       className="col-span-3 bg-muted"
                     />
@@ -455,7 +416,7 @@ export default function AdminDashboardReportsPage() {
                     </Label>
                     <Input
                       id="phone"
-                      value={userDetails?.phone || ""}
+                      value={userDetails?.phone || ''}
                       readOnly
                       className="col-span-3 bg-muted"
                     />

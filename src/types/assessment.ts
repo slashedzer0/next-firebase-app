@@ -9,7 +9,7 @@ export type Answer = {
 };
 
 export type AssessmentResult = {
-  stressLevel: "mild" | "moderate" | "severe";
+  stressLevel: 'mild' | 'moderate' | 'severe';
   confidence: number;
 };
 

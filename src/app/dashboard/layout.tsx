@@ -1,14 +1,10 @@
-"use client";
+'use client';
 
-import { SideNav } from "./_components/nav-side";
-import { TopNav } from "./_components/nav-top";
-import { AuthenticatedRoute } from "@/middleware/route-protection";
+import { SideNav } from './_components/nav-side';
+import { TopNav } from './_components/nav-top';
+import { AuthenticatedRoute } from '@/middleware/route-protection';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthenticatedRoute>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
