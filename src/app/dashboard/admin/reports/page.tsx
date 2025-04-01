@@ -42,8 +42,17 @@ import {
   limit,
   doc,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/services/firebase";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Define report data interface
 interface ReportData {
@@ -102,6 +111,12 @@ export default function AdminDashboardReportsPage() {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [loadingUserDetails, setLoadingUserDetails] = useState(false);
 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingAssessment, setDeletingAssessment] = useState<{
+    id: string;
+    userName: string;
+  } | null>(null);
+
   // Function to handle clicking the info button
   const handleInfoClick = async (userId: string) => {
     setLoadingUserDetails(true);
@@ -133,6 +148,39 @@ export default function AdminDashboardReportsPage() {
     } finally {
       setLoadingUserDetails(false);
     }
+  };
+
+  // Function to handle clicking the delete button
+  const handleDeleteClick = (id: string, userName: string) => {
+    setDeletingAssessment({ id, userName });
+    setDeleteDialogOpen(true);
+  };
+
+  // Function to handle confirming deletion
+  const handleDeleteConfirm = async () => {
+    if (!deletingAssessment) return;
+
+    try {
+      await deleteDoc(doc(db, "assessments", deletingAssessment.id));
+
+      // Update the UI by filtering out the deleted assessment
+      setReports((prevReports) =>
+        prevReports.filter((report) => report.id !== deletingAssessment.id)
+      );
+
+      // Reset state
+      setDeleteDialogOpen(false);
+      setDeletingAssessment(null);
+    } catch (error) {
+      console.error("Error deleting assessment:", error);
+      alert("Failed to delete assessment. Please try again.");
+    }
+  };
+
+  // Function to handle canceling deletion
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDeletingAssessment(null);
   };
 
   useEffect(() => {
@@ -268,7 +316,10 @@ export default function AdminDashboardReportsPage() {
                                   variant="outline"
                                   className="h-8 w-8 text-destructive"
                                   onClick={() =>
-                                    console.log("Delete " + report.id)
+                                    handleDeleteClick(
+                                      report.id,
+                                      report.userName
+                                    )
                                   }
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -333,6 +384,32 @@ export default function AdminDashboardReportsPage() {
             </PaginationContent>
           </Pagination>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete{" "}
+                <span className="font-semibold">
+                  {deletingAssessment?.userName}&apos;s
+                </span>{" "}
+                assessment record from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <div className="flex justify-end gap-2 w-full">
+                <Button variant="outline" onClick={handleDeleteCancel}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteConfirm}>
+                  Delete
+                </Button>
+              </div>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* User Details Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
