@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminRoute } from "@/components/auth/route-admin";
+import { AdminRoute } from "@/middleware/route-admin";
 
 export default function AdminLayout({
   children,

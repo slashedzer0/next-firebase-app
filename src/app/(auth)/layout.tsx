@@ -1,6 +1,6 @@
 "use client";
 
-import { UnauthenticatedRoute } from "@/components/auth/route-protection";
+import { UnauthenticatedRoute } from "@/middleware/route-protection";
 
 export default function AuthLayout({
   children,

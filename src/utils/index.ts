@@ -9,8 +9,8 @@ export { deleteUserData } from "./delete-user";
 
 // Export route protection components
 export {
-  AuthenticatedRoute,
-  UnauthenticatedRoute,
-} from "@/components/auth/route-protection";
-export { AdminRoute } from "@/components/auth/route-admin";
-export { UserRoute } from "@/components/auth/route-student";
+ AuthenticatedRoute,
+ UnauthenticatedRoute,
+} from "@/middleware/route-protection";
+export { AdminRoute } from "@/middleware/route-admin";
+export { UserRoute } from "@/middleware/route-student";
