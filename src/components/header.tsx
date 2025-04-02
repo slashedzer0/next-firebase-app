@@ -85,9 +85,12 @@ export function Header() {
                 )}
               </>
             )}
-            <Link href="/scan">
-              <Button className="h-10">Check Your Score</Button>
-            </Link>
+            {/* Only show Check Your Score button for non-admin users */}
+            {(!user || user.role !== 'admin') && (
+              <Link href="/scan">
+                <Button className="h-10">Check Your Score</Button>
+              </Link>
+            )}
           </div>
         </nav>
 
@@ -137,13 +140,16 @@ export function Header() {
                       )}
                     </>
                   )}
-                  <Link
-                    href="/scan"
-                    className="-mx-3 block px-3 py-2.5 text-base font-semibold"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Check Your Score
-                  </Link>
+                  {/* Only show Check Your Score button for non-admin users */}
+                  {(!user || user.role !== 'admin') && (
+                    <Link
+                      href="/scan"
+                      className="-mx-3 block px-3 py-2.5 text-base font-semibold"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Check Your Score
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

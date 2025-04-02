@@ -45,6 +45,12 @@ export function AuthenticatedRoute({ children }: ProtectedRouteProps) {
         return;
       }
     } else if (user.role === 'admin') {
+      // Check if admin is trying to access restricted routes
+      if (pathname.startsWith('/scan')) {
+        router.replace('/dashboard/admin');
+        return;
+      }
+
       // Check if admin is trying to access student-specific routes
       const pathSegments = pathname.split('/');
       if (
