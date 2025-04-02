@@ -29,7 +29,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Info, Trash2, Loader2 } from 'lucide-react';
-import { usePagination } from '@/stores/use-pagination';
+import { usePagination } from '@/stores/use-pagination-store';
 import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import {

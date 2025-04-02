@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { ScanResultsProps } from '@/types/assessment';
 import { Loader2, Save, LogIn } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 
 // Add the LevelBadge component
 function LevelBadge({ level }: { level: string }) {

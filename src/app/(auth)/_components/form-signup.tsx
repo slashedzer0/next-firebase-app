@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { cn } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import React from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { usePasswordVisibility } from '@/stores/use-password-visibility';
+import { usePasswordVisibility } from '@/stores/use-password-visibility-store';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormData } from '@/schemas/auth';

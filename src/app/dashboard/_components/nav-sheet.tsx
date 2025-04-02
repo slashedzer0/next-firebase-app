@@ -17,8 +17,8 @@ import { useEffect } from 'react';
 import { Branding } from '@/components/branding';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { useRoute } from '@/stores/use-route';
-import { useAuth } from '@/stores/use-auth';
+import { useRoute } from '@/stores/use-route-store';
+import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 import { useUIStore } from '@/stores/use-ui-store';
 

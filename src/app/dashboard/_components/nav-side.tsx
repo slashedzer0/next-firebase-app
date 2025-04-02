@@ -15,8 +15,8 @@ import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Branding } from '@/components/branding';
-import { useRoute } from '@/stores/use-route';
-import { useAuth } from '@/stores/use-auth';
+import { useRoute } from '@/stores/use-route-store';
+import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 
 export function SideNav() {

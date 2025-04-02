@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 import { Branding } from './branding';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { useUIStore } from '@/stores/use-ui-store';
 
 const navigation = [

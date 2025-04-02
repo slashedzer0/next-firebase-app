@@ -18,8 +18,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { usePagination } from '@/stores/use-pagination';
-import { useAuth } from '@/stores/use-auth';
+import { usePagination } from '@/stores/use-pagination-store';
+import { useAuth } from '@/stores/use-auth-store';
 import { Loader2 } from 'lucide-react';
 import { useResultsStore } from '@/stores/use-results-store';
 

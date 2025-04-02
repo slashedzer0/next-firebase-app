@@ -20,7 +20,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { Copy, Trash2, Loader2 } from 'lucide-react';
-import { usePagination } from '@/stores/use-pagination';
+import { usePagination } from '@/stores/use-pagination-store';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { deleteUserData } from '@/utils/delete-user';

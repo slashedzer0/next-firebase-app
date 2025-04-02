@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 
 type UserRouteProps = {
   children: React.ReactNode;

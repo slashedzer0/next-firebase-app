@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import {
   DropdownMenu,
   DropdownMenuContent,

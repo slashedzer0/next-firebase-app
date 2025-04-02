@@ -5,7 +5,7 @@ import { ScanQuestions } from './scan-questions';
 import { ScanResults } from './scan-results';
 import { ScanLoading } from './scan-loading';
 import { useScanStore } from '@/stores/use-scan-store';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 
 export function ScanMain() {

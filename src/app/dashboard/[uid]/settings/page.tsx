@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { settingsFormSchema, type SettingsFormValues } from '@/schemas/settings';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { cn } from '@/utils';
 
 import { Button } from '@/components/ui/button';

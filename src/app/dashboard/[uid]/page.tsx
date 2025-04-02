@@ -5,7 +5,7 @@ import { Calendar, FolderDown, HeartPulse } from 'lucide-react';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
 import { db } from '@/services/firebase';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { Loader2 } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';

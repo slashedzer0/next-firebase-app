@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
-import { useAuth } from '@/stores/use-auth';
+import { useAuth } from '@/stores/use-auth-store';
 import { incrementAssessmentCount, updateUserActivity } from '@/utils';
 import { ScanIntroProps } from '@/types/assessment';
 
