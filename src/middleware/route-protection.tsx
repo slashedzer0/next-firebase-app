@@ -98,3 +98,26 @@ export function UnauthenticatedRoute({ children }: ProtectedRouteProps) {
 
   return <>{children}</>;
 }
+
+// For routes that should be inaccessible by admin users
+export function AdminRestrictedRoute({ children }: ProtectedRouteProps) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Don't redirect during initial loading
+    if (loading.initial) return;
+
+    // If user is admin, redirect to admin dashboard
+    if (user?.role === 'admin') {
+      router.replace('/dashboard/admin');
+      return;
+    }
+  }, [user, loading.initial, router]);
+
+  // Only block if we're sure the user is admin
+  if (user?.role === 'admin') return null;
+
+  // Render immediately for all other cases
+  return <>{children}</>;
+}

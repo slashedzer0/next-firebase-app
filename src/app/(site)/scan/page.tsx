@@ -1,6 +1,6 @@
 import { ScanMain } from './_components/scan-main';
 import { Question } from '@/types/assessment';
-import { AuthenticatedRoute } from '@/middleware/route-protection';
+import { AdminRestrictedRoute } from '@/middleware/route-protection';
 
 export const questions: Question[] = [
   { id: 'q1', text: 'I feel overwhelmed by daily tasks' },
@@ -17,8 +17,8 @@ export const questions: Question[] = [
 
 export default function Page() {
   return (
-    <AuthenticatedRoute>
+    <AdminRestrictedRoute>
       <ScanMain />
-    </AuthenticatedRoute>
+    </AdminRestrictedRoute>
   );
 }
