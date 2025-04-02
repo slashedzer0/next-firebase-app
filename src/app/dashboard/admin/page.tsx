@@ -8,7 +8,6 @@ import { db } from '@/services/firebase';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -16,17 +15,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { RecentAssessment } from '@/types/admin';
-
-const chartConfig = {
-  highest: {
-    label: 'Highest',
-    color: 'hsl(var(--chart-1))',
-  },
-  lowest: {
-    label: 'Lowest',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig;
+import { adminDashboardChartConfig } from '@/utils/chart-config';
 
 export default function AdminDashboardOverviewPage() {
   const [recentAssessments, setRecentAssessments] = useState<RecentAssessment[]>([]);
@@ -385,7 +374,7 @@ export default function AdminDashboardOverviewPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <ChartContainer config={chartConfig} className="w-full md:h-[200px]">
+              <ChartContainer config={adminDashboardChartConfig} className="w-full md:h-[200px]">
                 <BarChart
                   accessibilityLayer
                   data={chartData}

@@ -10,7 +10,6 @@ import { Loader2 } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -18,17 +17,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { AssessmentData, ChartDataPoint } from '@/types/dashboard';
-
-const chartConfig = {
-  you: {
-    label: 'You',
-    color: 'hsl(var(--chart-1))',
-  },
-  average: {
-    label: 'Others',
-    color: 'hsl(var(--chart-2))',
-  },
-} satisfies ChartConfig;
+import { userDashboardChartConfig } from '@/utils/chart-config';
 
 export default function UserDashboardOverviewPage() {
   const { user } = useAuth();
@@ -282,7 +271,7 @@ export default function UserDashboardOverviewPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <ChartContainer config={chartConfig} className="w-full md:h-[200px]">
+              <ChartContainer config={userDashboardChartConfig} className="w-full md:h-[200px]">
                 <LineChart
                   data={chartData}
                   margin={{

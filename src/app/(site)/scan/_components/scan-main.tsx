@@ -7,21 +7,11 @@ import { ScanResults } from './scan-results';
 import { ScanLoading } from './scan-loading';
 import { questions as originalQuestions } from '@/app/(site)/scan/page';
 import { Answer, AssessmentResult, Question } from '@/types/assessment';
-import { calculateCF, saveAssessmentResult } from '@/utils';
+import { calculateCF, saveAssessmentResult, shuffleArray } from '@/utils';
 import { useAuth } from '@/stores/use-auth';
 import { useRouter } from 'next/navigation';
 
 const LOADING_DURATION = 3000; // 3 seconds
-
-// Fisher-Yates shuffle algorithm for randomizing questions
-const shuffleQuestions = (array: Question[]): Question[] => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};
 
 export function ScanMain() {
   const [step, setStep] = useState<'intro' | 'questions' | 'results' | 'loading'>('intro');
@@ -35,7 +25,7 @@ export function ScanMain() {
 
   const handleStart = () => {
     // Shuffle questions each time the assessment starts
-    setQuestions(shuffleQuestions(originalQuestions));
+    setQuestions(shuffleArray(originalQuestions));
     setCurrentQuestion(0);
     setAnswers([]);
     setStep('questions');
