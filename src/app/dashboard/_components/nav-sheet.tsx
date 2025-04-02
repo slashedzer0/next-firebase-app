@@ -12,7 +12,7 @@ import {
   ScanText,
   Settings,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Branding } from '@/components/branding';
 import { Button } from '@/components/ui/button';
@@ -20,13 +20,14 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/s
 import { useRoute } from '@/stores/use-route';
 import { useAuth } from '@/stores/use-auth';
 import { useRouter } from 'next/navigation';
+import { useUIStore } from '@/stores/use-ui-store';
 
 export function SheetNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { activeRoute, setActiveRoute } = useRoute();
   const { user, signOut } = useAuth();
-  const [open, setOpen] = useState(false);
+  const { isSheetOpen, setSheetOpen } = useUIStore();
 
   // Get username and role from auth store
   const username = user?.username || 'uid';
@@ -100,11 +101,11 @@ export function SheetNav() {
   };
 
   const handleLinkClick = () => {
-    setOpen(false);
+    setSheetOpen(false);
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="shrink-0 md:hidden">
           <Menu className="h-5 w-5" />

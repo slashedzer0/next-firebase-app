@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -20,10 +20,8 @@ import {
 } from '@/components/ui/pagination';
 import { usePagination } from '@/stores/use-pagination';
 import { useAuth } from '@/stores/use-auth';
-import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
-import { db } from '@/services/firebase';
 import { Loader2 } from 'lucide-react';
-import { AssessmentResultItem } from '@/types/dashboard';
+import { useResultsStore } from '@/stores/use-results-store';
 
 function LevelBadge({ level }: { level: string }) {
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
@@ -56,72 +54,15 @@ function LevelBadge({ level }: { level: string }) {
 }
 
 export default function UserDashboardResultsPage() {
-  const [assessments, setAssessments] = useState<AssessmentResultItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { assessments, loading, fetchUserAssessments } = useResultsStore();
   const { user } = useAuth();
   const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
 
   useEffect(() => {
-    async function fetchUserAssessments() {
-      if (!user?.uid) return;
-
-      try {
-        setLoading(true);
-
-        // Query assessments for the current user
-        const assessmentsRef = collection(db, 'assessments');
-        const q = query(assessmentsRef, where('userId', '==', user.uid));
-
-        const querySnapshot = await getDocs(q);
-
-        // Process the results and sort in memory
-        const unsortedResults: Array<{
-          data: DocumentData;
-          id: string;
-        }> = [];
-
-        querySnapshot.forEach((doc) => {
-          unsortedResults.push({
-            data: doc.data(),
-            id: doc.id,
-          });
-        });
-
-        // Sort by createdAt timestamp (oldest first)
-        unsortedResults.sort((a, b) => {
-          // First try to sort by createdAt timestamp
-          const timestampA = a.data.createdAt?.toMillis?.();
-          const timestampB = b.data.createdAt?.toMillis?.();
-
-          if (timestampA && timestampB) {
-            return timestampA - timestampB; // Ascending order (oldest first)
-          }
-
-          // Fallback to date string if createdAt is not available
-          const dateA = a.data.date.split('-').reverse().join('-');
-          const dateB = b.data.date.split('-').reverse().join('-');
-          return dateA.localeCompare(dateB); // Ascending order (oldest first)
-        });
-
-        // Create the assessment data with correct numbering (oldest is #1)
-        const assessmentData: AssessmentResultItem[] = unsortedResults.map((item, index) => ({
-          id: String(index + 1), // Sequential numbering (oldest is #1)
-          level: item.data.stressLevel,
-          confidence: item.data.confidence,
-          date: item.data.date,
-        }));
-
-        // Reverse the array so newest (highest number) appears first in table
-        setAssessments(assessmentData.reverse());
-      } catch (error) {
-        console.error('Error fetching assessments:', error);
-      } finally {
-        setLoading(false);
-      }
+    if (user?.uid) {
+      fetchUserAssessments(user.uid);
     }
-
-    fetchUserAssessments();
-  }, [user]);
+  }, [user?.uid, fetchUserAssessments]);
 
   const totalPages = Math.ceil(assessments.length / itemsPerPage);
 

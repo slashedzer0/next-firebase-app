@@ -11,8 +11,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/stores/use-auth';
@@ -26,22 +25,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { db } from '@/services/firebase';
 
 import { SheetNav } from './nav-sheet';
 import { ModeToggle } from '@/components/mode-toggle';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-
-interface UserData {
-  fullName: string;
-  email: string;
-  photoURL?: string;
-}
+import { useUserDataStore } from '@/stores/use-user-data-store';
 
 export function TopNav() {
   const router = useRouter();
   const { user, signOut } = useAuth();
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const { userData, fetchUserData } = useUserDataStore();
 
   // Get username and role from auth store
   const username = user?.username || 'uid';
@@ -91,21 +84,10 @@ export function TopNav() {
   ];
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.uid) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            setUserData(userDoc.data() as UserData);
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
+    if (user?.uid) {
+      fetchUserData(user.uid);
+    }
+  }, [user?.uid, fetchUserData]);
 
   const getInitials = (name: string) => {
     return name.substring(0, 2).toUpperCase();

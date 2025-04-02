@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { cn } from '@/utils';
 import { ScanQuestionsProps } from '@/types/assessment';
+import { useScanStore } from '@/stores/use-scan-store';
+import { useEffect } from 'react';
 
 export function ScanQuestions({
   question,
@@ -18,12 +19,12 @@ export function ScanQuestions({
   className,
   ...props
 }: ScanQuestionsProps & React.ComponentPropsWithoutRef<'div'>) {
-  const [selected, setSelected] = useState(initialSelected);
+  const { selectedOption, setSelectedOption } = useScanStore();
 
   // Update selected when navigating between questions
   useEffect(() => {
-    setSelected(initialSelected);
-  }, [initialSelected]);
+    setSelectedOption(initialSelected);
+  }, [initialSelected, setSelectedOption]);
 
   const options = [
     { value: -1, label: 'Strongly disagree' },
@@ -54,15 +55,15 @@ export function ScanQuestions({
                   {options.map((option) => (
                     <div
                       key={option.value}
-                      onClick={() => setSelected(option.value.toString())}
+                      onClick={() => setSelectedOption(option.value.toString())}
                       className={`relative flex items-center rounded-md border p-2 text-sm cursor-pointer transition-colors hover:bg-muted/50 ${
-                        selected === option.value.toString()
+                        selectedOption === option.value.toString()
                           ? 'border-primary bg-primary/10'
                           : 'border-border'
                       }`}
                     >
                       <span className="flex-grow">{option.label}</span>
-                      {selected === option.value.toString() && (
+                      {selectedOption === option.value.toString() && (
                         <Check className="size-3.5 text-primary shrink-0" />
                       )}
                     </div>
@@ -76,10 +77,10 @@ export function ScanQuestions({
                   </Button>
                   <Button
                     onClick={() => {
-                      onAnswer(Number(selected));
-                      setSelected('');
+                      onAnswer(Number(selectedOption));
+                      setSelectedOption('');
                     }}
-                    disabled={selected === ''}
+                    disabled={selectedOption === ''}
                     className="flex-1"
                   >
                     Next

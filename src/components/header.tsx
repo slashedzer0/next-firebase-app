@@ -3,9 +3,10 @@
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Branding } from './branding';
 import { useAuth } from '@/stores/use-auth';
+import { useUIStore } from '@/stores/use-ui-store';
 
 const navigation = [
   { name: 'About', href: '/about' },
@@ -13,7 +14,7 @@ const navigation = [
 ];
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isMenuOpen, setMenuOpen } = useUIStore();
   const {
     user,
     loading: { initial },
@@ -32,23 +33,15 @@ export function Header() {
 
   // useBodyScrollLock - prevents body from scrolling when mobile menu is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
+    // This is handled automatically by the useUIStore's setMenuOpen method
+  }, []);
 
   return (
     <div>
       <header className="max-w-screen-2xl mx-auto px-4 py-6 lg:px-8">
         <nav className="flex items-center justify-between">
           <Branding />
-          <button onClick={() => setIsOpen(!isOpen)} className="flex md:hidden">
+          <button onClick={() => setMenuOpen(!isMenuOpen)} className="flex md:hidden">
             <Menu className="w-6 h-6" />
           </button>
 
@@ -95,11 +88,11 @@ export function Header() {
         </nav>
 
         {/* mobile menu */}
-        {isOpen && (
+        {isMenuOpen && (
           <div className="bg-white dark:bg-black absolute top-0 left-0 w-full h-full px-4 py-6 z-50 overflow-auto md:hidden lg:px-8">
             <div className="flex items-center justify-between">
               <Branding />
-              <button onClick={() => setIsOpen(!isOpen)}>
+              <button onClick={() => setMenuOpen(false)}>
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -112,7 +105,7 @@ export function Header() {
                       key={item.name}
                       href={item.href}
                       className="-mx-3 block px-3 py-2 text-base font-semibold"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setMenuOpen(false)}
                     >
                       {item.name}
                     </Link>
@@ -125,7 +118,7 @@ export function Header() {
                         <Link
                           href={getDashboardPath()}
                           className="-mx-3 block px-3 py-2.5 text-base font-semibold"
-                          onClick={() => setIsOpen(false)}
+                          onClick={() => setMenuOpen(false)}
                         >
                           Dashboard
                         </Link>
@@ -133,7 +126,7 @@ export function Header() {
                         <Link
                           href="/login"
                           className="-mx-3 block px-3 py-2.5 text-base font-semibold"
-                          onClick={() => setIsOpen(false)}
+                          onClick={() => setMenuOpen(false)}
                         >
                           Log in
                         </Link>
@@ -145,7 +138,7 @@ export function Header() {
                     <Link
                       href="/scan"
                       className="-mx-3 block px-3 py-2.5 text-base font-semibold"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => setMenuOpen(false)}
                     >
                       Check Your Score
                     </Link>
