@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { AssessmentResult } from '@/types/assessment';
+import { ScanResultsProps } from '@/types/assessment';
 import { Loader2, Save, LogIn } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/stores/use-auth';
@@ -29,12 +29,6 @@ function LevelBadge({ level }: { level: string }) {
     default:
       return null;
   }
-}
-
-interface ScanResultsProps {
-  result: AssessmentResult;
-  onSaveResult: () => Promise<void>;
-  isSaving: boolean;
 }
 
 export function ScanResults({ result, onSaveResult, isSaving }: ScanResultsProps) {

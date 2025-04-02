@@ -13,5 +13,22 @@ export type AssessmentResult = {
   confidence: number;
 };
 
-// You can now import the comprehensive Assessment type from schemas
-// import { Assessment } from "@/schemas/assessment";
+// Scan component props
+export interface ScanIntroProps {
+  onStart: () => void;
+}
+
+export interface ScanQuestionsProps {
+  question: Question;
+  currentQuestion: number;
+  totalQuestions: number;
+  onAnswer: (value: number) => void;
+  onBack: () => void;
+  initialSelected: string;
+}
+
+export interface ScanResultsProps {
+  result: AssessmentResult;
+  onSaveResult: () => Promise<void>;
+  isSaving: boolean;
+}

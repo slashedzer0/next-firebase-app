@@ -40,22 +40,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
-// Define report data interface
-interface ReportData {
-  id: string;
-  userId: string;
-  userName: string;
-  level: string;
-  confidence: number;
-  date: string;
-}
-
-interface UserDetails {
-  email: string;
-  nim: string;
-  phone: string;
-}
+import { ReportData, UserDetails } from '@/types/admin';
 
 function LevelBadge({ level }: { level: string }) {
   // Convert to capitalized format for badge display

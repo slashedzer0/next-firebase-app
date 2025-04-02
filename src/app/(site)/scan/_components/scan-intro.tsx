@@ -2,10 +2,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '@/stores/use-auth';
 import { incrementAssessmentCount, updateUserActivity } from '@/utils';
-
-interface ScanIntroProps {
-  onStart: () => void;
-}
+import { ScanIntroProps } from '@/types/assessment';
 
 export function ScanIntro({ onStart }: ScanIntroProps) {
   const user = useAuth((state) => state.user);

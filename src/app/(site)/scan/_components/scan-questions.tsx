@@ -6,16 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { cn } from '@/utils';
-import { Question } from '@/types/assessment';
-
-interface ScanQuestionsProps {
-  question: Question;
-  currentQuestion: number;
-  totalQuestions: number;
-  onAnswer: (value: number) => void;
-  onBack: () => void;
-  initialSelected: string;
-}
+import { ScanQuestionsProps } from '@/types/assessment';
 
 export function ScanQuestions({
   question,

@@ -15,6 +15,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { RecentAssessment } from '@/types/admin';
 
 const chartConfig = {
   highest: {
@@ -26,13 +27,6 @@ const chartConfig = {
     color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
-
-interface RecentAssessment {
-  id: string;
-  userName: string;
-  userEmail: string;
-  confidence: number;
-}
 
 export default function AdminDashboardOverviewPage() {
   const [recentAssessments, setRecentAssessments] = useState<RecentAssessment[]>([]);

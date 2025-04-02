@@ -33,15 +33,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { doc, getDoc } from 'firebase/firestore';
-
-interface UserData {
-  id: string;
-  fullName: string;
-  status: string;
-  nim?: string;
-  phone?: string;
-  email: string;
-}
+import { AdminUserData } from '@/types/admin';
 
 function StatusBadge({ status }: { status: string }) {
   return status === 'active' ? (
@@ -56,7 +48,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function AdminDashboardUsersPage() {
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<AdminUserData[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -77,7 +69,7 @@ export default function AdminDashboardUsersPage() {
         const q = query(usersRef, where('role', '==', 'student'));
         const querySnapshot = await getDocs(q);
 
-        const userData: UserData[] = [];
+        const userData: AdminUserData[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           userData.push({

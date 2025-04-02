@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Calendar, FolderDown, HeartPulse } from 'lucide-react';
 import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { useAuth } from '@/stores/use-auth';
 import { Loader2 } from 'lucide-react';
@@ -17,6 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { AssessmentData, ChartDataPoint } from '@/types/dashboard';
 
 const chartConfig = {
   you: {
@@ -28,20 +29,6 @@ const chartConfig = {
     color: 'hsl(var(--chart-2))',
   },
 } satisfies ChartConfig;
-
-import type { Timestamp } from 'firebase/firestore';
-
-interface AssessmentData {
-  createdAt: Timestamp;
-  date: string;
-  day: string;
-  confidence: number;
-}
-
-interface ChartDataPoint {
-  you: number | null;
-  average: number | null;
-}
 
 export default function UserDashboardOverviewPage() {
   const { user } = useAuth();

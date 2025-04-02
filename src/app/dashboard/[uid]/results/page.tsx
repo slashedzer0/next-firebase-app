@@ -23,13 +23,7 @@ import { useAuth } from '@/stores/use-auth';
 import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { Loader2 } from 'lucide-react';
-
-interface AssessmentResult {
-  id: string;
-  level: string;
-  confidence: number;
-  date: string;
-}
+import { AssessmentResultItem } from '@/types/dashboard';
 
 function LevelBadge({ level }: { level: string }) {
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
@@ -62,7 +56,7 @@ function LevelBadge({ level }: { level: string }) {
 }
 
 export default function UserDashboardResultsPage() {
-  const [assessments, setAssessments] = useState<AssessmentResult[]>([]);
+  const [assessments, setAssessments] = useState<AssessmentResultItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
@@ -110,7 +104,7 @@ export default function UserDashboardResultsPage() {
         });
 
         // Create the assessment data with correct numbering (oldest is #1)
-        const assessmentData: AssessmentResult[] = unsortedResults.map((item, index) => ({
+        const assessmentData: AssessmentResultItem[] = unsortedResults.map((item, index) => ({
           id: String(index + 1), // Sequential numbering (oldest is #1)
           level: item.data.stressLevel,
           confidence: item.data.confidence,
