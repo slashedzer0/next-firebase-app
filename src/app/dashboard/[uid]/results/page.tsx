@@ -18,7 +18,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { usePagination } from '@/stores/use-pagination-store';
+import { usePaginationWithReset } from '@/stores/use-pagination-store';
 import { useAuth } from '@/stores/use-auth-store';
 import { Spinner } from '@/components/spinner';
 import { useResultsStore } from '@/stores/use-results-store';
@@ -56,7 +56,7 @@ function LevelBadge({ level }: { level: string }) {
 export default function UserDashboardResultsPage() {
   const { assessments, loading, fetchUserAssessments } = useResultsStore();
   const { user } = useAuth();
-  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+  const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
 
   useEffect(() => {
     if (user?.uid) {

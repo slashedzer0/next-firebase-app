@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/pagination';
 import { Copy, Trash2 } from 'lucide-react';
 import { Spinner } from '@/components/spinner';
-import { usePagination } from '@/stores/use-pagination-store';
+import { usePaginationWithReset } from '@/stores/use-pagination-store';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { deleteUserData, handleError, toast } from '@/utils';
@@ -51,7 +51,7 @@ function StatusBadge({ status }: { status: string }) {
 export default function AdminDashboardUsersPage() {
   const [users, setUsers] = useState<AdminUserData[]>([]);
   const [loading, setLoading] = useState(true);
-  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+  const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingUser, setDeletingUser] = useState<{
     id: string;

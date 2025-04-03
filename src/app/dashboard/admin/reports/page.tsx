@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/pagination';
 import { Info, Trash2 } from 'lucide-react';
 import { Spinner } from '@/components/spinner';
-import { usePagination } from '@/stores/use-pagination-store';
+import { usePaginationWithReset } from '@/stores/use-pagination-store';
 import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { toast } from '@/utils';
@@ -76,7 +76,7 @@ function LevelBadge({ level }: { level: string }) {
 export default function AdminDashboardReportsPage() {
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
-  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+  const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
 
   // Add state for the dialog
   const [dialogOpen, setDialogOpen] = useState(false);
