@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Users,
   LogOut,
@@ -10,14 +10,14 @@ import {
   FileChartColumn,
   Settings,
   ScanText,
-} from "lucide-react";
-import { useEffect } from "react";
+} from 'lucide-react';
+import { useEffect } from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Branding } from "@/components/branding";
-import { useRoute } from "@/stores/use-route";
-import { useAuth } from "@/stores/use-auth";
-import { useRouter } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { Branding } from '@/components/branding';
+import { useRoute } from '@/stores/use-route-store';
+import { useAuth } from '@/stores/use-auth-store';
+import { useRouter } from 'next/navigation';
 
 export function SideNav() {
   const router = useRouter();
@@ -26,59 +26,59 @@ export function SideNav() {
   const { user, signOut } = useAuth();
 
   // Get username and role from auth store
-  const username = user?.username || "uid";
-  const userRole = user?.role || "student";
+  const username = user?.username || 'uid';
+  const userRole = user?.role || 'student';
 
   // Use "admin" as path for admin users, username for students
-  const userPath = userRole === "admin" ? "admin" : username;
+  const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: "Dashboard",
+      label: 'Dashboard',
       icon: <LayoutGrid className="h-4 w-4" />,
-      roles: ["student", "admin"],
+      roles: ['student', 'admin'],
     },
     {
-      href: "/scan",
-      label: "Start Scan",
+      href: '/scan',
+      label: 'Start Scan',
       icon: <CircleGauge className="h-4 w-4" />,
-      roles: ["student"], // Removed admin access
-      target: "_blank",
+      roles: ['student'], // Removed admin access
+      target: '_blank',
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: "Scan Results",
+      label: 'Scan Results',
       icon: <FileChartColumn className="h-4 w-4" />,
-      roles: ["student"], // Removed admin access
+      roles: ['student'], // Removed admin access
     },
     {
-      href: "/dashboard/admin/reports",
-      label: "Scan Reports",
+      href: '/dashboard/admin/reports',
+      label: 'Scan Reports',
       icon: <ScanText className="h-4 w-4" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
-      href: "/dashboard/admin/users",
-      label: "Users",
+      href: '/dashboard/admin/users',
+      label: 'Users',
       icon: <Users className="h-4 w-4" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: "Settings",
+      label: 'Settings',
       icon: <Settings className="h-4 w-4" />,
-      roles: ["student"], // Removed admin access
+      roles: ['student'], // Removed admin access
     },
   ];
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      router.push("/login");
+      router.push('/login');
     } catch (error) {
-      console.error("Sign out error:", error);
+      console.error('Sign out error:', error);
     }
   };
 
@@ -88,9 +88,7 @@ export function SideNav() {
 
   const linkClass = (href: string) =>
     `flex items-center gap-3 rounded-lg ${
-      activeRoute === href
-        ? "bg-muted px-3 py-2 text-primary"
-        : "px-3 py-2 text-muted-foreground"
+      activeRoute === href ? 'bg-muted px-3 py-2 text-primary' : 'px-3 py-2 text-foreground'
     } transition-all hover:text-primary`;
 
   return (
@@ -119,11 +117,11 @@ export function SideNav() {
         <div className="mt-auto p-4">
           <Button
             variant="outline"
-            className="w-full flex items-center gap-2"
+            className="w-full flex items-center gap-2 text-destructive"
             onClick={handleSignOut}
-            title="Sign out (your last activity will be recorded)"
+            title="Sign out of your account"
           >
-            <LogOut size="icon" className="h-5 w-5" />
+            <LogOut size="icon" className="h-5 w-5 text-destructive" />
             Sign out
           </Button>
         </div>

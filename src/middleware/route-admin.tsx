@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/stores/use-auth";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/stores/use-auth-store';
 
 type AdminRouteProps = {
   children: React.ReactNode;
@@ -18,23 +18,23 @@ export function AdminRoute({ children }: AdminRouteProps) {
 
     // If not authenticated, redirect to login
     if (!user) {
-      router.replace("/login");
+      router.replace('/login');
       return;
     }
 
     // If not admin, redirect to appropriate dashboard
-    if (user.role !== "admin") {
-      if (user.role === "student" && user.username) {
+    if (user.role !== 'admin') {
+      if (user.role === 'student' && user.username) {
         router.replace(`/dashboard/${user.username}`);
       } else {
-        router.replace("/");
+        router.replace('/');
       }
       return;
     }
   }, [user, loading.initial, router]);
 
   // Show nothing while checking authentication or redirecting
-  if (loading.initial || !user || user.role !== "admin") return null;
+  if (loading.initial || !user || user.role !== 'admin') return null;
 
   return <>{children}</>;
 }

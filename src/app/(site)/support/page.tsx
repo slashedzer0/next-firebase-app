@@ -1,46 +1,51 @@
-import { Mail, MapPin, Instagram, Phone } from 'lucide-react'
-import { ContactCard, ContactCardProps } from "@/components/card"
-import { JSX } from 'react'
+import { Mail, MapPin, Instagram, Phone } from 'lucide-react';
+import { ContactCard, ContactCardProps } from '@/components/card';
+import { JSX } from 'react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Support',
+};
 
 export default function SupportPage() {
   const contactInfo: Array<Omit<ContactCardProps, 'icon'> & { icon: JSX.Element }> = [
     {
       icon: <Mail className="size-6" />,
-      title: "Email",
+      title: 'Email',
       contactInfo: {
         type: 'email' as const,
-        value: 'info@telkomuniversity.ac.id'
+        value: 'info@telkomuniversity.ac.id',
       },
-      description: "We'll respond within 1-2 business days",
+      description: 'They usually respond within 1-2 business days',
     },
     {
       icon: <MapPin className="size-6" />,
-      title: "Office",
+      title: 'Office',
       contactInfo: {
         type: 'website' as const,
-        value: 'https://kemahasiswaan.ittelkom-pwt.ac.id'
+        value: 'https://studentaffairs.telkomuniversity.ac.id/',
       },
-      description: "DI Panjaitan No.128 Purwokerto 53147",
+      description: 'DI Panjaitan No.128, Purwokerto Selatan 53147',
     },
     {
       icon: <Instagram className="size-6" />,
-      title: "Instagram",
+      title: 'Instagram',
       contactInfo: {
         type: 'website' as const,
-        value: 'https://bit.ly/KemahasiswaanTUP'
+        value: 'https://bit.ly/KemahasiswaanTUP',
       },
-      description: "Available during business hours",
+      description: 'Available during business hours',
     },
     {
       icon: <Phone className="size-6" />,
-      title: "WhatsApp",
+      title: 'WhatsApp',
       contactInfo: {
         type: 'website' as const,
-        value: 'https://bit.ly/6281228307444'
+        value: 'https://bit.ly/6281228307444',
       },
-      description: "Monday ~ Friday, 09:00 ~ 17:00 WIB",
+      description: 'Monday-Friday at 09:00-17:00 WIB',
     },
-  ]
+  ];
 
   return (
     <main className="py-16 md:py-32">
@@ -49,11 +54,10 @@ export default function SupportPage() {
           {/* Left Column */}
           <div className="flex flex-col space-y-4">
             <p className="text-sm font-medium tracking-wider text-muted-foreground">Support</p>
-            <h1 className="text-3xl font-medium tracking-tight md:text-5xl">
-              Get in touch
-            </h1>
+            <h1 className="text-3xl font-medium tracking-tight md:text-5xl">Get in touch</h1>
             <p className="text-lg text-muted-foreground">
-              Need some academic assistant? The student affairs team is here to assist you with any questions or concerns you may have.
+              Need some academic assistant? The student affairs team is here to assist you with any
+              questions or concerns you may have.
             </p>
           </div>
 
@@ -72,6 +76,5 @@ export default function SupportPage() {
         </div>
       </div>
     </main>
-  )
+  );
 }
-

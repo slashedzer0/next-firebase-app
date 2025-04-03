@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Menu,
   Users,
@@ -11,82 +11,78 @@ import {
   FileChartColumn,
   ScanText,
   Settings,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+} from 'lucide-react';
+import { useEffect } from 'react';
 
-import { Branding } from "@/components/branding";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useRoute } from "@/stores/use-route";
-import { useAuth } from "@/stores/use-auth";
-import { useRouter } from "next/navigation";
+import { Branding } from '@/components/branding';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useRoute } from '@/stores/use-route-store';
+import { useAuth } from '@/stores/use-auth-store';
+import { useRouter } from 'next/navigation';
+import { useUIStore } from '@/stores/use-ui-store';
 
 export function SheetNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { activeRoute, setActiveRoute } = useRoute();
   const { user, signOut } = useAuth();
-  const [open, setOpen] = useState(false);
+  const { isSheetOpen, setSheetOpen } = useUIStore();
 
   // Get username and role from auth store
-  const username = user?.username || "uid";
-  const userRole = user?.role || "student";
+  const username = user?.username || 'uid';
+  const userRole = user?.role || 'student';
 
   // Use "admin" as path for admin users, username for students
-  const userPath = userRole === "admin" ? "admin" : username;
+  const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: "Dashboard",
+      label: 'Dashboard',
       icon: <LayoutGrid className="h-5 w-5" />,
-      roles: ["student", "admin"],
+      roles: ['student', 'admin'],
     },
     {
-      href: "/scan",
-      label: "Start Scan",
+      href: '/scan',
+      label: 'Start Scan',
       icon: <CircleGauge className="h-5 w-5" />,
-      roles: ["student"], // Removed admin access
-      target: "_blank",
+      roles: ['student'], // Removed admin access
+      target: '_blank',
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: "Scan Results",
+      label: 'Scan Results',
       icon: <FileChartColumn className="h-5 w-5" />,
-      roles: ["student"], // Removed admin access
+      roles: ['student'], // Removed admin access
     },
     {
-      href: "/dashboard/admin/reports",
-      label: "Scan Reports",
+      href: '/dashboard/admin/reports',
+      label: 'Scan Reports',
       icon: <ScanText className="h-5 w-5" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
-      href: "/dashboard/admin/users",
-      label: "Users",
+      href: '/dashboard/admin/users',
+      label: 'Users',
       icon: <Users className="h-5 w-5" />,
-      roles: ["admin"],
+      roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: "Settings",
+      label: 'Settings',
       icon: <Settings className="h-5 w-5" />,
-      roles: ["student"], // Removed admin access
+      roles: ['student'], // Removed admin access
     },
   ];
 
   const handleSignOut = async () => {
     try {
       await signOut(); // This already updates lastActive through the useAuth store
-      router.push("/login");
+      router.push('/login');
     } catch (error) {
-      console.error("Sign out error:", error);
+      console.error('Sign out error:', error);
     }
   };
 
@@ -95,23 +91,21 @@ export function SheetNav() {
   }, [pathname, setActiveRoute]);
 
   const linkClass = (href: string) => {
-    if (href === "/scan") {
-      return "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground";
+    if (href === '/scan') {
+      return 'mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground';
     }
 
     return `mx-[-0.65rem] flex items-center gap-4 rounded-xl ${
-      activeRoute === href
-        ? "bg-muted px-3 py-2 text-primary"
-        : "px-3 py-2 text-muted-foreground"
+      activeRoute === href ? 'bg-muted px-3 py-2 text-primary' : 'px-3 py-2 text-muted-foreground'
     }`;
   };
 
   const handleLinkClick = () => {
-    setOpen(false);
+    setSheetOpen(false);
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="shrink-0 md:hidden">
           <Menu className="h-5 w-5" />
@@ -141,11 +135,11 @@ export function SheetNav() {
           <Button
             variant="outline"
             size="lg"
-            className="w-full flex items-center gap-2"
+            className="w-full flex items-center gap-2 text-destructive"
             onClick={handleSignOut}
-            title="Sign out (your last activity will be recorded)"
+            title="Sign out of your account"
           >
-            <LogOut size="icon" className="h-5 w-5" />
+            <LogOut className="h-5 w-5 text-destructive" />
             Sign out
           </Button>
         </div>

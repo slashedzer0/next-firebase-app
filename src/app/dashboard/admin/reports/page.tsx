@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -8,141 +9,222 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Info, Trash2 } from "lucide-react";
-import { usePagination } from "@/stores/use-pagination";
-
-const scanResults = [
-  {
-    id: "Budi",
-    level: "Severe",
-    date: "2024-01-15",
-    score: "4.8",
-  },
-  {
-    id: "Siti",
-    level: "Moderate",
-    date: "2024-01-10",
-    score: "3.2",
-  },
-  {
-    id: "Ahmad",
-    level: "Mild",
-    date: "2024-01-05",
-    score: "1.8",
-  },
-  {
-    id: "Dewi",
-    level: "Severe",
-    date: "2024-01-03",
-    score: "4.5",
-  },
-  {
-    id: "Rina",
-    level: "Moderate",
-    date: "2023-12-28",
-    score: "3.4",
-  },
-  {
-    id: "Joko",
-    level: "Mild",
-    date: "2023-12-25",
-    score: "1.5",
-  },
-  {
-    id: "Agus",
-    level: "Severe",
-    date: "2023-12-20",
-    score: "4.7",
-  },
-  {
-    id: "Wati",
-    level: "Moderate",
-    date: "2023-12-15",
-    score: "3.1",
-  },
-  {
-    id: "Bambang",
-    level: "Mild",
-    date: "2023-12-10",
-    score: "2.0",
-  },
-  {
-    id: "Sri",
-    level: "Severe",
-    date: "2023-12-05",
-    score: "4.9",
-  },
-  {
-    id: "Yanto",
-    level: "Moderate",
-    date: "2023-11-30",
-    score: "3.6",
-  },
-  {
-    id: "Adi",
-    level: "Mild",
-    date: "2023-11-25",
-    score: "1.9",
-  },
-  {
-    id: "Putri",
-    level: "Severe",
-    date: "2023-11-20",
-    score: "4.6",
-  },
-  {
-    id: "Rini",
-    level: "Moderate",
-    date: "2023-11-15",
-    score: "3.3",
-  },
-  {
-    id: "Dian",
-    level: "Mild",
-    date: "2023-11-10",
-    score: "1.7",
-  },
-];
+} from '@/components/ui/pagination';
+import { Info, Trash2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
+import { usePaginationWithReset } from '@/stores/use-pagination-store';
+import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { toast } from '@/utils';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { ReportData, UserDetails } from '@/types/admin';
+import { handleError } from '@/utils';
 
 function LevelBadge({ level }: { level: string }) {
-  switch (level) {
-    case "Mild":
+  // Convert to capitalized format for badge display
+  const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
+
+  switch (formattedLevel) {
+    case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />{" "}
-          {level}
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> {formattedLevel}
         </Badge>
       );
-    case "Moderate":
+    case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" /> {level}
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" /> {formattedLevel}
         </Badge>
       );
-    case "Severe":
+    case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {level}
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {formattedLevel}
         </Badge>
       );
+    default:
+      return null;
   }
 }
 
 export default function AdminDashboardReportsPage() {
-  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
-  const totalPages = Math.ceil(scanResults.length / itemsPerPage);
+  const [reports, setReports] = useState<ReportData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
 
-  const paginatedResults = scanResults.slice(
+  // Add state for the dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [loadingUserDetails, setLoadingUserDetails] = useState(false);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingAssessment, setDeletingAssessment] = useState<{
+    id: string;
+    userName: string;
+  } | null>(null);
+
+  // Function to handle clicking the info button
+  const handleInfoClick = async (userId: string) => {
+    setLoadingUserDetails(true);
+    setDialogOpen(true);
+
+    try {
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        setUserDetails({
+          email: userData.email || '-',
+          nim: userData.nim || '-',
+          phone: userData.phone || '-',
+        });
+      } else {
+        setUserDetails({
+          email: 'User not found',
+          nim: 'User not found',
+          phone: 'User not found',
+        });
+      }
+    } catch (error) {
+      handleError(error, 'Could not load user details', { showToast: false });
+      setUserDetails({
+        email: 'Error loading data',
+        nim: 'Error loading data',
+        phone: 'Error loading data',
+      });
+    } finally {
+      setLoadingUserDetails(false);
+    }
+  };
+
+  // Function to handle clicking the delete button
+  const handleDeleteClick = (id: string, userName: string) => {
+    setDeletingAssessment({ id, userName });
+    setDeleteDialogOpen(true);
+  };
+
+  // Function to handle confirming deletion
+  const handleDeleteConfirm = async () => {
+    if (!deletingAssessment) return;
+
+    try {
+      await deleteDoc(doc(db, 'assessments', deletingAssessment.id));
+
+      // Update the UI by filtering out the deleted assessment
+      setReports((prevReports) =>
+        prevReports.filter((report) => report.id !== deletingAssessment.id)
+      );
+
+      // Success notification
+      toast({
+        title: 'Assessment Deleted',
+        description: 'The assessment has been successfully removed.',
+        type: 'success',
+      });
+
+      // Reset state
+      setDeleteDialogOpen(false);
+      setDeletingAssessment(null);
+    } catch (error) {
+      handleError(error, 'Failed to delete assessment. Please try again.');
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  // Function to handle canceling deletion
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDeletingAssessment(null);
+  };
+
+  useEffect(() => {
+    async function fetchReports() {
+      try {
+        setLoading(true);
+
+        // Fetch assessments from Firestore
+        const assessmentsRef = collection(db, 'assessments');
+        const assessmentsQuery = query(assessmentsRef, limit(100)); // Limit to avoid large queries
+        const assessmentsSnapshot = await getDocs(assessmentsQuery);
+
+        // Process assessments and fetch user data
+        const reportPromises = assessmentsSnapshot.docs.map(async (assessmentDoc) => {
+          const assessmentData = assessmentDoc.data();
+          const userId = assessmentData.userId;
+
+          // Get user data to display name
+          let userName = 'Unknown User';
+          try {
+            const userDoc = await getDoc(doc(db, 'users', userId));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              // Extract first name from full name
+              const fullName = userData.fullName || '';
+              userName = fullName.split(' ')[0] || 'Unknown';
+            }
+          } catch (error) {
+            console.error(`Error fetching user data for ${userId}:`, error);
+          }
+
+          return {
+            id: assessmentDoc.id,
+            userId,
+            userName,
+            level: assessmentData.stressLevel,
+            confidence: assessmentData.confidence,
+            date: assessmentData.date || '',
+          };
+        });
+
+        const reportData = await Promise.all(reportPromises);
+
+        // Sort by date (most recent first)
+        reportData.sort((a, b) => {
+          // Convert DD-MM-YYYY to sortable format
+          const dateA = a.date.split('-').reverse().join('-');
+          const dateB = b.date.split('-').reverse().join('-');
+          return dateB.localeCompare(dateA);
+        });
+
+        setReports(reportData);
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchReports();
+  }, []);
+
+  const totalPages = Math.ceil(reports.length / itemsPerPage);
+
+  const paginatedReports = reports.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -156,93 +238,189 @@ export default function AdminDashboardReportsPage() {
         <Card className="bg-background">
           <CardHeader></CardHeader>
           <CardContent>
-            <div className="grid w-full md:block">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="[&>*]:whitespace-nowrap">
-                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">Name</TableHead>
-                      <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
-                      <TableHead className="text-right">Score</TableHead>
-                      <TableHead className="text-right">Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedResults.map((result) => (
-                      <TableRow 
-                        key={result.id}
-                        className="group [&>td]:whitespace-nowrap"
-                      >
-                        <TableCell className="pl-4 sticky left-0 bg-background font-medium">
-                          {result.id}
-                        </TableCell>
-                        <TableCell className="sticky left-[100px] bg-background font-medium">
-                          <LevelBadge level={result.level} />
-                        </TableCell>
-                        <TableCell className="text-right font-medium">{result.score}</TableCell>
-                        <TableCell className="text-right font-medium">{result.date}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8"
-                              onClick={() => console.log("Clicked info for " + result.id)}
-                            >
-                              <Info />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8 text-destructive"
-                              onClick={() => console.log("Delete " + result.id)}
-                            >
-                              <Trash2 />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
-            </div>
+            ) : (
+              <div className="grid w-full md:block">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="[&>*]:whitespace-nowrap">
+                        <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
+                          Name
+                        </TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
+                        <TableHead className="text-right">Confidence</TableHead>
+                        <TableHead className="text-right">Date</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedReports.length > 0 ? (
+                        paginatedReports.map((report) => (
+                          <TableRow key={report.id} className="group [&>td]:whitespace-nowrap">
+                            <TableCell className="pl-4 sticky left-0 bg-background font-medium">
+                              {report.userName}
+                            </TableCell>
+                            <TableCell className="sticky left-[100px] bg-background font-medium">
+                              <LevelBadge level={report.level} />
+                            </TableCell>
+                            <TableCell className="text-right font-medium">
+                              {report.confidence}%
+                            </TableCell>
+                            <TableCell className="text-right font-medium">{report.date}</TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  className="h-8 w-8"
+                                  onClick={() => handleInfoClick(report.userId)}
+                                >
+                                  <Info className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="outline"
+                                  className="h-8 w-8 text-destructive"
+                                  onClick={() => handleDeleteClick(report.id, report.userName)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center">
+                            No assessment reports found.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
 
-        <Pagination className="w-full max-w-xs mx-auto p-4">
-          <PaginationContent className="w-full justify-between">
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                className={`border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) setCurrentPage(currentPage - 1);
-                }}
-                aria-disabled={currentPage === 1}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <span className="text-xs text-muted-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                className={`border ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                }}
-                aria-disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        {reports.length > 0 && (
+          <Pagination className="w-full max-w-xs mx-auto p-4">
+            <PaginationContent className="w-full justify-between">
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  className={`border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) setCurrentPage(currentPage - 1);
+                  }}
+                  aria-disabled={currentPage === 1}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="text-xs text-muted-foreground">
+                  Page {currentPage} of {totalPages || 1}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  className={`border ${
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
+                  }`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                  }}
+                  aria-disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete{' '}
+                <span className="font-semibold">{deletingAssessment?.userName}</span>&apos;s
+                assessment record from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <div className="flex justify-center md:justify-end gap-2 w-full">
+                <Button variant="outline" onClick={handleDeleteCancel}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteConfirm}>
+                  Delete
+                </Button>
+              </div>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* User Details Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Student Details</DialogTitle>
+              <DialogDescription>Contact information for this student.</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              {loadingUserDetails ? (
+                <div className="flex justify-center py-4">
+                  <Spinner className="h-6 w-6 text-muted-foreground" />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      value={userDetails?.email || ''}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="nim" className="text-right">
+                      NIM
+                    </Label>
+                    <Input
+                      id="nim"
+                      value={userDetails?.nim || ''}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="phone" className="text-right">
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      value={userDetails?.phone || ''}
+                      readOnly
+                      className="col-span-3 bg-muted"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );

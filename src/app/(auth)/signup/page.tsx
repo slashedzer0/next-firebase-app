@@ -1,5 +1,10 @@
-import { SignUpForm } from "@/app/(auth)/_components/form-signup"
-import { Branding } from "@/components/branding"
+import { SignUpForm } from '@/app/(auth)/_components/form-signup';
+import { Branding } from '@/components/branding';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Sign up',
+};
 
 export default function SignUpPage() {
   return (
@@ -9,6 +14,5 @@ export default function SignUpPage() {
         <SignUpForm />
       </div>
     </div>
-  )
+  );
 }
-

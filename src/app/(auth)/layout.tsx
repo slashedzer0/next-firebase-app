@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { UnauthenticatedRoute } from "@/components/auth/route-protection";
+import { UnauthenticatedRoute } from '@/middleware/route-protection';
 
 export default function AuthLayout({
   children,
@@ -9,9 +9,7 @@ export default function AuthLayout({
 }>) {
   return (
     <UnauthenticatedRoute>
-      <div className="flex min-h-screen flex-col items-center justify-center p-4">
-        {children}
-      </div>
+      <div className="flex min-h-screen flex-col items-center justify-center p-4">{children}</div>
     </UnauthenticatedRoute>
   );
 }

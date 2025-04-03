@@ -1,33 +1,33 @@
-import { ScanLine, Zap, LineChart, ShieldBan } from "lucide-react"
-import { InfoCard } from "@/components/card"
+import { ScanLine, Zap, LineChart, ShieldBan } from 'lucide-react';
+import { InfoCard } from '@/components/card';
 
-export default function FeaturesSection() {
+export function FeaturesSection() {
   const features = [
     {
       icon: <ScanLine className="size-6" />,
-      title: "Easy Scanning",
+      title: 'Easy Scanning',
       description:
-        "Quick and simple stress measurement scans that you can complete in minutes. Perfect for busy students on the go.",
+        'Quick and simple stress measurement scans that you can complete in minutes. Perfect for busy students on the go.',
     },
     {
       icon: <Zap className="size-6" />,
-      title: "Instant Results",
+      title: 'Instant Results',
       description:
-        "Get immediate feedback on your stress levels after each scan. Understand where you stand at any moment.",
+        'Get immediate feedback on your stress levels after each scan. Understand where you stand at any moment.',
     },
     {
       icon: <LineChart className="size-6" />,
-      title: "Progress Tracking",
+      title: 'Progress Tracking',
       description:
-        "Save all your scan results and track changes over time. Identify patterns and trends in your stress levels.",
+        'Save all your scan results and track changes over time. Identify patterns and trends in your stress levels.',
     },
     {
       icon: <ShieldBan className="size-6" />,
-      title: "Zero Setup",
+      title: 'Zero Setup',
       description:
-        "Start measuring your stress levels immediately without creating an account. Quick and hassle-free access to core features.",
+        'Start measuring your stress levels immediately without creating an account. Quick and hassle-free access to core features.',
     },
-  ]
+  ];
 
   return (
     <section id="features" className="py-32">
@@ -39,9 +39,9 @@ export default function FeaturesSection() {
               Simple tools to manage your academic stress
             </h2>
             <p className="text-lg text-muted-foreground md:max-w-2xl">
-              Our app focuses on what matters most to students -
-              easy tracking and monitoring of stress levels during your academic journey.
-              No complicated features, just the essentials you need.
+              Our app focuses on what matters most to students - easy tracking and monitoring of
+              stress levels during your academic journey. No complicated features, just the
+              essentials you need.
             </p>
           </div>
         </div>
@@ -58,5 +58,5 @@ export default function FeaturesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

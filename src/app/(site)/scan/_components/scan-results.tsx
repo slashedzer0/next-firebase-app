@@ -1,26 +1,27 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { AssessmentResult } from "@/types/assessment";
-import { Loader2, Save, LogIn } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/stores/use-auth";
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ScanResultsProps } from '@/types/assessment';
+import { Save, LogIn } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/stores/use-auth-store';
 
 // Add the LevelBadge component
 function LevelBadge({ level }: { level: string }) {
   switch (level) {
-    case "Mild":
+    case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
           {level}
         </Badge>
       );
-    case "Moderate":
+    case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
           {level}
         </Badge>
       );
-    case "Severe":
+    case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
           {level}
@@ -31,30 +32,33 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
-interface ScanResultsProps {
-  result: AssessmentResult;
-  onSaveResult: () => Promise<void>;
-  isSaving: boolean;
-}
-
-export function ScanResults({
-  result,
-  onSaveResult,
-  isSaving,
-}: ScanResultsProps) {
+export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanResultsProps) {
   const user = useAuth((state) => state.user);
   const isAuthenticated = !!user;
 
+  if (isLoading) {
+    return (
+      <section className="py-32">
+        <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
+          <div className="flex flex-col items-center justify-center space-y-6 min-h-[400px]">
+            <Spinner className="size-8" />
+            <p className="text-lg text-muted-foreground">Calculating your results...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!result) return null;
+
   // Helper function to capitalize first letter
-  const capitalizeFirst = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1);
+  const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const getMessage = (level: string) => {
-    if (level === "mild")
-      return "Your stress levels appear to be well-managed.";
-    if (level === "moderate")
+    if (level === 'mild') return 'Your stress levels appear to be well-managed.';
+    if (level === 'moderate')
       return "You're experiencing moderate stress levels. Consider basic stress management techniques.";
-    return "Your stress levels are severe. Professional support is recommended.";
+    return 'Your stress levels are severe. Professional support is recommended.';
   };
 
   return (
@@ -65,9 +69,7 @@ export function ScanResults({
             <p className="text-sm font-medium tracking-wider text-muted-foreground">
               Scan Complete
             </p>
-            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">
-              Your Results
-            </h2>
+            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">Your Score</h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <div className="space-y-4">
                 <div className="flex flex-col items-center space-y-2">
@@ -90,8 +92,8 @@ export function ScanResults({
                 <Button onClick={onSaveResult} disabled={isSaving}>
                   {isSaving ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving
+                      <Spinner className="mr-2 h-4 w-4" />
+                      Saving...
                     </>
                   ) : (
                     <>
@@ -100,7 +102,7 @@ export function ScanResults({
                       ) : (
                         <LogIn className="mr-2 h-4 w-4" />
                       )}
-                      {isAuthenticated ? "Save Result" : "Log in"}
+                      {isAuthenticated ? 'Save Result' : 'Log in'}
                     </>
                   )}
                 </Button>

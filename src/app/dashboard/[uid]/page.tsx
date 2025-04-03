@@ -1,67 +1,201 @@
-"use client";
+'use client';
 
-import { Calendar, FolderDown, HeartPulse } from "lucide-react";
-import { Line, LineChart, CartesianGrid, XAxis } from "recharts";
+import { useEffect, useState } from 'react';
+import { Calendar, FolderDown, HeartPulse } from 'lucide-react';
+import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { useAuth } from '@/stores/use-auth-store';
+import { Spinner } from '@/components/spinner';
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
-
-const data = [
-  {
-    average: 400,
-    you: 240,
-  },
-  {
-    average: 300,
-    you: 139,
-  },
-  {
-    average: 200,
-    you: 980,
-  },
-  {
-    average: 278,
-    you: 390,
-  },
-  {
-    average: 189,
-    you: 480,
-  },
-  {
-    average: 239,
-    you: 380,
-  },
-  {
-    average: 268,
-    you: 475,
-  },
-];
-
-const chartConfig = {
-  you: {
-    label: "You",
-    color: "hsl(var(--chart-1))",
-  },
-  average: {
-    label: "Average",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
+} from '@/components/ui/chart';
+import { AssessmentData, ChartDataPoint } from '@/types/dashboard';
+import { userDashboardChartConfig } from '@/utils/chart-config';
 
 export default function UserDashboardOverviewPage() {
+  const { user } = useAuth();
+  const [recentAssessments, setRecentAssessments] = useState<AssessmentData[]>([]);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [savedCount, setSavedCount] = useState(0);
+  const [unsavedCount, setUnsavedCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!user?.uid) return;
+
+      try {
+        setLoading(true);
+        const assessmentsRef = collection(db, 'assessments');
+
+        // Get all assessments for the current user
+        const userQuery = query(assessmentsRef, where('userId', '==', user.uid), limit(100));
+        const userSnapshot = await getDocs(userQuery);
+
+        const userAssessments: Array<{
+          confidence: number;
+          createdAt: Timestamp;
+          date: string;
+          day: string;
+        }> = [];
+
+        // Collect user assessment data
+        userSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.createdAt && data.confidence) {
+            userAssessments.push({
+              confidence: data.confidence,
+              createdAt: data.createdAt,
+              date: data.date || '',
+              day: data.day || '',
+            });
+          }
+        });
+
+        // Sort by timestamp (oldest first)
+        userAssessments.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.toMillis?.() || 0;
+          return timeA - timeB;
+        });
+
+        // Take only the 3 most recent for Recent Attempts display
+        setRecentAssessments(
+          [...userAssessments]
+            .sort((a, b) => {
+              // Sort by createdAt (newest first) for Recent Attempts
+              const timeA = a.createdAt?.toMillis?.() || 0;
+              const timeB = b.createdAt?.toMillis?.() || 0;
+              return timeB - timeA;
+            })
+            .slice(0, 3)
+        );
+
+        // Get all other users' assessments for comparison data
+        const otherAssessmentsQuery = query(
+          assessmentsRef,
+          where('userId', '!=', user.uid),
+          limit(100)
+        );
+        const otherAssessmentsSnapshot = await getDocs(otherAssessmentsQuery);
+
+        const otherAssessments: Array<{
+          confidence: number;
+          createdAt: Timestamp;
+        }> = [];
+
+        // Collect other users' assessment data
+        otherAssessmentsSnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.createdAt && data.confidence) {
+            otherAssessments.push({
+              confidence: data.confidence,
+              createdAt: data.createdAt,
+            });
+          }
+        });
+
+        // Sort by timestamp (oldest first)
+        otherAssessments.sort((a, b) => {
+          const timeA = a.createdAt?.toMillis?.() || 0;
+          const timeB = b.createdAt?.toMillis?.() || 0;
+          return timeA - timeB;
+        });
+
+        // Get last 7 assessments for both current user and others, sorted by createdAt
+        const last7UserAssessments = userAssessments
+          .slice(-7)
+          .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
+
+        const last7OtherAssessments = otherAssessments
+          .slice(-7)
+          .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis());
+
+        // Initialize array with 7 null data points
+        const chartPoints: ChartDataPoint[] = Array.from({ length: 7 }, () => ({
+          you: null,
+          average: null,
+        }));
+
+        // Fill in user's data points
+        last7UserAssessments.forEach((assessment, index) => {
+          chartPoints[index] = {
+            ...chartPoints[index],
+            you: assessment.confidence,
+          };
+        });
+
+        // Fill in others' data points
+        last7OtherAssessments.forEach((assessment, index) => {
+          chartPoints[index] = {
+            ...chartPoints[index],
+            average: assessment.confidence,
+          };
+        });
+
+        setChartData(chartPoints);
+
+        // Set saved count and unsaved count
+        const totalSaved = userSnapshot.size;
+        setSavedCount(totalSaved);
+
+        // Calculate unsaved assessments
+        const totalAttempts = user.assessmentCount || 0;
+        const notSaved = Math.max(0, totalAttempts - totalSaved);
+        setUnsavedCount(notSaved);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUserData();
+  }, [user]);
+
+  // Format date from DD-MM-YYYY to display format
+  const formatLastAttemptDate = (dateStr: string) => {
+    if (!dateStr) return { day: '--', month: 'No data' };
+
+    const [day, month, year] = dateStr.split('-');
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+
+    // Convert month string to number (subtract 1 as array is zero-indexed)
+    const monthIndex = parseInt(month) - 1;
+    const monthName = monthNames[monthIndex];
+
+    return {
+      day: parseInt(day).toString(), // Remove leading zero if present
+      month: `${monthName} ${year}`,
+    };
+  };
+
+  // Get last attempt date if available
+  const lastAttempt =
+    recentAssessments.length > 0
+      ? formatLastAttemptDate(recentAssessments[0].date)
+      : { day: '-', month: 'No saved results' };
+
   return (
     <>
       <div className="flex items-center">
@@ -74,8 +208,16 @@ export default function UserDashboardOverviewPage() {
             <HeartPulse className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">37</div>
-            <p className="text-xs text-muted-foreground">+7% from last week</p>
+            {loading ? (
+              <div className="flex flex-col h-[52px] justify-center items-center">
+                <Spinner className="h-5 w-5 text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-bold">{user?.assessmentCount || 0}</div>
+                <p className="text-xs text-muted-foreground">Assessment attempts</p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-background">
@@ -84,8 +226,18 @@ export default function UserDashboardOverviewPage() {
             <FolderDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">29</div>
-            <p className="text-xs text-muted-foreground">8 results not saved</p>
+            {loading ? (
+              <div className="flex flex-col h-[52px] justify-center items-center">
+                <Spinner className="h-5 w-5 text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-bold">{savedCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  {unsavedCount > 0 ? `${unsavedCount} results not saved` : 'All results saved'}
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-background">
@@ -94,118 +246,117 @@ export default function UserDashboardOverviewPage() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">30</div>
-            <p className="text-xs text-muted-foreground">November 2024</p>
+            {loading ? (
+              <div className="flex flex-col h-[52px] justify-center items-center">
+                <Spinner className="h-5 w-5 text-muted-foreground" />
+              </div>
+            ) : (
+              <>
+                <div className="text-3xl font-bold">{lastAttempt.day}</div>
+                <p className="text-xs text-muted-foreground">{lastAttempt.month}</p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Stress Levels
-            </CardTitle>
-            <CardDescription>
-              Compared to the average by latest attempts
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">Stress Levels</CardTitle>
+            <CardDescription>Compared to other students by latest attempts</CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
-            <ChartContainer
-              config={chartConfig}
-              className="w-full md:h-[200px]"
-            >
-              <LineChart
-                data={data}
-                margin={{
-                  top: 5,
-                  right: 10,
-                  left: 10,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="attempt"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="you"
-                  strokeWidth={2}
-                  stroke="var(--color-you)"
-                  activeDot={{
-                    r: 8,
-                    style: { fill: "var(--color-you)" },
+            {loading ? (
+              <div className="flex justify-center items-center py-16">
+                <Spinner className="h-8 w-8 text-muted-foreground" />
+              </div>
+            ) : (
+              <ChartContainer config={userDashboardChartConfig} className="w-full md:h-[200px]">
+                <LineChart
+                  data={chartData}
+                  margin={{
+                    top: 5,
+                    right: 10,
+                    left: 10,
+                    bottom: 0,
                   }}
-                />
-                <Line
-                  type="monotone"
-                  strokeWidth={2}
-                  dataKey="average"
-                  stroke="var(--color-average)"
-                  strokeOpacity={0.5}
-                  activeDot={{
-                    r: 6,
-                    fill: "var(--color-average)",
-                  }}
-                />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
-              </LineChart>
-            </ChartContainer>
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis tickLine={false} axisLine={false} tick={false} />
+                  <YAxis yAxisId="stress" domain={[0, 100]} hide={true} />
+                  <Line
+                    type="monotone"
+                    dataKey="you"
+                    strokeWidth={2}
+                    stroke="var(--color-you)"
+                    activeDot={{
+                      r: 8,
+                      style: { fill: 'var(--color-you)' },
+                    }}
+                    // Allow null values (gaps in data)
+                    connectNulls={false}
+                    yAxisId="stress"
+                  />
+                  <Line
+                    type="monotone"
+                    strokeWidth={2}
+                    dataKey="average"
+                    stroke="var(--color-average)"
+                    strokeOpacity={0.5}
+                    activeDot={{
+                      r: 6,
+                      fill: 'var(--color-average)',
+                    }}
+                    // Allow null values (gaps in data)
+                    connectNulls={false}
+                    yAxisId="stress"
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                </LineChart>
+              </ChartContainer>
+            )}
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">
-              Recent Attempts
-            </CardTitle>
-            <CardDescription>
-              Your latest attempts and scores
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">Recent Attempts</CardTitle>
+            <CardDescription>Your latest assessments and confidence levels</CardDescription>
           </CardHeader>
-            <CardContent>
+          <CardContent>
             <div className="rounded-md">
               <div className="grid grid-cols-2 p-4 text-sm font-medium border-b text-muted-foreground">
-              <div>Date</div>
-              <div className="text-right">Score</div>
+                <div>Date</div>
+                <div className="text-right">Confidence</div>
               </div>
               <div className="divide-y">
-              <div className="grid grid-cols-2 p-4 text-sm">
-              <div>
-              <p className="text-sm font-medium leading-none">30-11-2024</p>
-              <p className="text-xs text-muted-foreground">
-                Saturday
-              </p>
-              </div>
-              <div className="text-xl text-right font-medium">4.9</div>
-              </div>
-              <div className="grid grid-cols-2 p-4 text-sm">
-              <div>
-              <p className="text-sm font-medium leading-none">29-11-2024</p>
-              <p className="text-xs text-muted-foreground">
-                Friday
-              </p>
-              </div>
-              <div className="text-xl text-right font-medium">4.2</div>
-              </div>
-              <div className="grid grid-cols-2 p-4 text-sm">
-              <div>
-              <p className="text-sm font-medium leading-none">28-11-2024</p>
-              <p className="text-xs text-muted-foreground">
-                Thursday
-              </p>
-              </div>
-              <div className="text-xl text-right font-medium">4.7</div>
-              </div>
+                {loading ? (
+                  <div className="flex justify-center items-center py-8">
+                    <Spinner className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                ) : recentAssessments.length > 0 ? (
+                  recentAssessments.map((assessment) => (
+                    <div
+                      key={`${assessment.date}-${assessment.confidence}`}
+                      className="grid grid-cols-2 p-4 text-sm"
+                    >
+                      <div>
+                        <p className="text-sm font-medium leading-none">{assessment.date}</p>
+                        <p className="text-xs text-muted-foreground">{assessment.day}</p>
+                      </div>
+                      <div className="text-xl text-right font-medium">{assessment.confidence}%</div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    No assessments found.
+                  </div>
+                )}
               </div>
             </div>
-            </CardContent>
+          </CardContent>
         </Card>
       </div>
     </>
   );
 }
-

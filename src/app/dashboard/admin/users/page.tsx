@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -9,37 +9,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Copy, Trash2, Loader2 } from "lucide-react";
-import { usePagination } from "@/stores/use-pagination";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/services/firebase";
-
-interface UserData {
-  id: string;
-  fullName: string;
-  status: string;
-  nim?: string;
-  phone?: string;
-  email: string;
-}
+} from '@/components/ui/pagination';
+import { Copy, Trash2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
+import { usePaginationWithReset } from '@/stores/use-pagination-store';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '@/services/firebase';
+import { deleteUserData, handleError, toast } from '@/utils';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { doc, getDoc } from 'firebase/firestore';
+import { AdminUserData } from '@/types/admin';
 
 function StatusBadge({ status }: { status: string }) {
-  return status === "active" ? (
+  return status === 'active' ? (
     <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
       <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> Active
     </Badge>
@@ -51,36 +49,41 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function AdminDashboardUsersPage() {
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<AdminUserData[]>([]);
   const [loading, setLoading] = useState(true);
-  const { currentPage, itemsPerPage, setCurrentPage } = usePagination();
+  const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingUser, setDeletingUser] = useState<{
+    id: string;
+    fullName: string;
+    email: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
         setLoading(true);
-
-        // Get student users from Firestore
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("role", "==", "student"));
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('role', '==', 'student'));
         const querySnapshot = await getDocs(q);
 
-        const userData: UserData[] = [];
+        const userData: AdminUserData[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           userData.push({
             id: doc.id,
-            fullName: data.fullName || "",
-            status: data.status || "active",
-            nim: data.nim || "",
-            phone: data.phone || "",
-            email: data.email || "",
+            fullName: data.fullName || '',
+            status: data.status || 'active',
+            nim: data.nim || '',
+            phone: data.phone || '',
+            email: data.email || '',
           });
         });
 
         setUsers(userData);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
       } finally {
         setLoading(false);
       }
@@ -90,15 +93,10 @@ export default function AdminDashboardUsersPage() {
   }, []);
 
   const totalPages = Math.ceil(users.length / itemsPerPage);
+  const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const paginatedUsers = users.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // Format name as "First L."
   const formatName = (fullName: string) => {
-    const parts = fullName.split(" ");
+    const parts = fullName.split(' ');
     if (parts.length <= 1) return fullName;
 
     const firstName = parts[0];
@@ -107,17 +105,75 @@ export default function AdminDashboardUsersPage() {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert(`Copied to clipboard: ${text}`);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast({
+          title: 'Copied to clipboard',
+          description: text,
+          type: 'success',
+        });
+      })
+      .catch((error) => {
+        handleError(error, 'Failed to copy text to clipboard');
+      });
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
+  const handleDeleteClick = async (userId: string) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', userId));
+
+      if (!userDoc.exists()) {
+        toast({
+          title: 'Error',
+          description: 'User not found',
+          type: 'error',
+        });
+        return;
+      }
+
+      const userData = userDoc.data();
+
+      setDeletingUser({
+        id: userId,
+        fullName: userData.fullName || 'Unknown User',
+        email: userData.email || 'No email',
+      });
+      setDeleteDialogOpen(true);
+    } catch (error) {
+      handleError(error, 'Could not prepare user for deletion');
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingUser) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteUserData(deletingUser.id);
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== deletingUser.id));
+
+      toast({
+        title: 'User Deleted',
+        description: `User ${deletingUser.fullName} has been successfully deleted from the system.`,
+        type: 'success',
+      });
+    } catch (error) {
+      handleError(
+        error,
+        `Failed to delete user: ${deletingUser.fullName}. Please try again or check permissions.`
+      );
+    } finally {
+      setDeleteDialogOpen(false);
+      setDeletingUser(null);
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setDeletingUser(null);
+  };
 
   return (
     <>
@@ -128,74 +184,69 @@ export default function AdminDashboardUsersPage() {
         <Card className="bg-background">
           <CardHeader></CardHeader>
           <CardContent>
-            <div className="grid w-full md:block">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="[&>*]:whitespace-nowrap">
-                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
-                        Name
-                      </TableHead>
-                      <TableHead className="sticky left-[100px] bg-background">
-                        Status
-                      </TableHead>
-                      <TableHead className="text-right">NIM</TableHead>
-                      <TableHead className="text-right">Phone</TableHead>
-                      <TableHead className="text-right">Email</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedUsers.map((user) => (
-                      <TableRow
-                        key={user.id}
-                        className="group [&>td]:whitespace-nowrap"
-                      >
-                        <TableCell className="pl-4 sticky left-0 bg-background font-medium">
-                          {formatName(user.fullName)}
-                        </TableCell>
-                        <TableCell className="sticky left-[100px] bg-background font-medium">
-                          <StatusBadge status={user.status} />
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {user.nim || ""}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {user.phone || ""}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {user.email}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8"
-                              onClick={() => copyToClipboard(user.email)}
-                              title="Copy email address"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="outline"
-                              className="h-8 w-8 text-destructive"
-                              onClick={() =>
-                                console.log("Delete user:", user.id)
-                              }
-                              title="Delete user (not implemented yet)"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
-            </div>
+            ) : (
+              <div className="grid w-full md:block">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="[&>*]:whitespace-nowrap">
+                        <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
+                          Name
+                        </TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">Status</TableHead>
+                        <TableHead className="text-right">NIM</TableHead>
+                        <TableHead className="text-right">Phone</TableHead>
+                        <TableHead className="text-right">Email</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedUsers.map((user) => (
+                        <TableRow key={user.id} className="group [&>td]:whitespace-nowrap">
+                          <TableCell className="pl-4 sticky left-0 bg-background font-medium">
+                            {formatName(user.fullName)}
+                          </TableCell>
+                          <TableCell className="sticky left-[100px] bg-background font-medium">
+                            <StatusBadge status={user.status} />
+                          </TableCell>
+                          <TableCell className="text-right font-medium">{user.nim || ''}</TableCell>
+                          <TableCell className="text-right font-medium">
+                            {user.phone || ''}
+                          </TableCell>
+                          <TableCell className="text-right font-medium">{user.email}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8"
+                                onClick={() => copyToClipboard(user.email)}
+                                title="Copy email address"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-8 w-8 text-destructive"
+                                onClick={() => handleDeleteClick(user.id)}
+                                title="Delete user account permanently"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
@@ -206,9 +257,7 @@ export default function AdminDashboardUsersPage() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  className={`border ${
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }`}
+                  className={`border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
                   onClick={(e) => {
                     e.preventDefault();
                     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -225,14 +274,11 @@ export default function AdminDashboardUsersPage() {
                 <PaginationNext
                   href="#"
                   className={`border ${
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
+                    currentPage === totalPages ? 'pointer-events-none opacity-50' : ''
                   }`}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (currentPage < totalPages)
-                      setCurrentPage(currentPage + 1);
+                    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
                   }}
                   aria-disabled={currentPage === totalPages}
                 />
@@ -240,6 +286,36 @@ export default function AdminDashboardUsersPage() {
             </PaginationContent>
           </Pagination>
         )}
+
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete{' '}
+                <span className="font-semibold">{deletingUser?.fullName}</span>&apos;s account from
+                the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <div className="flex justify-center md:justify-end gap-2 w-full">
+                <Button variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
+                  {isDeleting ? (
+                    <>
+                      <Spinner className="mr-2 h-4 w-4" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete account'
+                  )}
+                </Button>
+              </div>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );

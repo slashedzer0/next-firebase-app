@@ -7,8 +7,8 @@ import {
   doc,
   Timestamp,
   limit,
-} from "firebase/firestore";
-import { db } from "@/services/firebase";
+} from 'firebase/firestore';
+import { db } from '@/services/firebase';
 
 /**
  * Checks for and updates user statuses:
@@ -23,12 +23,12 @@ export async function checkAndUpdateUserStatuses(): Promise<void> {
 
     // Query for student accounts with lastActive older than 30 days and status still 'active'
     // Process in batches to avoid overloading the client
-    const usersRef = collection(db, "users");
+    const usersRef = collection(db, 'users');
     const q = query(
       usersRef,
-      where("role", "==", "student"),
-      where("status", "==", "active"),
-      where("lastActive", "<", Timestamp.fromDate(thirtyDaysAgo)),
+      where('role', '==', 'student'),
+      where('status', '==', 'active'),
+      where('lastActive', '<', Timestamp.fromDate(thirtyDaysAgo)),
       limit(50) // Process 50 at a time
     );
 
@@ -37,12 +37,10 @@ export async function checkAndUpdateUserStatuses(): Promise<void> {
     // Process each inactive account
     const promises = querySnapshot.docs.map(async (document) => {
       try {
-        await updateDoc(doc(db, "users", document.id), {
-          status: "inactive",
+        await updateDoc(doc(db, 'users', document.id), {
+          status: 'inactive',
         });
-        console.log(
-          `Set user ${document.id} to inactive due to 30+ days of inactivity`
-        );
+        console.log(`Set user ${document.id} to inactive due to 30+ days of inactivity`);
       } catch (err) {
         console.error(`Error updating user ${document.id}:`, err);
       }
@@ -54,6 +52,6 @@ export async function checkAndUpdateUserStatuses(): Promise<void> {
       console.log(`Updated ${querySnapshot.docs.length} inactive users`);
     }
   } catch (error) {
-    console.error("Error checking inactive accounts:", error);
+    console.error('Error checking inactive accounts:', error);
   }
 }

@@ -1,8 +1,8 @@
 // import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-export default function HeroSection() {
+export function HeroSection() {
   return (
     <section className="py-32">
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
@@ -13,15 +13,16 @@ export default function HeroSection() {
           <span className="font-medium">How it works</span>
           <ArrowRight className="ml-2 inline size-4" />
         </Link>
-        
+
         <h1 className="my-4 mb-6 text-center text-3xl font-semibold tracking-tight md:text-5xl">
           Track your stress levels with ease.
         </h1>
-        
+
         <p className="mx-auto mb-8 max-w-2xl text-center text-lg text-muted-foreground">
-          A simple way for students to measure, track, and understand their stress levels throughout the academic year. Save your scan results and monitor your progress over time.
+          A simple way for students to measure, track, and understand their stress levels throughout
+          the academic year. Save your scan results and monitor your progress over time.
         </p>
-        
+
         <div className="flex justify-center">
           <a
             href="#features"
@@ -30,13 +31,17 @@ export default function HeroSection() {
             Getting Started
           </a>
         </div>
-        
+
         <div className="mt-6 lg:mt-8">
-            <p className="mx-auto max-w-2xl text-center text-sm italic text-muted-foreground">
-            Not a substitute for professional mental health support. <Link href="/about" className="underline">Click here</Link> to learn more.
-            </p>
+          <p className="mx-auto max-w-2xl text-center text-sm italic text-muted-foreground">
+            Not a substitute for professional mental health support.{' '}
+            <Link href="/about" className="underline">
+              Click here
+            </Link>{' '}
+            to learn more.
+          </p>
         </div>
       </div>
     </section>
-  )
+  );
 }
