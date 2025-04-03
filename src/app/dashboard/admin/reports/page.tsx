@@ -32,6 +32,7 @@ import { Info, Trash2, Loader2 } from 'lucide-react';
 import { usePagination } from '@/stores/use-pagination-store';
 import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/services/firebase';
+import { toast } from '@/utils';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -42,7 +43,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ReportData, UserDetails } from '@/types/admin';
 import { handleError } from '@/utils';
-import { toast } from '@/hooks/use-toast';
 
 function LevelBadge({ level }: { level: string }) {
   // Convert to capitalized format for badge display
@@ -143,7 +143,7 @@ export default function AdminDashboardReportsPage() {
       toast({
         title: 'Assessment Deleted',
         description: 'The assessment has been successfully removed.',
-        variant: 'default',
+        type: 'success',
       });
 
       // Reset state

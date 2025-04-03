@@ -23,7 +23,7 @@ import { Copy, Trash2, Loader2 } from 'lucide-react';
 import { usePagination } from '@/stores/use-pagination-store';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
-import { deleteUserData, handleError } from '@/utils';
+import { deleteUserData, handleError, toast } from '@/utils';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { doc, getDoc } from 'firebase/firestore';
 import { AdminUserData } from '@/types/admin';
-import { toast } from '@/hooks/use-toast';
 
 function StatusBadge({ status }: { status: string }) {
   return status === 'active' ? (
@@ -115,7 +114,7 @@ export default function AdminDashboardUsersPage() {
         toast({
           title: 'Copied to clipboard',
           description: text,
-          variant: 'default',
+          type: 'success',
         });
       })
       .catch((error) => {
@@ -133,7 +132,7 @@ export default function AdminDashboardUsersPage() {
         toast({
           title: 'Error',
           description: 'User not found',
-          variant: 'destructive',
+          type: 'error',
         });
         return;
       }
@@ -167,7 +166,7 @@ export default function AdminDashboardUsersPage() {
       toast({
         title: 'User Deleted',
         description: `User ${deletingUser.fullName} has been successfully deleted from the system.`,
-        variant: 'default',
+        type: 'success',
       });
     } catch (error) {
       handleError(

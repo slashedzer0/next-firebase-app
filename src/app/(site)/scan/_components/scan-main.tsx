@@ -7,8 +7,7 @@ import { ScanLoading } from './scan-loading';
 import { useScanStore } from '@/stores/use-scan-store';
 import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
-import { handleError } from '@/utils';
-import { toast } from '@/hooks/use-toast';
+import { handleError, toast } from '@/utils';
 
 export function ScanMain() {
   const {
@@ -42,7 +41,7 @@ export function ScanMain() {
         toast({
           title: 'Success',
           description: 'Assessment saved successfully!',
-          variant: 'default',
+          type: 'success',
         });
 
         // Correctly redirect based on user role and username

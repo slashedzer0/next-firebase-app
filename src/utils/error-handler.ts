@@ -1,7 +1,7 @@
 import { FirebaseError } from 'firebase/app';
 import { AuthError } from 'firebase/auth';
 import { FirestoreError } from 'firebase/firestore';
-import { toast } from '@/hooks/use-toast';
+import { toast } from './toast';
 
 // Define error categories
 type ErrorCategory = 'auth' | 'database' | 'network' | 'validation' | 'unknown';
@@ -42,7 +42,7 @@ export function handleError(
     toast({
       title: getCategoryTitle(errorDetails.category),
       description: userMessage,
-      variant: 'destructive',
+      type: 'error',
     });
   }
 
