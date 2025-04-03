@@ -253,7 +253,7 @@ export default function UserDashboardSettingsPage() {
                     )}
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 md:flex gap-4">
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Reset
                     </Button>
