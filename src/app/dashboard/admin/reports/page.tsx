@@ -28,7 +28,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Info, Trash2, Loader2 } from 'lucide-react';
+import { Info, Trash2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 import { usePagination } from '@/stores/use-pagination-store';
 import { collection, query, getDocs, limit, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/services/firebase';
@@ -239,7 +240,7 @@ export default function AdminDashboardReportsPage() {
           <CardContent>
             {loading ? (
               <div className="flex justify-center items-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
             ) : (
               <div className="grid w-full md:block">
@@ -378,7 +379,7 @@ export default function AdminDashboardReportsPage() {
             <div className="grid gap-4 py-4">
               {loadingUserDetails ? (
                 <div className="flex justify-center py-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <Spinner className="h-6 w-6 text-muted-foreground" />
                 </div>
               ) : (
                 <>

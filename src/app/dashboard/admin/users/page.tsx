@@ -19,7 +19,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Copy, Trash2, Loader2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 import { usePagination } from '@/stores/use-pagination-store';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
@@ -189,7 +190,7 @@ export default function AdminDashboardUsersPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Spinner className="h-8 w-8 text-muted-foreground" />
       </div>
     );
   }
@@ -318,7 +319,7 @@ export default function AdminDashboardUsersPage() {
               <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
                 {isDeleting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Spinner className="mr-2 h-4 w-4" />
                     Deleting...
                   </>
                 ) : (

@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ScanResultsProps } from '@/types/assessment';
-import { Loader2, Save, LogIn } from 'lucide-react';
+import { Save, LogIn } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/stores/use-auth-store';
 
@@ -76,7 +77,7 @@ export function ScanResults({ result, onSaveResult, isSaving }: ScanResultsProps
                 <Button onClick={onSaveResult} disabled={isSaving}>
                   {isSaving ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Spinner className="mr-2 h-4 w-4" />
                       Saving
                     </>
                   ) : (

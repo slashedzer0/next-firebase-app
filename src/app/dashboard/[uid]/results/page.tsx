@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/pagination';
 import { usePagination } from '@/stores/use-pagination-store';
 import { useAuth } from '@/stores/use-auth-store';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 import { useResultsStore } from '@/stores/use-results-store';
 
 function LevelBadge({ level }: { level: string }) {
@@ -74,7 +74,7 @@ export default function UserDashboardResultsPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Spinner className="h-8 w-8 text-muted-foreground" />
       </div>
     );
   }

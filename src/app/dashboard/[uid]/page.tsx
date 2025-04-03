@@ -6,7 +6,7 @@ import { Line, LineChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { collection, query, where, getDocs, limit, Timestamp } from 'firebase/firestore';
 import { db } from '@/services/firebase';
 import { useAuth } from '@/stores/use-auth-store';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -210,7 +210,7 @@ export default function UserDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -228,7 +228,7 @@ export default function UserDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -248,7 +248,7 @@ export default function UserDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -268,7 +268,7 @@ export default function UserDashboardOverviewPage() {
           <CardContent className="pb-4">
             {loading ? (
               <div className="flex justify-center items-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
             ) : (
               <ChartContainer config={userDashboardChartConfig} className="w-full md:h-[200px]">
@@ -332,7 +332,7 @@ export default function UserDashboardOverviewPage() {
               <div className="divide-y">
                 {loading ? (
                   <div className="flex justify-center items-center py-8">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <Spinner className="h-5 w-5 text-muted-foreground" />
                   </div>
                 ) : recentAssessments.length > 0 ? (
                   recentAssessments.map((assessment) => (

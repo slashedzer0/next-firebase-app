@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Percent, TriangleAlert, Users, Loader2 } from 'lucide-react';
+import { Percent, TriangleAlert, Users } from 'lucide-react';
+import { Spinner } from '@/components/spinner';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { collection, query, orderBy, limit, getDocs, getDoc, doc, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
@@ -312,7 +313,7 @@ export default function AdminDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -330,7 +331,7 @@ export default function AdminDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -351,7 +352,7 @@ export default function AdminDashboardOverviewPage() {
           <CardContent>
             {loading ? (
               <div className="flex flex-col h-[52px] justify-center items-center">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Spinner className="h-5 w-5 text-muted-foreground" />
               </div>
             ) : (
               <>
@@ -371,7 +372,7 @@ export default function AdminDashboardOverviewPage() {
           <CardContent className="pb-4">
             {loading ? (
               <div className="flex justify-center items-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
             ) : (
               <ChartContainer config={adminDashboardChartConfig} className="w-full md:h-[200px]">
@@ -411,7 +412,7 @@ export default function AdminDashboardOverviewPage() {
               <div className="divide-y">
                 {loading ? (
                   <div className="flex justify-center items-center py-8">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <Spinner className="h-5 w-5 text-muted-foreground" />
                   </div>
                 ) : recentAssessments.length > 0 ? (
                   recentAssessments.map((assessment) => (
