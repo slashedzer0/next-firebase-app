@@ -135,11 +135,11 @@ export function SheetNav() {
           <Button
             variant="outline"
             size="lg"
-            className="w-full flex items-center gap-2"
+            className="w-full flex items-center gap-2 text-destructive"
             onClick={handleSignOut}
-            title="Sign out (your last activity will be recorded)"
+            title="Sign out of your account"
           >
-            <LogOut size="icon" className="h-5 w-5" />
+            <LogOut className="h-5 w-5 text-destructive" />
             Sign out
           </Button>
         </div>

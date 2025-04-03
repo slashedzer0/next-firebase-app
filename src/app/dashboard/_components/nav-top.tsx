@@ -160,10 +160,10 @@ export function TopNav() {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={handleSignOut}
-            className="flex items-center gap-2"
-            title="Sign out (your last activity will be recorded)"
+            className="group flex items-center gap-2 text-destructive"
+            title="Sign out of your account"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4 text-destructive group-hover:text-white" />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>

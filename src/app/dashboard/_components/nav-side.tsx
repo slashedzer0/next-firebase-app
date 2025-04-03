@@ -88,7 +88,7 @@ export function SideNav() {
 
   const linkClass = (href: string) =>
     `flex items-center gap-3 rounded-lg ${
-      activeRoute === href ? 'bg-muted px-3 py-2 text-primary' : 'px-3 py-2 text-muted-foreground'
+      activeRoute === href ? 'bg-muted px-3 py-2 text-primary' : 'px-3 py-2 text-foreground'
     } transition-all hover:text-primary`;
 
   return (
@@ -117,11 +117,11 @@ export function SideNav() {
         <div className="mt-auto p-4">
           <Button
             variant="outline"
-            className="w-full flex items-center gap-2"
+            className="w-full flex items-center gap-2 text-destructive"
             onClick={handleSignOut}
-            title="Sign out (your last activity will be recorded)"
+            title="Sign out of your account"
           >
-            <LogOut size="icon" className="h-5 w-5" />
+            <LogOut size="icon" className="h-5 w-5 text-destructive" />
             Sign out
           </Button>
         </div>
