@@ -7,6 +7,7 @@ export { incrementAssessmentCount } from './count-assessment';
 export { updateUserActivity } from './update-activity';
 export { deleteUserData } from './delete-user';
 export { shuffleArray } from './shuffle';
+export { handleError, getAuthErrorMessage } from './error-handler';
 
 // Export route protection components
 export { AuthenticatedRoute, UnauthenticatedRoute } from '@/middleware/route-protection';

@@ -23,7 +23,7 @@ import { Copy, Trash2, Loader2 } from 'lucide-react';
 import { usePagination } from '@/stores/use-pagination-store';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/services/firebase';
-import { deleteUserData } from '@/utils/delete-user';
+import { deleteUserData, handleError } from '@/utils';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { doc, getDoc } from 'firebase/firestore';
 import { AdminUserData } from '@/types/admin';
+import { toast } from '@/hooks/use-toast';
 
 function StatusBadge({ status }: { status: string }) {
   return status === 'active' ? (
@@ -108,8 +109,18 @@ export default function AdminDashboardUsersPage() {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert(`Copied to clipboard: ${text}`);
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast({
+          title: 'Copied to clipboard',
+          description: text,
+          variant: 'default',
+        });
+      })
+      .catch((error) => {
+        handleError(error, 'Failed to copy text to clipboard');
+      });
   };
 
   // Function to handle clicking the delete button
@@ -119,7 +130,11 @@ export default function AdminDashboardUsersPage() {
       const userDoc = await getDoc(doc(db, 'users', userId));
 
       if (!userDoc.exists()) {
-        alert('User not found');
+        toast({
+          title: 'Error',
+          description: 'User not found',
+          variant: 'destructive',
+        });
         return;
       }
 
@@ -132,8 +147,7 @@ export default function AdminDashboardUsersPage() {
       });
       setDeleteDialogOpen(true);
     } catch (error) {
-      console.error('Error preparing user deletion:', error);
-      alert('Could not prepare user for deletion');
+      handleError(error, 'Could not prepare user for deletion');
     }
   };
 
@@ -150,10 +164,16 @@ export default function AdminDashboardUsersPage() {
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== deletingUser.id));
 
       // Success message
-      alert(`User ${deletingUser.fullName} has been successfully deleted from the system.`);
+      toast({
+        title: 'User Deleted',
+        description: `User ${deletingUser.fullName} has been successfully deleted from the system.`,
+        variant: 'default',
+      });
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert(`Failed to delete user: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      handleError(
+        error,
+        `Failed to delete user: ${deletingUser.fullName}. Please try again or check permissions.`
+      );
     } finally {
       setDeleteDialogOpen(false);
       setDeletingUser(null);

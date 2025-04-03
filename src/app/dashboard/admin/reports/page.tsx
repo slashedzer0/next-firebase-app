@@ -41,6 +41,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { ReportData, UserDetails } from '@/types/admin';
+import { handleError } from '@/utils';
+import { toast } from '@/hooks/use-toast';
 
 function LevelBadge({ level }: { level: string }) {
   // Convert to capitalized format for badge display
@@ -108,7 +110,7 @@ export default function AdminDashboardReportsPage() {
         });
       }
     } catch (error) {
-      console.error('Error fetching user details:', error);
+      handleError(error, 'Could not load user details', { showToast: false });
       setUserDetails({
         email: 'Error loading data',
         nim: 'Error loading data',
@@ -137,12 +139,19 @@ export default function AdminDashboardReportsPage() {
         prevReports.filter((report) => report.id !== deletingAssessment.id)
       );
 
+      // Success notification
+      toast({
+        title: 'Assessment Deleted',
+        description: 'The assessment has been successfully removed.',
+        variant: 'default',
+      });
+
       // Reset state
       setDeleteDialogOpen(false);
       setDeletingAssessment(null);
     } catch (error) {
-      console.error('Error deleting assessment:', error);
-      alert('Failed to delete assessment. Please try again.');
+      handleError(error, 'Failed to delete assessment. Please try again.');
+      setDeleteDialogOpen(false);
     }
   };
 

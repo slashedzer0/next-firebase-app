@@ -7,6 +7,8 @@ import { ScanLoading } from './scan-loading';
 import { useScanStore } from '@/stores/use-scan-store';
 import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
+import { handleError } from '@/utils';
+import { toast } from '@/hooks/use-toast';
 
 export function ScanMain() {
   const {
@@ -36,8 +38,12 @@ export function ScanMain() {
 
     try {
       await saveResult(user.uid, () => {
-        // Success callback
-        alert(`Assessment saved successfully!`);
+        // Success notification
+        toast({
+          title: 'Success',
+          description: 'Assessment saved successfully!',
+          variant: 'default',
+        });
 
         // Correctly redirect based on user role and username
         if (user.role === 'admin') {
@@ -48,8 +54,7 @@ export function ScanMain() {
         }
       });
     } catch (error) {
-      console.error('Error saving assessment:', error);
-      alert('Failed to save assessment result');
+      handleError(error, 'Failed to save assessment result. Please try again.');
     }
   };
 

@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { settingsFormSchema, type SettingsFormValues } from '@/schemas/settings';
 import { useAuth } from '@/stores/use-auth-store';
-import { cn } from '@/utils';
+import { cn, handleError } from '@/utils';
+import { toast } from '@/hooks/use-toast';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -89,11 +90,14 @@ export default function UserDashboardSettingsPage() {
         phone: values.phone,
       });
 
-      // More informative success message
-      alert('Profile updated successfully! Your account status is now marked as active.');
+      // Success notification
+      toast({
+        title: 'Profile Updated',
+        description: 'Your profile has been updated and your account is now marked as active.',
+        variant: 'default',
+      });
     } catch (error) {
-      console.error('Form submission error', error);
-      alert('Failed to update profile. Please try again.');
+      handleError(error, 'Failed to update profile. Please check your information and try again.');
     }
   }
 
