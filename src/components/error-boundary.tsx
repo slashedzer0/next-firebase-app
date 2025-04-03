@@ -1,14 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useErrorStore } from '@/stores/use-error-store';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
 export function ErrorBoundary({ children }: ErrorBoundaryProps) {
-  const [error, setError] = useState<Error | null>(null);
+  const { error, setError } = useErrorStore();
 
   useEffect(() => {
     // Add global error handler for uncaught errors
@@ -36,9 +37,9 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handlePromiseRejection);
     };
-  }, []);
+  }, [setError]);
 
-  if (error) {
+  if (error instanceof Error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
         <div className="w-full max-w-md p-6 bg-background rounded-lg shadow-lg border">
@@ -48,14 +49,14 @@ export function ErrorBoundary({ children }: ErrorBoundaryProps) {
           </p>
           <div className="grid gap-4">
             <Button onClick={() => window.location.reload()} className="w-full">
-              Refresh the page
+              Refresh
             </Button>
             <Button
               onClick={() => (window.location.href = '/')}
               variant="outline"
               className="w-full"
             >
-              Go to homepage
+              Back to Home
             </Button>
           </div>
         </div>
