@@ -92,7 +92,7 @@ export default function UserDashboardSettingsPage() {
       // Success notification
       toast({
         title: 'Profile Updated',
-        description: 'Your profile has been updated and your account is now marked as active.',
+        description: 'Your profile has been updated.',
         type: 'success',
       });
     } catch (error) {
