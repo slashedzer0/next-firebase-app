@@ -71,14 +71,6 @@ export default function UserDashboardResultsPage() {
     currentPage * itemsPerPage
   );
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <Spinner className="h-8 w-8 text-muted-foreground" />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="flex items-center">
@@ -88,46 +80,52 @@ export default function UserDashboardResultsPage() {
         <Card className="bg-background">
           <CardHeader></CardHeader>
           <CardContent>
-            <div className="grid w-full md:block">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="[&>*]:whitespace-nowrap [&>td]:py-4">
-                      <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
-                        No
-                      </TableHead>
-                      <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
-                      <TableHead className="text-right">Confidence</TableHead>
-                      <TableHead className="text-right">Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedResults.length > 0 ? (
-                      paginatedResults.map((result) => (
-                        <TableRow key={result.id} className="group [&>td]:whitespace-nowrap">
-                          <TableCell className="pl-4 sticky left-0 bg-background font-medium">
-                            #{result.id}
-                          </TableCell>
-                          <TableCell className="sticky left-[100px] bg-background font-medium">
-                            <LevelBadge level={result.level} />
-                          </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {result.confidence}%
-                          </TableCell>
-                          <TableCell className="text-right font-medium">{result.date}</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                          No assessment results found.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+            {loading ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <Spinner className="h-8 w-8 text-muted-foreground" />
               </div>
-            </div>
+            ) : (
+              <div className="grid w-full md:block">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="[&>*]:whitespace-nowrap [&>td]:py-4">
+                        <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
+                          No
+                        </TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
+                        <TableHead className="text-right">Confidence</TableHead>
+                        <TableHead className="text-right">Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedResults.length > 0 ? (
+                        paginatedResults.map((result) => (
+                          <TableRow key={result.id} className="group [&>td]:whitespace-nowrap">
+                            <TableCell className="pl-4 sticky left-0 bg-background font-medium">
+                              #{result.id}
+                            </TableCell>
+                            <TableCell className="sticky left-[100px] bg-background font-medium">
+                              <LevelBadge level={result.level} />
+                            </TableCell>
+                            <TableCell className="text-right font-medium">
+                              {result.confidence}%
+                            </TableCell>
+                            <TableCell className="text-right font-medium">{result.date}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                            No assessment results found.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
           </CardContent>
           <CardFooter></CardFooter>
         </Card>
