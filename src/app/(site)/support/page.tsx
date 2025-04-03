@@ -1,6 +1,11 @@
 import { Mail, MapPin, Instagram, Phone } from 'lucide-react';
 import { ContactCard, ContactCardProps } from '@/components/card';
 import { JSX } from 'react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Support',
+};
 
 export default function SupportPage() {
   const contactInfo: Array<Omit<ContactCardProps, 'icon'> & { icon: JSX.Element }> = [

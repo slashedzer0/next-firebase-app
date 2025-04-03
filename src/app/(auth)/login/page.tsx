@@ -1,5 +1,10 @@
 import { LoginForm } from '@/app/(auth)/_components/form-login';
 import { Branding } from '@/components/branding';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Log in',
+};
 
 export default function LoginPage() {
   return (
