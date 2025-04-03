@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from 'firebase/firestore';
-import { generateUsername } from '@/utils';
+import { generateUsername, toast } from '@/utils';
 
 interface LoadingState {
   email: boolean;
@@ -71,10 +71,18 @@ export const useAuth = create<AuthState>((set, get) => ({
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       const authError = error as AuthError;
-      set({ error: authError.code });
+      toast({
+        title: 'Authentication Error',
+        description:
+          authError.code === 'auth/invalid-credential'
+            ? 'Invalid email or password'
+            : 'Failed to sign in. Please try again.',
+        type: 'error',
+      });
     } finally {
       set((state) => ({
         loading: { ...state.loading, email: false, overall: false },
+        error: null,
       }));
     }
   },
@@ -87,6 +95,11 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
       const provider = new GoogleAuthProvider();
       const { user } = await signInWithPopup(auth, provider);
+      toast({
+        title: 'Welcome back!',
+        description: 'Successfully signed in with Google.',
+        type: 'success',
+      });
 
       // Check if user already exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -142,12 +155,17 @@ export const useAuth = create<AuthState>((set, get) => ({
           });
         }
       }
-    } catch (error) {
-      const authError = error as AuthError;
-      set({ error: authError.code });
+    } catch (err) {
+      console.error('Google sign in error:', err);
+      toast({
+        title: 'Authentication Error',
+        description: 'Failed to sign in with Google. Please try again.',
+        type: 'error',
+      });
     } finally {
       set((state) => ({
         loading: { ...state.loading, google: false, overall: false },
+        error: null,
       }));
     }
   },
@@ -160,6 +178,11 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      toast({
+        title: 'Welcome!',
+        description: 'Your account has been created successfully.',
+        type: 'success',
+      });
 
       try {
         const username = await generateUsername(name);
@@ -191,17 +214,27 @@ export const useAuth = create<AuthState>((set, get) => ({
       } catch (error) {
         await user.delete();
         console.error('Firestore error:', error);
-        set({
-          error:
+        toast({
+          title: 'Error',
+          description:
             error instanceof Error ? error.message : 'Failed to save user data. Please try again.',
+          type: 'error',
         });
       }
     } catch (error) {
-      const authError = error as AuthError;
-      set({ error: authError.code });
+      console.error('Sign up error:', error);
+      toast({
+        title: 'Authentication Error',
+        description:
+          (error as AuthError).code === 'auth/email-already-in-use'
+            ? 'An account with this email already exists'
+            : 'Failed to create account. Please try again.',
+        type: 'error',
+      });
     } finally {
       set((state) => ({
         loading: { ...state.loading, email: false, overall: false },
+        error: null,
       }));
     }
   },
@@ -221,9 +254,8 @@ export const useAuth = create<AuthState>((set, get) => ({
       }
 
       await firebaseSignOut(auth);
-    } catch (error) {
-      const authError = error as AuthError;
-      set({ error: authError.code });
+    } catch (err) {
+      console.error('Sign out error:', err);
     }
   },
 

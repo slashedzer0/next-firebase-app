@@ -23,7 +23,6 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
     signUp,
     signInWithGoogle,
     loading: { email: emailLoading, google: googleLoading },
-    error,
     clearError,
     user,
   } = useAuth();
@@ -60,13 +59,6 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        {error && (
-          <div className="mx-6 mt-6 rounded-md bg-destructive/15 p-4 text-sm text-destructive">
-            {error === 'auth/email-already-in-use'
-              ? 'An account with this email already exists'
-              : 'An error occurred. Please try again.'}
-          </div>
-        )}
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Join today</CardTitle>
           <CardDescription>

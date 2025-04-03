@@ -23,7 +23,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     signInWithEmail,
     signInWithGoogle,
     loading: { email: emailLoading, google: googleLoading },
-    error,
     clearError,
     user,
   } = useAuth();
@@ -58,13 +57,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        {error && (
-          <div className="mx-6 mt-6 rounded-md bg-destructive/15 p-4 text-sm text-destructive">
-            {error === 'auth/invalid-credential'
-              ? 'Invalid email or password'
-              : 'An error occurred. Please try again.'}
-          </div>
-        )}
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>
