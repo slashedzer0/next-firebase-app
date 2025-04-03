@@ -28,7 +28,8 @@ export interface ScanQuestionsProps {
 }
 
 export interface ScanResultsProps {
-  result: AssessmentResult;
-  onSaveResult: () => Promise<void>;
-  isSaving: boolean;
+  result?: AssessmentResult;
+  onSaveResult?: () => Promise<void>;
+  isSaving?: boolean;
+  isLoading?: boolean;
 }

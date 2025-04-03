@@ -32,9 +32,24 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
-export function ScanResults({ result, onSaveResult, isSaving }: ScanResultsProps) {
+export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanResultsProps) {
   const user = useAuth((state) => state.user);
   const isAuthenticated = !!user;
+
+  if (isLoading) {
+    return (
+      <section className="py-32">
+        <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
+          <div className="flex flex-col items-center justify-center space-y-6 min-h-[400px]">
+            <Spinner className="size-8" />
+            <p className="text-lg text-muted-foreground">Calculating your results...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!result) return null;
 
   // Helper function to capitalize first letter
   const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -54,7 +69,7 @@ export function ScanResults({ result, onSaveResult, isSaving }: ScanResultsProps
             <p className="text-sm font-medium tracking-wider text-muted-foreground">
               Scan Complete
             </p>
-            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">Your Results</h2>
+            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">Your Score</h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <div className="space-y-4">
                 <div className="flex flex-col items-center space-y-2">
@@ -78,7 +93,7 @@ export function ScanResults({ result, onSaveResult, isSaving }: ScanResultsProps
                   {isSaving ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Saving
+                      Saving...
                     </>
                   ) : (
                     <>

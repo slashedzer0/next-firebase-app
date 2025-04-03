@@ -96,7 +96,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       const provider = new GoogleAuthProvider();
       const { user } = await signInWithPopup(auth, provider);
       toast({
-        title: 'Welcome back!',
+        title: 'Log in Successful',
         description: 'Successfully signed in with Google.',
         type: 'success',
       });
@@ -179,8 +179,8 @@ export const useAuth = create<AuthState>((set, get) => ({
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       toast({
-        title: 'Welcome!',
-        description: 'Your account has been created successfully.',
+        title: 'Welcome',
+        description: 'Your account has been created.',
         type: 'success',
       });
 

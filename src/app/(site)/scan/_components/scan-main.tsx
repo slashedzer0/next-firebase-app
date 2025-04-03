@@ -3,7 +3,6 @@
 import { ScanIntro } from './scan-intro';
 import { ScanQuestions } from './scan-questions';
 import { ScanResults } from './scan-results';
-import { ScanLoading } from './scan-loading';
 import { useScanStore } from '@/stores/use-scan-store';
 import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
@@ -39,7 +38,7 @@ export function ScanMain() {
       await saveResult(user.uid, () => {
         // Success notification
         toast({
-          title: 'Success',
+          title: 'Result Saved',
           description: 'Assessment saved successfully!',
           type: 'success',
         });
@@ -59,7 +58,10 @@ export function ScanMain() {
 
   return (
     <>
-      {step === 'loading' && <ScanLoading />}
+      {step === 'loading' && <ScanResults isLoading />}
+      {step === 'results' && result && (
+        <ScanResults result={result} onSaveResult={handleSaveResult} isSaving={isSaving} />
+      )}
       {step === 'intro' && <ScanIntro onStart={handleStart} />}
       {step === 'questions' && questions.length > 0 && (
         <ScanQuestions
@@ -70,9 +72,6 @@ export function ScanMain() {
           onBack={handleBack}
           initialSelected={getCurrentAnswer()}
         />
-      )}
-      {step === 'results' && result && (
-        <ScanResults result={result} onSaveResult={handleSaveResult} isSaving={isSaving} />
       )}
     </>
   );
