@@ -37,11 +37,7 @@ export function ScanMain() {
     try {
       await saveResult(user.uid, () => {
         // Success notification
-        toast({
-          title: 'Result Saved',
-          description: 'Assessment saved successfully!',
-          type: 'success',
-        });
+        toast.success('Assessment has been saved');
 
         // Correctly redirect based on user role and username
         if (user.role === 'admin') {

@@ -108,11 +108,7 @@ export default function AdminDashboardUsersPage() {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        toast({
-          title: 'Copied to clipboard',
-          description: text,
-          type: 'success',
-        });
+        toast.success('Email address copied to clipboard');
       })
       .catch((error) => {
         handleError(error, 'Failed to copy text to clipboard');
@@ -124,11 +120,7 @@ export default function AdminDashboardUsersPage() {
       const userDoc = await getDoc(doc(db, 'users', userId));
 
       if (!userDoc.exists()) {
-        toast({
-          title: 'Error',
-          description: 'User not found',
-          type: 'error',
-        });
+        toast.error('User not found');
         return;
       }
 
@@ -153,16 +145,9 @@ export default function AdminDashboardUsersPage() {
       await deleteUserData(deletingUser.id);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== deletingUser.id));
 
-      toast({
-        title: 'User Deleted',
-        description: `User ${deletingUser.fullName} has been successfully deleted from the system.`,
-        type: 'success',
-      });
+      toast.success(`${deletingUser.fullName} has been deleted`);
     } catch (error) {
-      handleError(
-        error,
-        `Failed to delete user: ${deletingUser.fullName}. Please try again or check permissions.`
-      );
+      handleError(error, `Failed to delete ${deletingUser.fullName}. Please try again.`);
     } finally {
       setDeleteDialogOpen(false);
       setDeletingUser(null);
