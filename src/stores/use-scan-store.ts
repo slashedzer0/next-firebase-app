@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Answer, AssessmentResult, Question } from '@/types/assessment';
 import { calculateCF, saveAssessmentResult, shuffleArray } from '@/utils';
-import { questions as originalQuestions } from '@/app/(site)/scan/page';
+import { scanQuestions as originalQuestions } from '@/types/questions';
 
 type ScanStep = 'intro' | 'questions' | 'results' | 'loading';
 
