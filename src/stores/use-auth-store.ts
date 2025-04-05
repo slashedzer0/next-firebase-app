@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from 'firebase/firestore';
-import { generateUsername, toast } from '@/utils';
+import { generateUsername, toast, getAuthErrorMessage } from '@/utils';
 
 interface LoadingState {
   email: boolean;
@@ -27,9 +27,9 @@ interface CustomUser extends User {
   role?: string;
   nim?: string;
   phone?: string;
-  assessmentCount?: number; // Add assessment counter
-  status?: string; // Add status field
-  lastActive?: Date | string; // Add lastActive field
+  assessmentCount?: number;
+  status?: string;
+  lastActive?: Date | string;
 }
 
 // Data type for the updateProfile function
@@ -70,15 +70,8 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      const authError = error as AuthError;
-      toast({
-        title: 'Authentication Error',
-        description:
-          authError.code === 'auth/invalid-credential'
-            ? 'Invalid email or password'
-            : 'Failed to sign in. Please try again.',
-        type: 'error',
-      });
+      const message = getAuthErrorMessage((error as AuthError).code);
+      toast.error(message);
     } finally {
       set((state) => ({
         loading: { ...state.loading, email: false, overall: false },
@@ -95,11 +88,6 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
       const provider = new GoogleAuthProvider();
       const { user } = await signInWithPopup(auth, provider);
-      toast({
-        title: 'Log in Successful',
-        description: 'Successfully signed in with Google.',
-        type: 'success',
-      });
 
       // Check if user already exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -125,11 +113,11 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             email: user.email,
             createdAt: serverTimestamp(),
-            lastActive: serverTimestamp(), // Add lastActive timestamp
+            lastActive: serverTimestamp(),
             userId: user.uid,
             photoURL: user.photoURL,
             role: 'student',
-            status: 'active', // Set initial status to active
+            status: 'active',
           });
 
           await setDoc(doc(db, 'usernames', username), {
@@ -142,7 +130,7 @@ export const useAuth = create<AuthState>((set, get) => ({
               username,
               fullName,
               role: 'student',
-              status: 'active', // Include status in state
+              status: 'active',
             },
           });
         } catch (error) {
@@ -157,11 +145,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       }
     } catch (err) {
       console.error('Google sign in error:', err);
-      toast({
-        title: 'Authentication Error',
-        description: 'Failed to sign in with Google. Please try again.',
-        type: 'error',
-      });
+      toast.error('Google sign in error');
     } finally {
       set((state) => ({
         loading: { ...state.loading, google: false, overall: false },
@@ -178,11 +162,7 @@ export const useAuth = create<AuthState>((set, get) => ({
       }));
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      toast({
-        title: 'Welcome',
-        description: 'Your account has been created.',
-        type: 'success',
-      });
+      toast.success('Your account has been created');
 
       try {
         const username = await generateUsername(name);
@@ -192,10 +172,10 @@ export const useAuth = create<AuthState>((set, get) => ({
           username,
           email,
           createdAt: serverTimestamp(),
-          lastActive: serverTimestamp(), // Add lastActive timestamp
+          lastActive: serverTimestamp(),
           userId: user.uid,
           role: 'student',
-          status: 'active', // Set initial status to active
+          status: 'active',
         });
 
         await setDoc(doc(db, 'usernames', username), {
@@ -208,29 +188,17 @@ export const useAuth = create<AuthState>((set, get) => ({
             username,
             fullName: name,
             role: 'student',
-            status: 'active', // Include status in state
+            status: 'active',
           },
         });
       } catch (error) {
         await user.delete();
         console.error('Firestore error:', error);
-        toast({
-          title: 'Error',
-          description:
-            error instanceof Error ? error.message : 'Failed to save user data. Please try again.',
-          type: 'error',
-        });
       }
     } catch (error) {
       console.error('Sign up error:', error);
-      toast({
-        title: 'Authentication Error',
-        description:
-          (error as AuthError).code === 'auth/email-already-in-use'
-            ? 'An account with this email already exists'
-            : 'Failed to create account. Please try again.',
-        type: 'error',
-      });
+      const message = getAuthErrorMessage((error as AuthError).code);
+      toast.error(message);
     } finally {
       set((state) => ({
         loading: { ...state.loading, email: false, overall: false },
@@ -241,7 +209,6 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     try {
-      // Update lastActive before signing out
       const { user } = get();
       if (user?.uid) {
         try {
@@ -289,10 +256,9 @@ export const useAuth = create<AuthState>((set, get) => ({
       if (data.nim !== undefined) updateData.nim = data.nim;
       if (data.phone !== undefined) updateData.phone = data.phone;
 
-      // Update user data and lastActive simultaneously
       await updateDoc(doc(db, 'users', user.uid), {
         ...updateData,
-        lastActive: serverTimestamp(), // Update lastActive on profile changes
+        lastActive: serverTimestamp(),
       });
 
       set((state) => ({
@@ -312,16 +278,13 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
 }));
 
-// Set up auth state listener
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
-      // Get additional user data from Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
 
-        // Update lastActive timestamp for student users
         if (userData.role === 'student') {
           await updateDoc(doc(db, 'users', user.uid), {
             lastActive: serverTimestamp(),
@@ -336,8 +299,8 @@ onAuthStateChanged(auth, async (user) => {
             role: userData.role,
             nim: userData.nim,
             phone: userData.phone,
-            assessmentCount: userData.assessmentCount || 0, // Include assessment count
-            status: userData.status || 'active', // Include status
+            assessmentCount: userData.assessmentCount || 0,
+            status: userData.status || 'active',
           },
           loading: { ...useAuth.getState().loading, initial: false },
         });

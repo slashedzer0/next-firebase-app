@@ -141,11 +141,7 @@ export default function AdminDashboardReportsPage() {
       );
 
       // Success notification
-      toast({
-        title: 'Assessment Deleted',
-        description: 'The assessment has been successfully removed.',
-        type: 'success',
-      });
+      toast.success('Assessment has been deleted');
 
       // Reset state
       setDeleteDialogOpen(false);

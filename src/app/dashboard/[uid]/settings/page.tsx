@@ -90,13 +90,9 @@ export default function UserDashboardSettingsPage() {
       });
 
       // Success notification
-      toast({
-        title: 'Profile Updated',
-        description: 'Your profile has been updated.',
-        type: 'success',
-      });
+      toast.success('Profile has been updated');
     } catch (error) {
-      handleError(error, 'Failed to update profile. Please check your information and try again.');
+      handleError(error, 'Failed to update profile. Please try again.');
     }
   }
 

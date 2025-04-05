@@ -24,7 +24,7 @@ const defaultConfig: ErrorConfig = {
  */
 export function handleError(
   error: unknown,
-  userMessage = 'Something went wrong. Please try again.',
+  userMessage = 'Something went wrong.',
   config: ErrorConfig = defaultConfig
 ) {
   const { logToConsole, showToast, throwError } = { ...defaultConfig, ...config };
@@ -39,11 +39,7 @@ export function handleError(
 
   // Show toast notification if enabled
   if (showToast) {
-    toast({
-      title: getCategoryTitle(errorDetails.category),
-      description: userMessage,
-      type: 'error',
-    });
+    toast.error(userMessage);
   }
 
   // Re-throw the error if requested
@@ -52,24 +48,6 @@ export function handleError(
   }
 
   return errorDetails;
-}
-
-/**
- * Get friendly category title for user display
- */
-function getCategoryTitle(category: ErrorCategory): string {
-  switch (category) {
-    case 'auth':
-      return 'Authentication Error';
-    case 'database':
-      return 'Data Error';
-    case 'network':
-      return 'Network Error';
-    case 'validation':
-      return 'Validation Error';
-    default:
-      return 'Error';
-  }
 }
 
 /**
@@ -134,16 +112,16 @@ export function getAuthErrorMessage(code: string): string {
   switch (code) {
     case 'auth/user-not-found':
     case 'auth/wrong-password':
-      return 'Invalid email or password. Please try again.';
+      return 'Invalid email or password';
     case 'auth/email-already-in-use':
-      return 'This email is already registered. Please use another email or try signing in.';
+      return 'This email is already registered';
     case 'auth/weak-password':
-      return 'Password is too weak. Please use a stronger password.';
+      return 'Password is too weak';
     case 'auth/invalid-email':
-      return 'Invalid email address format.';
+      return 'Invalid email address';
     case 'auth/too-many-requests':
-      return 'Too many unsuccessful login attempts. Please try again later.';
+      return 'Too many unsuccessful login attempts';
     default:
-      return 'An authentication error occurred. Please try again.';
+      return 'An authentication error occurred';
   }
 }
