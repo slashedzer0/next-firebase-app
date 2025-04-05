@@ -197,7 +197,8 @@ export const useAuth = create<AuthState>((set, get) => ({
       }
     } catch (error) {
       console.error('Sign up error:', error);
-      toast.error('Email already in use');
+      const message = getAuthErrorMessage((error as AuthError).code);
+      toast.error(message);
     } finally {
       set((state) => ({
         loading: { ...state.loading, email: false, overall: false },
