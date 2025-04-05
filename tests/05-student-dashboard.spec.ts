@@ -87,7 +87,7 @@ test('TC-23', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Phone number' }).click();
   await page.getByRole('textbox', { name: 'Phone number' }).fill('081908987447');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
-  await expect(page.getByRole('listitem').first()).toBeVisible();
+  await expect(page.getByRole('region').getByRole('listitem')).toBeVisible();
 });
 
 test('TC-24', async ({ page }) => {
@@ -115,7 +115,7 @@ test('TC-24', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Phone number' }).click();
   await page.getByRole('textbox', { name: 'Phone number' }).fill('081908987447');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
-  await expect(page.getByRole('listitem').first()).toBeVisible();
+  await expect(page.getByRole('region').getByRole('listitem')).toBeVisible();
 });
 
 test('TC-25', async ({ page }) => {
