@@ -138,7 +138,6 @@ export default function UserDashboardSettingsPage() {
                             <FormControl>
                               <Input
                                 type="text"
-                                placeholder="Enter your first name"
                                 className={cn(
                                   getFieldStatus(field.value, /^[a-zA-Z\s]*$/) === 'invalid' &&
                                     'border-red-500'
@@ -165,7 +164,6 @@ export default function UserDashboardSettingsPage() {
                             <FormControl>
                               <Input
                                 type="text"
-                                placeholder="Enter your last name"
                                 className={cn(
                                   getFieldStatus(field.value || '', /^[a-zA-Z\s]*$/) ===
                                     'invalid' && 'border-red-500'
@@ -191,12 +189,7 @@ export default function UserDashboardSettingsPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="Enter your email"
-                            disabled={true}
-                            {...field}
-                          />
+                          <Input type="email" disabled={true} {...field} />
                         </FormControl>
                       </FormItem>
                     )}
@@ -211,7 +204,6 @@ export default function UserDashboardSettingsPage() {
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your NIM"
                             className={cn(
                               getFieldStatus(field.value || '', /^\d+$/) === 'invalid' &&
                                 'border-red-500'
