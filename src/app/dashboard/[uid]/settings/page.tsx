@@ -227,7 +227,6 @@ export default function UserDashboardSettingsPage() {
                         <FormControl>
                           <Input
                             type="tel"
-                            placeholder="+62"
                             className={cn(
                               getFieldStatus(field.value || '', /^\d+$/) === 'invalid' &&
                                 'border-red-500'
