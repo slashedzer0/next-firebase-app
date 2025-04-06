@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { settingsFormSchema, type SettingsFormValues } from '@/schemas/settings';
+import { Spinner } from '@/components/spinner';
 import { useAuth } from '@/stores/use-auth-store';
 import { cn, handleError, toast } from '@/utils';
 
@@ -254,7 +255,14 @@ export default function UserDashboardSettingsPage() {
                       Reset
                     </Button>
                     <Button type="submit" disabled={loading.overall || !form.formState.isValid}>
-                      {loading.overall ? 'Saving...' : 'Save changes'}
+                      {loading.overall ? (
+                        <>
+                          <Spinner className="mr-2 h-4 w-4" />
+                          Saving...
+                        </>
+                      ) : (
+                        'Save changes'
+                      )}
                     </Button>
                   </div>
                 </form>
