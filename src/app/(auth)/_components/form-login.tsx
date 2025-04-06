@@ -128,6 +128,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                           <Input
                             id="password"
                             type={isPasswordVisible ? 'text' : 'password'}
+                            placeholder={isPasswordVisible ? 'password' : '••••••••'}
                             {...field}
                           />
                         </FormControl>
