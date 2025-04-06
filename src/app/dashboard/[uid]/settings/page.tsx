@@ -146,7 +146,7 @@ export default function UserDashboardSettingsPage() {
                               />
                             </FormControl>
                             {field.value && (
-                              <FormMessage>
+                              <FormMessage className="text-xs">
                                 {getNameValidationMessage(field.value, 'First name')}
                               </FormMessage>
                             )}
@@ -172,7 +172,7 @@ export default function UserDashboardSettingsPage() {
                               />
                             </FormControl>
                             {field.value && (
-                              <FormMessage>
+                              <FormMessage className="text-xs">
                                 {getNameValidationMessage(field.value, 'Last name')}
                               </FormMessage>
                             )}
@@ -212,7 +212,9 @@ export default function UserDashboardSettingsPage() {
                           />
                         </FormControl>
                         {field.value && (
-                          <FormMessage>{getNimValidationMessage(field.value)}</FormMessage>
+                          <FormMessage className="text-xs">
+                            {getNimValidationMessage(field.value)}
+                          </FormMessage>
                         )}
                       </FormItem>
                     )}
@@ -235,7 +237,9 @@ export default function UserDashboardSettingsPage() {
                           />
                         </FormControl>
                         {field.value && (
-                          <FormMessage>{getPhoneValidationMessage(field.value)}</FormMessage>
+                          <FormMessage className="text-xs">
+                            {getPhoneValidationMessage(field.value)}
+                          </FormMessage>
                         )}
                       </FormItem>
                     )}

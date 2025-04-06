@@ -87,7 +87,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               {googleLoading ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
-                  Signing in...
+                  Logging in...
                 </>
               ) : (
                 'Log in with Google'
@@ -113,7 +113,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                       <FormControl>
                         <Input id="email" type="email" placeholder="name@example.com" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -147,7 +147,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                           <span className="sr-only">Toggle password visibility</span>
                         </Button>
                       </div>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -155,7 +155,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   {emailLoading ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Signing in...
+                      Logging in...
                     </>
                   ) : (
                     'Log in'

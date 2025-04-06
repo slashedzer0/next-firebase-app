@@ -115,7 +115,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                       <FormControl>
                         <Input id="name" placeholder="John Doe" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -128,7 +128,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                       <FormControl>
                         <Input id="email" type="email" placeholder="name@example.com" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
@@ -162,7 +162,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                           <span className="sr-only">Toggle password visibility</span>
                         </Button>
                       </div>
-                      <FormMessage />
+                      <FormMessage className="text-xs" />
                     </FormItem>
                   )}
                 />
