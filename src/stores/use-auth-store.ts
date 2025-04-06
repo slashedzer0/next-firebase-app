@@ -136,10 +136,7 @@ export const useAuth = create<AuthState>((set, get) => ({
         } catch (error) {
           console.error('Error saving Google user data to Firestore:', error);
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to save user data. Please try again.',
+            error: error instanceof Error ? error.message : 'Failed to save user data.',
           });
         }
       }

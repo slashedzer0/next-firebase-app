@@ -92,7 +92,7 @@ export default function UserDashboardSettingsPage() {
       // Success notification
       toast.success('Profile has been updated');
     } catch (error) {
-      handleError(error, 'Failed to update profile. Please try again.');
+      handleError(error, 'Failed to update profile.');
     }
   }
 

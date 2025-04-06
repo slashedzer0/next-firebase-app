@@ -48,7 +48,7 @@ export function ScanMain() {
         }
       });
     } catch (error) {
-      handleError(error, 'Failed to save assessment result. Please try again.');
+      handleError(error, 'Failed to save assessment result.');
     }
   };
 

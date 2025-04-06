@@ -147,7 +147,7 @@ export default function AdminDashboardReportsPage() {
       setDeleteDialogOpen(false);
       setDeletingAssessment(null);
     } catch (error) {
-      handleError(error, 'Failed to delete assessment. Please try again.');
+      handleError(error, 'Failed to delete assessment.');
       setDeleteDialogOpen(false);
     }
   };
