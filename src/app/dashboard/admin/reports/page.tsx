@@ -76,6 +76,7 @@ function LevelBadge({ level }: { level: string }) {
 export default function AdminDashboardReportsPage() {
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
 
   // Add state for the dialog
@@ -132,6 +133,8 @@ export default function AdminDashboardReportsPage() {
   const handleDeleteConfirm = async () => {
     if (!deletingAssessment) return;
 
+    setIsDeleting(true);
+
     try {
       await deleteDoc(doc(db, 'assessments', deletingAssessment.id));
 
@@ -146,8 +149,9 @@ export default function AdminDashboardReportsPage() {
       // Reset state
       setDeleteDialogOpen(false);
       setDeletingAssessment(null);
+      setIsDeleting(false);
     } catch (error) {
-      handleError(error, 'Failed to delete assessment. Please try again.');
+      handleError(error, 'Failed to delete assessment.');
       setDeleteDialogOpen(false);
     }
   };
@@ -354,11 +358,18 @@ export default function AdminDashboardReportsPage() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <div className="flex justify-center md:justify-end gap-2 w-full">
-                <Button variant="outline" onClick={handleDeleteCancel}>
+                <Button variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDeleteConfirm}>
-                  Delete
+                <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
+                  {isDeleting ? (
+                    <>
+                      <Spinner className="mr-2 h-4 w-4" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
                 </Button>
               </div>
             </AlertDialogFooter>

@@ -147,7 +147,7 @@ export default function AdminDashboardUsersPage() {
 
       toast.success(`${deletingUser.fullName} has been deleted`);
     } catch (error) {
-      handleError(error, `Failed to delete ${deletingUser.fullName}. Please try again.`);
+      handleError(error, `Failed to delete ${deletingUser.fullName}.`);
     } finally {
       setDeleteDialogOpen(false);
       setDeletingUser(null);

@@ -149,11 +149,11 @@ function calculateConsistency(answers: Answer[]): number {
  * Menghitung tingkat keyakinan akhir berdasarkan CF dan konsistensi
  */
 function calculateConfidence(cf: number, consistency: number): number {
-  // Combine absolute CF value with consistency
-  const rawConfidence = Math.abs(cf) * 0.8 + consistency * 0.2;
+  // Combine absolute CF value with consistency and clamp between 0 and 1
+  const rawConfidence = Math.min(1, Math.abs(cf) * 0.8 + consistency * 0.2);
 
-  // Scale to 0-100%
-  return Math.round(rawConfidence * 100);
+  // Scale to 0-100% and ensure it doesn't exceed 100
+  return Math.min(100, Math.round(rawConfidence * 100));
 }
 
 /**

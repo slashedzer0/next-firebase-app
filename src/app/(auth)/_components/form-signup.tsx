@@ -143,6 +143,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                           <Input
                             id="password"
                             type={isPasswordVisible ? 'text' : 'password'}
+                            placeholder={isPasswordVisible ? 'password' : '••••••••'}
                             {...field}
                           />
                         </FormControl>
