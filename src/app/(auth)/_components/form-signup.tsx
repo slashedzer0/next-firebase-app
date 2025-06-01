@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormData } from '@/schemas/auth';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { useTranslations } from 'next-intl';
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter();
@@ -30,6 +31,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 
   const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
   const togglePasswordVisibility = usePasswordVisibility((state) => state.toggleVisibility);
+  const t = useTranslations('AuthPage');
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -61,11 +63,11 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Join today</CardTitle>
+          <CardTitle className="text-xl">{t('signupTitle')}</CardTitle>
           <CardDescription>
-            Already have an account?{' '}
+            {t('signupSubtitle')}{' '}
             <Link href="/login" className="text-primary underline">
-              Log in
+              {t('signupLoginLink')}
             </Link>
           </CardDescription>
         </CardHeader>
@@ -81,7 +83,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
             >
               <Image
                 src="/google.svg"
-                alt="Sign up with Google"
+                alt={t('signupWithGoogle')}
                 width={20}
                 height={20}
                 className="inline-block mr-2"
@@ -89,17 +91,17 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
               {googleLoading ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
-                  Signing up...
+                  {t('signupLoading')}
                 </>
               ) : (
-                'Sign up with Google'
+                t('signupWithGoogle')
               )}
             </Button>
           </div>
 
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 bg-card px-2 text-muted-foreground">
-              Or continue with
+              {t('signupOrContinue')}
             </span>
           </div>
 
@@ -111,9 +113,9 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="name">Full name</Label>
+                      <Label htmlFor="name">{t('signupName')}</Label>
                       <FormControl>
-                        <Input id="name" placeholder="John Doe" {...field} />
+                        <Input id="name" placeholder={t('signupNamePlaceholder')} {...field} />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -124,9 +126,14 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="email">Email address</Label>
+                      <Label htmlFor="email">{t('signupEmail')}</Label>
                       <FormControl>
-                        <Input id="email" type="email" placeholder="name@example.com" {...field} />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder={t('signupEmailPlaceholder')}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -137,7 +144,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">{t('signupPassword')}</Label>
                       <div className="relative">
                         <FormControl>
                           <Input
@@ -159,7 +166,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                           ) : (
                             <Eye className="h-4 w-4" />
                           )}
-                          <span className="sr-only">Toggle password visibility</span>
+                          <span className="sr-only">{t('signupTogglePassword')}</span>
                         </Button>
                       </div>
                       <FormMessage className="text-xs" />
@@ -170,10 +177,10 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   {emailLoading ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Signing up...
+                      {t('signupLoading')}
                     </>
                   ) : (
-                    'Sign up'
+                    t('signupButton')
                   )}
                 </Button>
               </div>
@@ -182,8 +189,8 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
-        <a href="#">Privacy Policy</a>.
+        {t('signupTerms')} <a href="#">{t('signupTermsLink')}</a> and{' '}
+        <a href="#">{t('signupPrivacyLink')}</a>.
       </div>
     </div>
   );

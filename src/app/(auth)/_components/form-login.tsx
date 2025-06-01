@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@/schemas/auth';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { useTranslations } from 'next-intl';
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const router = useRouter();
@@ -29,6 +30,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   } = useAuth();
   const isPasswordVisible = usePasswordVisibility((state) => state.isVisible);
   const togglePasswordVisibility = usePasswordVisibility((state) => state.toggleVisibility);
+  const t = useTranslations('AuthPage');
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -59,11 +61,11 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">{t('loginTitle')}</CardTitle>
           <CardDescription>
-            Don&apos;t have an account?{' '}
+            {t('loginSubtitle')}{' '}
             <Link href="/signup" className="text-primary underline">
-              Sign up
+              {t('loginSignupLink')}
             </Link>
           </CardDescription>
         </CardHeader>
@@ -79,7 +81,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             >
               <Image
                 src="/google.svg"
-                alt="Log in with Google"
+                alt={t('loginWithGoogle')}
                 width={20}
                 height={20}
                 className="inline-block mr-2"
@@ -87,17 +89,17 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               {googleLoading ? (
                 <>
                   <Spinner className="mr-2 h-4 w-4" />
-                  Logging in...
+                  {t('loginLoading')}
                 </>
               ) : (
-                'Log in with Google'
+                t('loginWithGoogle')
               )}
             </Button>
           </div>
 
           <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
             <span className="relative z-10 bg-card px-2 text-muted-foreground">
-              Or continue with
+              {t('loginOrContinue')}
             </span>
           </div>
 
@@ -109,7 +111,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">{t('loginEmail')}</Label>
                       <FormControl>
                         <Input id="email" type="email" placeholder="name@example.com" {...field} />
                       </FormControl>
@@ -122,7 +124,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">{t('loginPassword')}</Label>
                       <div className="relative">
                         <FormControl>
                           <Input
@@ -144,7 +146,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                           ) : (
                             <Eye className="h-4 w-4" />
                           )}
-                          <span className="sr-only">Toggle password visibility</span>
+                          <span className="sr-only">{t('loginTogglePassword')}</span>
                         </Button>
                       </div>
                       <FormMessage className="text-xs" />
@@ -155,10 +157,10 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                   {emailLoading ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Logging in...
+                      {t('loginLoading')}
                     </>
                   ) : (
-                    'Log in'
+                    t('loginButton')
                   )}
                 </Button>
               </div>
@@ -167,8 +169,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:text-primary  ">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
-        <a href="#">Privacy Policy</a>.
+        {t('loginTerms')} <a href="#">{t('loginTermsLink')}</a> and{' '}
+        <a href="#">{t('loginPrivacyLink')}</a>.
       </div>
     </div>
   );
