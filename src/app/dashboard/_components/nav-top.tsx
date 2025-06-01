@@ -9,9 +9,10 @@ import {
   Settings,
   ScanText,
   LogOut,
+  Languages,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useTransition, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/stores/use-auth-store';
@@ -37,9 +38,11 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useUserDataStore } from '@/stores/use-user-data-store';
 import React from 'react';
+import { setUserLocale } from '@/i18n/locale';
 
 export function TopNav() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, signOut } = useAuth();
   const { userData, fetchUserData } = useUserDataStore();
   const [open, setOpen] = useState(false);
@@ -122,6 +125,15 @@ export function TopNav() {
   // Get filtered navigation items based on user role
   const filteredNavItems = navItems.filter((item) => item.roles.includes(userRole));
 
+  const [, startTransition] = useTransition();
+
+  const handleLocaleChange = (locale: 'en' | 'id') => {
+    startTransition(async () => {
+      await setUserLocale(locale);
+      router.replace(pathname); // trigger SSR re-render, next-intl akan baca cookie baru
+    });
+  };
+
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
       <SheetNav />
@@ -181,6 +193,36 @@ export function TopNav() {
           </CommandList>
         </CommandDialog>
       </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="relative h-8 w-8 rounded-full flex items-center justify-center"
+          >
+            <Languages className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-40" align="end" forceMount>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={async () => {
+                await handleLocaleChange('en');
+              }}
+              className="flex items-center gap-2"
+            >
+              English
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                await handleLocaleChange('id');
+              }}
+              className="flex items-center gap-2"
+            >
+              Indonesia
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ModeToggle />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
