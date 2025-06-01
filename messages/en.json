@@ -7,5 +7,18 @@
     "heroDisclaimer": "Not a substitute for professional mental health support.",
     "heroDisclaimerLink": "Click here",
     "heroDisclaimerSuffix": "to learn more."
+  },
+  "FeaturesSection": {
+    "sectionLabel": "Key Features",
+    "sectionTitle": "Simple tools to manage your academic stress",
+    "sectionDescription": "Our app focuses on what matters most to students - easy tracking and monitoring of stress levels during your academic journey. No complicated features, just the essentials you need.",
+    "easyScanningTitle": "Easy Scanning",
+    "easyScanningDesc": "Quick and simple stress measurement scans that you can complete in minutes. Perfect for busy students on the go.",
+    "instantResultsTitle": "Instant Results",
+    "instantResultsDesc": "Get immediate feedback on your stress levels after each scan. Understand where you stand at any moment.",
+    "progressTrackingTitle": "Progress Tracking",
+    "progressTrackingDesc": "Save all your scan results and track changes over time. Identify patterns and trends in your stress levels.",
+    "zeroSetupTitle": "Zero Setup",
+    "zeroSetupDesc": "Start measuring your stress levels immediately without creating an account. Quick and hassle-free access to core features."
   }
 }

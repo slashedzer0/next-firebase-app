@@ -2,10 +2,23 @@
   "HeroSection": {
     "heroCTALink": "Cara kerja",
     "heroTitle": "Pantau tingkat stres kamu dengan mudah.",
-    "heroDescription": "Cara sederhana buat kamu, mahasiswa, untuk mengukur, memantau, dan memahami tingkat stres sepanjang tahun akademik. Simpan hasil asesmen dan lihat perkembanganmu dari waktu ke waktu.",
+    "heroDescription": "Cara sederhana buat kamu, mahasiswa, untuk mengukur, memantau, dan memahami tingkat stres sepanjang tahun akademik. Simpan hasil scan dan lihat perkembanganmu dari waktu ke waktu.",
     "heroCTAButton": "Mulai Sekarang",
     "heroDisclaimer": "Bukan pengganti dukungan kesehatan mental profesional.",
     "heroDisclaimerLink": "Klik di sini",
     "heroDisclaimerSuffix": "untuk mempelajari lebih lanjut."
+  },
+  "FeaturesSection": {
+    "sectionLabel": "Fitur Utama",
+    "sectionTitle": "Alat sederhana untuk mengelola stres akademikmu",
+    "sectionDescription": "Aplikasi kami fokus pada hal yang paling penting untuk mahasiswa - pelacakan dan pemantauan tingkat stres yang mudah selama perjalanan akademikmu. Tidak ada fitur rumit, hanya yang esensial.",
+    "easyScanningTitle": "Scan Mudah",
+    "easyScanningDesc": "Scan pengukuran stres yang cepat dan sederhana, bisa kamu lakukan dalam hitungan menit. Cocok untuk mahasiswa yang sibuk.",
+    "instantResultsTitle": "Hasil Instan",
+    "instantResultsDesc": "Dapatkan umpan balik langsung tentang tingkat stresmu setelah setiap scan. Ketahui posisimu kapan saja.",
+    "progressTrackingTitle": "Pantau Perkembangan",
+    "progressTrackingDesc": "Simpan semua hasil scan dan pantau perubahan dari waktu ke waktu. Temukan pola dan tren tingkat stresmu.",
+    "zeroSetupTitle": "Tanpa Daftar",
+    "zeroSetupDesc": "Langsung ukur tingkat stres tanpa perlu membuat akun. Akses fitur utama dengan cepat dan mudah."
   }
 }
