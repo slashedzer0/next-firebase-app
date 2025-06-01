@@ -123,5 +123,19 @@
     "signupTerms": "By clicking continue, you agree to our",
     "signupTermsLink": "Terms of Service",
     "signupPrivacyLink": "Privacy Policy"
+  },
+  "DashboardNav": {
+    "dashboard": "Dashboard",
+    "startScan": "Start Scan",
+    "scanResults": "Scan Results",
+    "scanReports": "Scan Reports",
+    "users": "Users",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found.",
+    "navigation": "Navigation",
+    "english": "English",
+    "indonesian": "Indonesia"
   }
 }

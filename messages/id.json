@@ -114,14 +114,28 @@
     "signupLoading": "Sedang mendaftar...",
     "signupOrContinue": "Atau lanjutkan dengan",
     "signupName": "Nama lengkap",
-    "signupNamePlaceholder": "John Doe",
+    "signupNamePlaceholder": "Budi Santoso",
     "signupEmail": "Alamat email",
-    "signupEmailPlaceholder": "name@example.com",
+    "signupEmailPlaceholder": "nama@email.com",
     "signupPassword": "Kata sandi",
     "signupTogglePassword": "Tampilkan/sembunyikan sandi",
     "signupButton": "Daftar",
     "signupTerms": "Dengan melanjutkan, kamu setuju dengan",
     "signupTermsLink": "Syarat Layanan",
     "signupPrivacyLink": "Kebijakan Privasi"
+  },
+  "DashboardNav": {
+    "dashboard": "Dasbor",
+    "startScan": "Mulai Scan",
+    "scanResults": "Hasil Scan",
+    "scanReports": "Laporan Scan",
+    "users": "Pengguna",
+    "settings": "Pengaturan",
+    "signOut": "Keluar",
+    "searchPlaceholder": "Cari...",
+    "noResults": "Tidak ada hasil.",
+    "navigation": "Navigasi",
+    "english": "English",
+    "indonesian": "Indonesia"
   }
 }

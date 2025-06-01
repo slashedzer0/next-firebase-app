@@ -41,6 +41,7 @@ import { useUserDataStore } from '@/stores/use-user-data-store';
 import React from 'react';
 import { setUserLocale } from '@/i18n/locale';
 import { useLocaleStore } from '@/stores/use-locale-store';
+import { useTranslations } from 'next-intl';
 
 export function TopNav() {
   const router = useRouter();
@@ -66,40 +67,41 @@ export function TopNav() {
   const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
+  const t = useTranslations('DashboardNav');
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: 'Dashboard',
+      label: 'dashboard',
       icon: <LayoutGrid className="h-4 w-4" />,
       roles: ['student', 'admin'],
     },
     {
       href: '/scan',
-      label: 'Start Scan',
+      label: 'startScan',
       icon: <CircleGauge className="h-4 w-4" />,
       roles: ['student'],
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: 'Scan Results',
+      label: 'scanResults',
       icon: <FileChartColumn className="h-4 w-4" />,
       roles: ['student'],
     },
     {
       href: '/dashboard/admin/reports',
-      label: 'Scan Reports',
+      label: 'scanReports',
       icon: <ScanText className="h-4 w-4" />,
       roles: ['admin'],
     },
     {
       href: '/dashboard/admin/users',
-      label: 'Users',
+      label: 'users',
       icon: <Users className="h-4 w-4" />,
       roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: 'Settings',
+      label: 'settings',
       icon: <Settings className="h-4 w-4" />,
       roles: ['student'],
     },
@@ -155,16 +157,16 @@ export function TopNav() {
           onClick={() => setOpen(true)}
         >
           <Search className="mr-2 h-4 w-4" />
-          <span>Search...</span>
+          <span>{t('searchPlaceholder')}</span>
           <kbd className="pointer-events-none absolute right-2 top-[50%] hidden h-5 translate-y-[-50%] select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono font-medium opacity-100 sm:flex">
             <span className="text-xs">Ctrl</span>K
           </kbd>
         </Button>
         <CommandDialog open={open} onOpenChange={setOpen}>
-          <CommandInput placeholder="Search..." />
+          <CommandInput placeholder={t('searchPlaceholder')} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Navigation">
+            <CommandEmpty>{t('noResults')}</CommandEmpty>
+            <CommandGroup heading={t('navigation')}>
               {filteredNavItems.map((item, index) => (
                 <CommandItem
                   key={index}
@@ -185,7 +187,7 @@ export function TopNav() {
                     })}
                   </div>
                   <span className="opacity-100" style={{ color: 'var(--foreground)', opacity: 1 }}>
-                    {item.label}
+                    {t(item.label)}
                   </span>
                 </CommandItem>
               ))}
@@ -198,7 +200,7 @@ export function TopNav() {
                 style={{ opacity: 1 }}
               >
                 <LogOut className="mr-2 h-4 w-4 opacity-100" style={{ opacity: 1 }} />
-                <span style={{ opacity: 1 }}>Sign out</span>
+                <span style={{ opacity: 1 }}>{t('signOut')}</span>
               </CommandItem>
             </CommandGroup>
           </CommandList>
@@ -227,7 +229,7 @@ export function TopNav() {
               ) : (
                 <span className="inline-block w-4" />
               )}
-              English
+              {t('english')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
@@ -241,7 +243,7 @@ export function TopNav() {
               ) : (
                 <span className="inline-block w-4" />
               )}
-              Indonesia
+              {t('indonesian')}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -286,7 +288,7 @@ export function TopNav() {
                   className="flex items-center gap-2"
                 >
                   {item.icon}
-                  {item.label}
+                  {t(item.label)}
                 </DropdownMenuItem>
               ))}
           </DropdownMenuGroup>
@@ -297,7 +299,7 @@ export function TopNav() {
             title="Sign out of your account"
           >
             <LogOut className="h-4 w-4 text-destructive group-hover:text-white" />
-            Sign out
+            {t('signOut')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
