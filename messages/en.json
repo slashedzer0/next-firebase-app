@@ -81,6 +81,16 @@
     "resultsSave": "Save Result",
     "resultsLogin": "Log in",
     "resultsBackHome": "Back to Home",
-    "resultsCalculating": "Calculating your results..."
+    "resultsCalculating": "Calculating your results...",
+    "q1": "I feel overwhelmed by daily tasks",
+    "q2": "I find it difficult to relax",
+    "q3": "I experience physical tension or pain",
+    "q4": "My sleep pattern is disturbed",
+    "q5": "I have trouble concentrating",
+    "q6": "I feel irritable or short-tempered",
+    "q7": "I worry excessively about things",
+    "q8": "I feel tired or have low energy",
+    "q9": "I have difficulty making decisions",
+    "q10": "I feel pressured by time constraints"
   }
 }

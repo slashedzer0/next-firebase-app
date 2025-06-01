@@ -50,7 +50,7 @@ export function ScanQuestions({
               </CardHeader>
               <CardContent className="grid gap-6">
                 <h2 className="text-lg font-medium text-center break-words w-full">
-                  {question.text}
+                  {t(question.text)}
                 </h2>
 
                 <div className="grid gap-2">
