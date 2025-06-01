@@ -1,5 +1,11 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "HeroSection": {
+    "heroCTALink": "How it works",
+    "heroTitle": "Track your stress levels with ease.",
+    "heroDescription": "A simple way for students to measure, track, and understand their stress levels throughout the academic year. Save your scan results and monitor your progress over time.",
+    "heroCTAButton": "Get Started",
+    "heroDisclaimer": "Not a substitute for professional mental health support.",
+    "heroDisclaimerLink": "Click here",
+    "heroDisclaimerSuffix": "to learn more."
   }
 }

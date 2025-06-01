@@ -10,3 +10,6 @@ export const getConfig = getRequestConfig(async () => {
     messages: (await import(`../../messages/${locale}.json`)).default,
   };
 });
+
+// eslint-disable-next-line import/no-default-export
+export default getConfig;
