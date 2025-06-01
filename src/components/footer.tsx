@@ -1,19 +1,22 @@
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+  const t = useTranslations('Footer');
   return (
     <footer className="border-t py-6">
       <div className="max-w-screen-2xl mx-auto px-4 flex flex-col items-center gap-4">
         {/* Branding */}
         <Link href="#">
-          <span className="sr-only">MindEase</span>
-          <p className="text-xl font-extrabold tracking-tight text-foreground">MindEase</p>
+          <span className="sr-only">{t('brand')}</span>
+          <p className="text-xl font-extrabold tracking-tight text-foreground">{t('brand')}</p>
         </Link>
 
         {/* Description */}
         <p className="text-center text-sm text-muted-foreground px-4">
-          This project is created for academic purposes
-          <br />© 2025 Doni Wicaksono
+          {t('desc')}
+          <br />
+          {t('copyright')}
         </p>
 
         {/* Links */}
@@ -23,7 +26,7 @@ export function Footer() {
             target="_blank"
             className="text-sm font-medium underline transition-all hover:text-muted-foreground"
           >
-            GitHub
+            {t('github')}
           </Link>
 
           {/* Separator */}
@@ -34,7 +37,7 @@ export function Footer() {
             target="_blank"
             className="text-sm font-medium underline transition-all hover:text-muted-foreground"
           >
-            Contact
+            {t('contact')}
           </Link>
 
           {/* Separator */}
@@ -45,7 +48,7 @@ export function Footer() {
             target="_blank"
             className="text-sm font-medium underline transition-all hover:text-muted-foreground"
           >
-            Website
+            {t('website')}
           </Link>
         </div>
       </div>

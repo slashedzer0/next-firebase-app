@@ -2,7 +2,7 @@
   "HeroSection": {
     "heroCTALink": "Cara kerja",
     "heroTitle": "Pantau tingkat stres kamu dengan mudah.",
-    "heroDescription": "Cara sederhana buat kamu, mahasiswa, untuk mengukur, memantau, dan memahami tingkat stres sepanjang tahun akademik. Simpan hasil scan dan lihat perkembanganmu dari waktu ke waktu.",
+    "heroDescription": "Cara sederhana buat kamu, mahasiswa, untuk mengukur, memantau, dan memahami tingkat stres sepanjang tahun akademik. Simpan hasil asesmen dan lihat perkembanganmu dari waktu ke waktu.",
     "heroCTAButton": "Mulai Sekarang",
     "heroDisclaimer": "Bukan pengganti dukungan kesehatan mental profesional.",
     "heroDisclaimerLink": "Klik di sini",
@@ -20,5 +20,20 @@
     "progressTrackingDesc": "Simpan semua hasil scan dan pantau perubahan dari waktu ke waktu. Temukan pola dan tren tingkat stresmu.",
     "zeroSetupTitle": "Tanpa Daftar",
     "zeroSetupDesc": "Langsung ukur tingkat stres tanpa perlu membuat akun. Akses fitur utama dengan cepat dan mudah."
+  },
+  "Header": {
+    "about": "Tentang",
+    "support": "Dukungan",
+    "dashboard": "Dasbor",
+    "login": "Masuk",
+    "checkScore": "Cek Skor Kamu"
+  },
+  "Footer": {
+    "brand": "MindEase",
+    "desc": "Proyek ini dibuat untuk tujuan akademik",
+    "copyright": "© 2025 Doni Wicaksono",
+    "github": "GitHub",
+    "contact": "Kontak",
+    "website": "Website"
   }
 }

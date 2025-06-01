@@ -20,5 +20,20 @@
     "progressTrackingDesc": "Save all your scan results and track changes over time. Identify patterns and trends in your stress levels.",
     "zeroSetupTitle": "Zero Setup",
     "zeroSetupDesc": "Start measuring your stress levels immediately without creating an account. Quick and hassle-free access to core features."
+  },
+  "Header": {
+    "about": "About",
+    "support": "Support",
+    "dashboard": "Dashboard",
+    "login": "Log in",
+    "checkScore": "Check Your Score"
+  },
+  "Footer": {
+    "brand": "MindEase",
+    "desc": "This project is created for academic purposes",
+    "copyright": "© 2025 Doni Wicaksono",
+    "github": "GitHub",
+    "contact": "Contact",
+    "website": "Website"
   }
 }
