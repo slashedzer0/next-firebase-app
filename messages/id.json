@@ -35,5 +35,25 @@
     "github": "GitHub",
     "contact": "Kontak",
     "website": "Website"
+  },
+  "AboutPage": {
+    "sectionLabel": "Tentang Kami",
+    "sectionTitle": "Mendukung kesehatan mental mahasiswa",
+    "desc1": "Mahasiswa sering mengalami stres selama perjalanan akademik, terutama saat ujian dan tenggat tugas. Banyak mahasiswa tidak memiliki cara sistematis untuk melacak tingkat stres mereka dari waktu ke waktu.",
+    "desc2": "Proyek ini bertujuan memberikan alat sederhana bagi mahasiswa untuk melacak tingkat stresnya. Melalui platform yang mudah digunakan, kami membantu mengidentifikasi pola stres dan memberdayakan mahasiswa untuk lebih mengelola kesejahteraan mentalnya.",
+    "disclaimer": "MindEase sama sekali tidak menggantikan dukungan kesehatan mental profesional. Untuk masalah serius, silakan cari bantuan dari tenaga profesional."
+  },
+  "SupportPage": {
+    "sectionLabel": "Dukungan",
+    "sectionTitle": "Hubungi Kami",
+    "sectionDesc": "Butuh bantuan akademik? Tim kemahasiswaan siap membantu segala pertanyaan atau kendala yang kamu hadapi.",
+    "emailTitle": "Email",
+    "emailDesc": "Biasanya membalas dalam 1-2 hari kerja",
+    "officeTitle": "Kantor",
+    "officeDesc": "DI Panjaitan No.128, Purwokerto Selatan 53147",
+    "instagramTitle": "Instagram",
+    "instagramDesc": "Tersedia selama jam kerja",
+    "whatsappTitle": "WhatsApp",
+    "whatsappDesc": "Senin-Jumat pukul 09:00-17:00 WIB"
   }
 }

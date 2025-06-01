@@ -35,5 +35,25 @@
     "github": "GitHub",
     "contact": "Contact",
     "website": "Website"
+  },
+  "AboutPage": {
+    "sectionLabel": "About Us",
+    "sectionTitle": "Supporting student <br /> mental health",
+    "desc1": "Students commonly experience stress during their academic journey, especially during exam periods and assignment deadlines. Many students don't have a systematic way to track their stress levels over time.",
+    "desc2": "This project aims to provide students with a simple tool for tracking their stress levels. Through our easy-to-use platform, we may help identify stress patterns and empower students to better manage their mental well-being.",
+    "disclaimer": "MindEase by no means replaces professional mental health support. For serious concerns, please seek help from qualified mental health professionals."
+  },
+  "SupportPage": {
+    "sectionLabel": "Support",
+    "sectionTitle": "Get in touch",
+    "sectionDesc": "Need some academic assistant? The student affairs team is here to assist you with any questions or concerns you may have.",
+    "emailTitle": "Email",
+    "emailDesc": "They usually respond within 1-2 business days",
+    "officeTitle": "Office",
+    "officeDesc": "DI Panjaitan No.128, Purwokerto Selatan 53147",
+    "instagramTitle": "Instagram",
+    "instagramDesc": "Available during business hours",
+    "whatsappTitle": "WhatsApp",
+    "whatsappDesc": "Monday-Friday at 09:00-17:00 WIB"
   }
 }
