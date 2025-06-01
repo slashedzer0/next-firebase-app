@@ -10,6 +10,7 @@ import {
   ScanText,
   LogOut,
   Languages,
+  Check,
 } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTransition, useEffect, useState } from 'react';
@@ -39,10 +40,20 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useUserDataStore } from '@/stores/use-user-data-store';
 import React from 'react';
 import { setUserLocale } from '@/i18n/locale';
+import { useLocaleStore } from '@/stores/use-locale-store';
 
 export function TopNav() {
   const router = useRouter();
   const pathname = usePathname();
+  const { locale, setLocale } = useLocaleStore();
+  // Sync locale from cookie on mount
+  React.useEffect(() => {
+    const cookie = document.cookie.split('; ').find((row) => row.startsWith('NEXT_LOCALE='));
+    if (cookie) {
+      const value = cookie.split('=')[1];
+      if (value === 'en' || value === 'id') setLocale(value);
+    }
+  }, [setLocale]);
   const { user, signOut } = useAuth();
   const { userData, fetchUserData } = useUserDataStore();
   const [open, setOpen] = useState(false);
@@ -207,17 +218,29 @@ export function TopNav() {
             <DropdownMenuItem
               onClick={async () => {
                 await handleLocaleChange('en');
+                setLocale('en');
               }}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${locale === 'en' ? 'bg-secondary' : ''}`}
             >
+              {locale === 'en' ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <span className="inline-block w-4" />
+              )}
               English
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={async () => {
                 await handleLocaleChange('id');
+                setLocale('id');
               }}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${locale === 'id' ? 'bg-secondary' : ''}`}
             >
+              {locale === 'id' ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <span className="inline-block w-4" />
+              )}
               Indonesia
             </DropdownMenuItem>
           </DropdownMenuGroup>
