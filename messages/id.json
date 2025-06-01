@@ -55,5 +55,32 @@
     "instagramDesc": "Tersedia selama jam kerja",
     "whatsappTitle": "WhatsApp",
     "whatsappDesc": "Senin-Jumat pukul 09:00-17:00 WIB"
+  },
+  "ScanPage": {
+    "introLabel": "Asesmen Stres",
+    "introTitle": "Bagaimana scan bekerja",
+    "introDesc1": "Asesmen ini menggunakan pendekatan pengukuran seimbang untuk membantu mengidentifikasi berbagai aspek stres dalam kehidupan sehari-hari. Kami mempertimbangkan frekuensi dan intensitas pengalamanmu untuk gambaran yang lebih akurat.",
+    "introDesc2": "Untuk setiap pernyataan, kamu akan menunjukkan seberapa yakin mengalami indikator stres tertentu. Pendekatan berbasis certainty factor ini memungkinkan pengukuran stres lebih alami dibanding jawaban ya/tidak tradisional.",
+    "introDesc3": "Agar hasil optimal, jawab setiap pertanyaan dengan jujur dan penuh pertimbangan.",
+    "introButton": "Mulai Scan",
+    "questionLabel": "Pertanyaan {current} dari {total}",
+    "optionStronglyDisagree": "Sangat tidak setuju",
+    "optionDisagree": "Tidak setuju",
+    "optionNeutral": "Netral",
+    "optionAgree": "Setuju",
+    "optionStronglyAgree": "Sangat setuju",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "resultsLabel": "Scan Selesai",
+    "resultsTitle": "Skor Kamu",
+    "resultsWellManaged": "Tingkat stresmu tampak terkelola dengan baik.",
+    "resultsModerate": "Kamu mengalami tingkat stres sedang. Coba teknik manajemen stres dasar.",
+    "resultsSevere": "Tingkat stresmu berat. Disarankan mencari dukungan profesional.",
+    "resultsDisclaimer": "MindEase bisa saja keliru, gunakan hasil dengan bijak.",
+    "resultsSaving": "Menyimpan...",
+    "resultsSave": "Simpan Hasil",
+    "resultsLogin": "Masuk",
+    "resultsBackHome": "Kembali ke Beranda",
+    "resultsCalculating": "Menghitung hasil kamu..."
   }
 }

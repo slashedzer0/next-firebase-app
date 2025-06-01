@@ -5,6 +5,7 @@ import { Save, LogIn } from 'lucide-react';
 import { Spinner } from '@/components/spinner';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/stores/use-auth-store';
+import { useTranslations } from 'next-intl';
 
 // Add the LevelBadge component
 function LevelBadge({ level }: { level: string }) {
@@ -35,6 +36,7 @@ function LevelBadge({ level }: { level: string }) {
 export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanResultsProps) {
   const user = useAuth((state) => state.user);
   const isAuthenticated = !!user;
+  const t = useTranslations('ScanPage');
 
   if (isLoading) {
     return (
@@ -42,7 +44,7 @@ export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanR
         <div className="max-w-screen-2xl mx-auto px-4 lg:px-8">
           <div className="flex flex-col items-center justify-center space-y-6 min-h-[400px]">
             <Spinner className="size-8" />
-            <p className="text-lg text-muted-foreground">Calculating your results...</p>
+            <p className="text-lg text-muted-foreground">{t('resultsCalculating')}</p>
           </div>
         </div>
       </section>
@@ -55,10 +57,9 @@ export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanR
   const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const getMessage = (level: string) => {
-    if (level === 'mild') return 'Your stress levels appear to be well-managed.';
-    if (level === 'moderate')
-      return "You're experiencing moderate stress levels. Consider basic stress management techniques.";
-    return 'Your stress levels are severe. Professional support is recommended.';
+    if (level === 'mild') return t('resultsWellManaged');
+    if (level === 'moderate') return t('resultsModerate');
+    return t('resultsSevere');
   };
 
   return (
@@ -67,9 +68,9 @@ export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanR
         <div className="flex w-full flex-col items-center">
           <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6 md:max-w-3xl md:text-center">
             <p className="text-sm font-medium tracking-wider text-muted-foreground">
-              Scan Complete
+              {t('resultsLabel')}
             </p>
-            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">Your Score</h2>
+            <h2 className="text-3xl font-medium tracking-tight md:text-5xl">{t('resultsTitle')}</h2>
             <div className="space-y-6 text-lg text-muted-foreground md:max-w-2xl">
               <div className="space-y-4">
                 <div className="flex flex-col items-center space-y-2">
@@ -82,18 +83,18 @@ export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanR
 
               <p>{getMessage(result.stressLevel)}</p>
               <p className="text-sm text-center text-muted-foreground italic">
-                MindEase may make mistakes, user discretion is strongly advised.
+                {t('resultsDisclaimer')}
               </p>
 
               <div className="flex justify-center gap-4 pt-4">
                 <Link href="/">
-                  <Button variant="outline">Back to Home</Button>
+                  <Button variant="outline">{t('resultsBackHome')}</Button>
                 </Link>
                 <Button onClick={onSaveResult} disabled={isSaving}>
                   {isSaving ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Saving...
+                      {t('resultsSaving')}
                     </>
                   ) : (
                     <>
@@ -102,7 +103,7 @@ export function ScanResults({ result, onSaveResult, isSaving, isLoading }: ScanR
                       ) : (
                         <LogIn className="mr-2 h-4 w-4" />
                       )}
-                      {isAuthenticated ? 'Save Result' : 'Log in'}
+                      {isAuthenticated ? t('resultsSave') : t('resultsLogin')}
                     </>
                   )}
                 </Button>

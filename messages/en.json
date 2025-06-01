@@ -55,5 +55,32 @@
     "instagramDesc": "Available during business hours",
     "whatsappTitle": "WhatsApp",
     "whatsappDesc": "Monday-Friday at 09:00-17:00 WIB"
+  },
+  "ScanPage": {
+    "introLabel": "Stress Assessment",
+    "introTitle": "How the scan works",
+    "introDesc1": "The assessment uses a balanced measurement approach that helps identify different aspects of stress in your daily life. We consider both the frequency and intensity of your experiences to provide a more accurate picture.",
+    "introDesc2": "For each statement, you'll indicate how certain you are about experiencing specific stress indicators. This approach, based on certainty factors, allows us to measure stress levels more naturally than traditional yes-or-no answers.",
+    "introDesc3": "For best results, please answer each question thoughtfully and honestly.",
+    "introButton": "Scan Now",
+    "questionLabel": "Question {current} of {total}",
+    "optionStronglyDisagree": "Strongly disagree",
+    "optionDisagree": "Disagree",
+    "optionNeutral": "Neutral",
+    "optionAgree": "Agree",
+    "optionStronglyAgree": "Strongly agree",
+    "back": "Back",
+    "next": "Next",
+    "resultsLabel": "Scan Complete",
+    "resultsTitle": "Your Score",
+    "resultsWellManaged": "Your stress levels appear to be well-managed.",
+    "resultsModerate": "You're experiencing moderate stress levels. Consider basic stress management techniques.",
+    "resultsSevere": "Your stress levels are severe. Professional support is recommended.",
+    "resultsDisclaimer": "MindEase may make mistakes, user discretion is strongly advised.",
+    "resultsSaving": "Saving...",
+    "resultsSave": "Save Result",
+    "resultsLogin": "Log in",
+    "resultsBackHome": "Back to Home",
+    "resultsCalculating": "Calculating your results..."
   }
 }
