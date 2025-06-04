@@ -257,7 +257,7 @@ export default function AdminDashboardUsersPage() {
               </PaginationItem>
               <PaginationItem>
                 <span className="text-xs text-muted-foreground">
-                  Page {currentPage} of {totalPages || 1}
+                  {t('pageOf', { current: currentPage, total: totalPages || 1 })}
                 </span>
               </PaginationItem>
               <PaginationItem>
