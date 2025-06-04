@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,18 +38,20 @@ import { doc, getDoc } from 'firebase/firestore';
 import { AdminUserData } from '@/types/admin';
 
 function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations('DashboardAdminPage');
   return status === 'active' ? (
     <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> Active
+      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> {t('active') || 'Active'}
     </Badge>
   ) : (
     <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-      <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> Inactive
+      <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {t('inactive') || 'Inactive'}
     </Badge>
   );
 }
 
 export default function AdminDashboardUsersPage() {
+  const t = useTranslations('DashboardAdminPage');
   const [users, setUsers] = useState<AdminUserData[]>([]);
   const [loading, setLoading] = useState(true);
   const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
@@ -108,10 +111,10 @@ export default function AdminDashboardUsersPage() {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        toast.success('Email address copied to clipboard');
+        toast.success(t('emailCopied'));
       })
       .catch((error) => {
-        handleError(error, 'Failed to copy text to clipboard');
+        handleError(error, t('failedCopy'));
       });
   };
 
@@ -120,7 +123,7 @@ export default function AdminDashboardUsersPage() {
       const userDoc = await getDoc(doc(db, 'users', userId));
 
       if (!userDoc.exists()) {
-        toast.error('User not found');
+        toast.error(t('userNotFound'));
         return;
       }
 
@@ -145,9 +148,9 @@ export default function AdminDashboardUsersPage() {
       await deleteUserData(deletingUser.id);
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== deletingUser.id));
 
-      toast.success(`${deletingUser.fullName} has been deleted`);
+      toast.success(t('userDeleted', { name: deletingUser.fullName }));
     } catch (error) {
-      handleError(error, `Failed to delete ${deletingUser.fullName}.`);
+      handleError(error, t('failedDeleteUser', { name: deletingUser.fullName }));
     } finally {
       setDeleteDialogOpen(false);
       setDeletingUser(null);
@@ -163,7 +166,7 @@ export default function AdminDashboardUsersPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">{t('users')}</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4">
         <Card className="bg-background">
@@ -180,13 +183,15 @@ export default function AdminDashboardUsersPage() {
                     <TableHeader>
                       <TableRow className="[&>*]:whitespace-nowrap">
                         <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
-                          Name
+                          {t('name')}
                         </TableHead>
-                        <TableHead className="sticky left-[100px] bg-background">Status</TableHead>
-                        <TableHead className="text-right">NIM</TableHead>
-                        <TableHead className="text-right">Phone</TableHead>
-                        <TableHead className="text-right">Email</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">
+                          {t('status')}
+                        </TableHead>
+                        <TableHead className="text-right">{t('nim')}</TableHead>
+                        <TableHead className="text-right">{t('phone')}</TableHead>
+                        <TableHead className="text-right">{t('email')}</TableHead>
+                        <TableHead className="text-right">{t('actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -210,7 +215,7 @@ export default function AdminDashboardUsersPage() {
                                 variant="outline"
                                 className="h-8 w-8"
                                 onClick={() => copyToClipboard(user.email)}
-                                title="Copy email address"
+                                title={t('copyEmail')}
                               >
                                 <Copy className="h-4 w-4" />
                               </Button>
@@ -219,7 +224,7 @@ export default function AdminDashboardUsersPage() {
                                 variant="outline"
                                 className="h-8 w-8 text-destructive"
                                 onClick={() => handleDeleteClick(user.id)}
-                                title="Delete user account permanently"
+                                title={t('deleteUser')}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -285,16 +290,16 @@ export default function AdminDashboardUsersPage() {
             <AlertDialogFooter>
               <div className="flex justify-center md:justify-end gap-2 w-full">
                 <Button variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
                   {isDeleting ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Deleting...
+                      {t('deleting')}
                     </>
                   ) : (
-                    'Delete account'
+                    t('deleteAccount')
                   )}
                 </Button>
               </div>
