@@ -19,7 +19,10 @@ import {
 import { AssessmentData, ChartDataPoint } from '@/types/dashboard';
 import { userDashboardChartConfig } from '@/utils/chart-config';
 
+import { useTranslations } from 'next-intl';
+
 export default function UserDashboardOverviewPage() {
+  const t = useTranslations('DashboardPage');
   const { user } = useAuth();
   const [recentAssessments, setRecentAssessments] = useState<AssessmentData[]>([]);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
@@ -199,12 +202,12 @@ export default function UserDashboardOverviewPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-xl font-semibold md:text-2xl">Overview</h1>
+        <h1 className="text-xl font-semibold md:text-2xl">{t('overviewTitle')}</h1>
       </div>
       <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Scans</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalScans')}</CardTitle>
             <HeartPulse className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -215,14 +218,14 @@ export default function UserDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{user?.assessmentCount || 0}</div>
-                <p className="text-xs text-muted-foreground">Assessment attempts</p>
+                <p className="text-xs text-muted-foreground">{t('assessmentAttempts')}</p>
               </>
             )}
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Saved Results</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('savedResults')}</CardTitle>
             <FolderDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -234,7 +237,9 @@ export default function UserDashboardOverviewPage() {
               <>
                 <div className="text-3xl font-bold">{savedCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  {unsavedCount > 0 ? `${unsavedCount} results not saved` : 'All results saved'}
+                  {unsavedCount > 0
+                    ? t('resultsNotSaved', { count: unsavedCount })
+                    : t('allResultsSaved')}
                 </p>
               </>
             )}
@@ -242,7 +247,7 @@ export default function UserDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Last Attempt</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('lastAttempt')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -262,8 +267,8 @@ export default function UserDashboardOverviewPage() {
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">Stress Levels</CardTitle>
-            <CardDescription>Compared to other students by latest attempts</CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">{t('stressLevels')}</CardTitle>
+            <CardDescription>{t('comparedToOthers')}</CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
             {loading ? (
@@ -320,14 +325,16 @@ export default function UserDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">Recent Attempts</CardTitle>
-            <CardDescription>Your latest assessments and confidence levels</CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">
+              {t('recentAttempts')}
+            </CardTitle>
+            <CardDescription>{t('latestAssessments')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="rounded-md">
               <div className="grid grid-cols-2 p-4 text-sm font-medium border-b text-muted-foreground">
-                <div>Date</div>
-                <div className="text-right">Confidence</div>
+                <div>{t('date')}</div>
+                <div className="text-right">{t('confidence')}</div>
               </div>
               <div className="divide-y">
                 {loading ? (
@@ -349,7 +356,7 @@ export default function UserDashboardOverviewPage() {
                   ))
                 ) : (
                   <div className="p-4 text-center text-sm text-muted-foreground">
-                    No assessments found.
+                    {t('noAssessments')}
                   </div>
                 )}
               </div>
