@@ -9,9 +9,11 @@ import {
   Settings,
   ScanText,
   LogOut,
+  Languages,
+  Check,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useTransition, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/stores/use-auth-store';
@@ -37,9 +39,22 @@ import { ModeToggle } from '@/components/mode-toggle';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useUserDataStore } from '@/stores/use-user-data-store';
 import React from 'react';
+import { setUserLocale } from '@/i18n/locale';
+import { useLocaleStore } from '@/stores/use-locale-store';
+import { useTranslations } from 'next-intl';
 
 export function TopNav() {
   const router = useRouter();
+  const pathname = usePathname();
+  const { locale, setLocale } = useLocaleStore();
+  // Sync locale from cookie on mount
+  React.useEffect(() => {
+    const cookie = document.cookie.split('; ').find((row) => row.startsWith('NEXT_LOCALE='));
+    if (cookie) {
+      const value = cookie.split('=')[1];
+      if (value === 'en' || value === 'id') setLocale(value);
+    }
+  }, [setLocale]);
   const { user, signOut } = useAuth();
   const { userData, fetchUserData } = useUserDataStore();
   const [open, setOpen] = useState(false);
@@ -52,40 +67,41 @@ export function TopNav() {
   const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
+  const t = useTranslations('DashboardNav');
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: 'Dashboard',
+      label: 'dashboard',
       icon: <LayoutGrid className="h-4 w-4" />,
       roles: ['student', 'admin'],
     },
     {
       href: '/scan',
-      label: 'Start Scan',
+      label: 'startScan',
       icon: <CircleGauge className="h-4 w-4" />,
       roles: ['student'],
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: 'Scan Results',
+      label: 'scanResults',
       icon: <FileChartColumn className="h-4 w-4" />,
       roles: ['student'],
     },
     {
       href: '/dashboard/admin/reports',
-      label: 'Scan Reports',
+      label: 'scanReports',
       icon: <ScanText className="h-4 w-4" />,
       roles: ['admin'],
     },
     {
       href: '/dashboard/admin/users',
-      label: 'Users',
+      label: 'users',
       icon: <Users className="h-4 w-4" />,
       roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: 'Settings',
+      label: 'settings',
       icon: <Settings className="h-4 w-4" />,
       roles: ['student'],
     },
@@ -122,6 +138,15 @@ export function TopNav() {
   // Get filtered navigation items based on user role
   const filteredNavItems = navItems.filter((item) => item.roles.includes(userRole));
 
+  const [, startTransition] = useTransition();
+
+  const handleLocaleChange = (locale: 'en' | 'id') => {
+    startTransition(async () => {
+      await setUserLocale(locale);
+      router.replace(pathname); // trigger SSR re-render, next-intl akan baca cookie baru
+    });
+  };
+
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
       <SheetNav />
@@ -132,16 +157,16 @@ export function TopNav() {
           onClick={() => setOpen(true)}
         >
           <Search className="mr-2 h-4 w-4" />
-          <span>Search...</span>
+          <span>{t('searchPlaceholder')}</span>
           <kbd className="pointer-events-none absolute right-2 top-[50%] hidden h-5 translate-y-[-50%] select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono font-medium opacity-100 sm:flex">
             <span className="text-xs">Ctrl</span>K
           </kbd>
         </Button>
         <CommandDialog open={open} onOpenChange={setOpen}>
-          <CommandInput placeholder="Search..." />
+          <CommandInput placeholder={t('searchPlaceholder')} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Navigation">
+            <CommandEmpty>{t('noResults')}</CommandEmpty>
+            <CommandGroup heading={t('navigation')}>
               {filteredNavItems.map((item, index) => (
                 <CommandItem
                   key={index}
@@ -162,7 +187,7 @@ export function TopNav() {
                     })}
                   </div>
                   <span className="opacity-100" style={{ color: 'var(--foreground)', opacity: 1 }}>
-                    {item.label}
+                    {t(item.label)}
                   </span>
                 </CommandItem>
               ))}
@@ -175,12 +200,54 @@ export function TopNav() {
                 style={{ opacity: 1 }}
               >
                 <LogOut className="mr-2 h-4 w-4 opacity-100" style={{ opacity: 1 }} />
-                <span style={{ opacity: 1 }}>Sign out</span>
+                <span style={{ opacity: 1 }}>{t('signOut')}</span>
               </CommandItem>
             </CommandGroup>
           </CommandList>
         </CommandDialog>
       </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="relative h-8 w-8 rounded-full flex items-center justify-center"
+          >
+            <Languages className="h-5 w-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-40" align="end" forceMount>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={async () => {
+                await handleLocaleChange('en');
+                setLocale('en');
+              }}
+              className={`flex items-center gap-2 ${locale === 'en' ? 'bg-secondary' : ''}`}
+            >
+              {locale === 'en' ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <span className="inline-block w-4" />
+              )}
+              {t('english')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={async () => {
+                await handleLocaleChange('id');
+                setLocale('id');
+              }}
+              className={`flex items-center gap-2 ${locale === 'id' ? 'bg-secondary' : ''}`}
+            >
+              {locale === 'id' ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <span className="inline-block w-4" />
+              )}
+              {t('indonesian')}
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ModeToggle />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -221,7 +288,7 @@ export function TopNav() {
                   className="flex items-center gap-2"
                 >
                   {item.icon}
-                  {item.label}
+                  {t(item.label)}
                 </DropdownMenuItem>
               ))}
           </DropdownMenuGroup>
@@ -232,7 +299,7 @@ export function TopNav() {
             title="Sign out of your account"
           >
             <LogOut className="h-4 w-4 text-destructive group-hover:text-white" />
-            Sign out
+            {t('signOut')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -18,7 +18,10 @@ import {
 import { RecentAssessment } from '@/types/admin';
 import { adminDashboardChartConfig } from '@/utils/chart-config';
 
+import { useTranslations } from 'next-intl';
+
 export default function AdminDashboardOverviewPage() {
+  const t = useTranslations('DashboardAdminPage');
   const [recentAssessments, setRecentAssessments] = useState<RecentAssessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [highRiskCount, setHighRiskCount] = useState(0);
@@ -302,12 +305,12 @@ export default function AdminDashboardOverviewPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-xl font-semibold md:text-2xl">Overview</h1>
+        <h1 className="text-xl font-semibold md:text-2xl">{t('overviewTitle')}</h1>
       </div>
       <div className="grid gap-4 md:grid-cols-3 md:gap-6">
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Students</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('activeStudents')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -318,14 +321,14 @@ export default function AdminDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{activeStudentsCount}</div>
-                <p className="text-xs text-muted-foreground">Including new accounts</p>
+                <p className="text-xs text-muted-foreground">{t('includingNewAccounts')}</p>
               </>
             )}
           </CardContent>
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('averageScore')}</CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -338,7 +341,7 @@ export default function AdminDashboardOverviewPage() {
                 <div className="text-3xl font-bold">{averageConfidence.score}</div>
                 <p className="text-xs text-muted-foreground">
                   {averageConfidence.change > 0 ? '+' : ''}
-                  {averageConfidence.change}% from last month
+                  {t('percentChange', { change: averageConfidence.change })}
                 </p>
               </>
             )}
@@ -346,7 +349,7 @@ export default function AdminDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">High Risk</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('highRisk')}</CardTitle>
             <TriangleAlert className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -357,7 +360,7 @@ export default function AdminDashboardOverviewPage() {
             ) : (
               <>
                 <div className="text-3xl font-bold">{highRiskCount}</div>
-                <p className="text-xs text-muted-foreground">Students in crisis</p>
+                <p className="text-xs text-muted-foreground">{t('studentsInCrisis')}</p>
               </>
             )}
           </CardContent>
@@ -366,8 +369,8 @@ export default function AdminDashboardOverviewPage() {
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2 bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">Stress Levels</CardTitle>
-            <CardDescription>Highest and lowest stress levels per month</CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">{t('stressLevels')}</CardTitle>
+            <CardDescription>{t('highestLowestPerMonth')}</CardDescription>
           </CardHeader>
           <CardContent className="pb-4">
             {loading ? (
@@ -400,14 +403,16 @@ export default function AdminDashboardOverviewPage() {
         </Card>
         <Card className="bg-background">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold md:text-xl">Recent Attempts</CardTitle>
-            <CardDescription>Latest assessment submissions</CardDescription>
+            <CardTitle className="text-lg font-semibold md:text-xl">
+              {t('recentAttempts')}
+            </CardTitle>
+            <CardDescription>{t('latestSubmissions')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="rounded-md">
               <div className="grid grid-cols-2 p-4 text-sm font-medium">
-                <div>Student</div>
-                <div className="text-right">Confidence</div>
+                <div>{t('student')}</div>
+                <div className="text-right">{t('confidence')}</div>
               </div>
               <div className="divide-y">
                 {loading ? (
@@ -426,7 +431,7 @@ export default function AdminDashboardOverviewPage() {
                   ))
                 ) : (
                   <div className="p-4 text-center text-sm text-muted-foreground">
-                    No recent assessments found.
+                    {t('noRecentAssessments')}
                   </div>
                 )}
               </div>

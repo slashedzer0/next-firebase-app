@@ -8,12 +8,15 @@ import { Branding } from './branding';
 import { useAuth } from '@/stores/use-auth-store';
 import { useUIStore } from '@/stores/use-ui-store';
 
+import { useTranslations } from 'next-intl';
+
 const navigation = [
-  { name: 'About', href: '/about' },
-  { name: 'Support', href: '/support' },
+  { name: 'about', href: '/about' },
+  { name: 'support', href: '/support' },
 ];
 
 export function Header() {
+  const t = useTranslations('Header');
   const { isMenuOpen, setMenuOpen } = useUIStore();
   const {
     user,
@@ -53,7 +56,7 @@ export function Header() {
                 href={item.href}
                 className="text-sm font-medium transition-all hover:text-muted-foreground"
               >
-                {item.name}
+                {t(item.name)}
               </Link>
             ))}
 
@@ -66,13 +69,13 @@ export function Header() {
                 {user ? (
                   <Link href={getDashboardPath()}>
                     <Button variant="outline" className="h-10">
-                      Dashboard
+                      {t('dashboard')}
                     </Button>
                   </Link>
                 ) : (
                   <Link href="/login">
                     <Button variant="outline" className="h-10">
-                      Log in
+                      {t('login')}
                     </Button>
                   </Link>
                 )}
@@ -81,7 +84,7 @@ export function Header() {
             {/* Only show Check Your Score button for non-admin users */}
             {(!user || user.role !== 'admin') && (
               <Link href="/scan">
-                <Button className="h-10">Check Your Score</Button>
+                <Button className="h-10">{t('checkScore')}</Button>
               </Link>
             )}
           </div>
@@ -107,7 +110,7 @@ export function Header() {
                       className="-mx-3 block px-3 py-2 text-base font-semibold"
                       onClick={() => setMenuOpen(false)}
                     >
-                      {item.name}
+                      {t(item.name)}
                     </Link>
                   ))}
                 </div>
@@ -120,7 +123,7 @@ export function Header() {
                           className="-mx-3 block px-3 py-2.5 text-base font-semibold"
                           onClick={() => setMenuOpen(false)}
                         >
-                          Dashboard
+                          {t('dashboard')}
                         </Link>
                       ) : (
                         <Link
@@ -128,7 +131,7 @@ export function Header() {
                           className="-mx-3 block px-3 py-2.5 text-base font-semibold"
                           onClick={() => setMenuOpen(false)}
                         >
-                          Log in
+                          {t('login')}
                         </Link>
                       )}
                     </>
@@ -140,7 +143,7 @@ export function Header() {
                       className="-mx-3 block px-3 py-2.5 text-base font-semibold"
                       onClick={() => setMenuOpen(false)}
                     >
-                      Check Your Score
+                      {t('checkScore')}
                     </Link>
                   )}
                 </div>

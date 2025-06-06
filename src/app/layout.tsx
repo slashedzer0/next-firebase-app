@@ -5,6 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { checkAndUpdateUserStatuses } from '@/utils/check-account-status';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/sonner';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,16 +40,19 @@ if (typeof window !== 'undefined') {
   setInterval(checkAndUpdateUserStatuses, 24 * 60 * 60 * 1000);
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <ErrorBoundary>
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          </ErrorBoundary>
           <Toaster />
         </ThemeProvider>
       </body>

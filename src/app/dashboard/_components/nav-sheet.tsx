@@ -21,6 +21,7 @@ import { useRoute } from '@/stores/use-route-store';
 import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 import { useUIStore } from '@/stores/use-ui-store';
+import { useTranslations } from 'next-intl';
 
 export function SheetNav() {
   const router = useRouter();
@@ -37,41 +38,42 @@ export function SheetNav() {
   const userPath = userRole === 'admin' ? 'admin' : username;
 
   // Define navigation items based on user role
+  const t = useTranslations('DashboardNav');
   const navItems = [
     {
       href: `/dashboard/${userPath}`,
-      label: 'Dashboard',
+      label: 'dashboard',
       icon: <LayoutGrid className="h-5 w-5" />,
       roles: ['student', 'admin'],
     },
     {
       href: '/scan',
-      label: 'Start Scan',
+      label: 'startScan',
       icon: <CircleGauge className="h-5 w-5" />,
       roles: ['student'], // Removed admin access
       target: '_blank',
     },
     {
       href: `/dashboard/${userPath}/results`,
-      label: 'Scan Results',
+      label: 'scanResults',
       icon: <FileChartColumn className="h-5 w-5" />,
       roles: ['student'], // Removed admin access
     },
     {
       href: '/dashboard/admin/reports',
-      label: 'Scan Reports',
+      label: 'scanReports',
       icon: <ScanText className="h-5 w-5" />,
       roles: ['admin'],
     },
     {
       href: '/dashboard/admin/users',
-      label: 'Users',
+      label: 'users',
       icon: <Users className="h-5 w-5" />,
       roles: ['admin'],
     },
     {
       href: `/dashboard/${userPath}/settings`,
-      label: 'Settings',
+      label: 'settings',
       icon: <Settings className="h-5 w-5" />,
       roles: ['student'], // Removed admin access
     },
@@ -127,7 +129,7 @@ export function SheetNav() {
                 onClick={handleLinkClick}
               >
                 {item.icon}
-                {item.label}
+                {t(item.label)}
               </Link>
             ))}
         </nav>
@@ -140,7 +142,7 @@ export function SheetNav() {
             title="Sign out of your account"
           >
             <LogOut className="h-5 w-5 text-destructive" />
-            Sign out
+            {t('signOut')}
           </Button>
         </div>
       </SheetContent>

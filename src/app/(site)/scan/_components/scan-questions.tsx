@@ -8,6 +8,7 @@ import { cn } from '@/utils';
 import { ScanQuestionsProps } from '@/types/assessment';
 import { useScanStore } from '@/stores/use-scan-store';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function ScanQuestions({
   question,
@@ -20,6 +21,7 @@ export function ScanQuestions({
   ...props
 }: ScanQuestionsProps & React.ComponentPropsWithoutRef<'div'>) {
   const { selectedOption, setSelectedOption } = useScanStore();
+  const t = useTranslations('ScanPage');
 
   // Update selected when navigating between questions
   useEffect(() => {
@@ -27,11 +29,11 @@ export function ScanQuestions({
   }, [initialSelected, setSelectedOption]);
 
   const options = [
-    { value: -1, label: 'Strongly disagree' },
-    { value: -0.6, label: 'Disagree' },
-    { value: 0, label: 'Neutral' },
-    { value: 0.6, label: 'Agree' },
-    { value: 1, label: 'Strongly agree' },
+    { value: -1, label: t('optionStronglyDisagree') },
+    { value: -0.6, label: t('optionDisagree') },
+    { value: 0, label: t('optionNeutral') },
+    { value: 0.6, label: t('optionAgree') },
+    { value: 1, label: t('optionStronglyAgree') },
   ];
 
   return (
@@ -43,12 +45,12 @@ export function ScanQuestions({
               <CardHeader className="space-y-2">
                 <Progress value={(currentQuestion / totalQuestions) * 100} className="w-full" />
                 <CardDescription>
-                  Question {currentQuestion} of {totalQuestions}
+                  {t('questionLabel', { current: currentQuestion, total: totalQuestions })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6">
                 <h2 className="text-lg font-medium text-center break-words w-full">
-                  {question.text}
+                  {t(question.text)}
                 </h2>
 
                 <div className="grid gap-2">
@@ -73,7 +75,7 @@ export function ScanQuestions({
                 <div className="flex gap-4">
                   <Button onClick={onBack} variant="outline" className="flex-1">
                     <ArrowLeft className="size-4 mr-2" />
-                    Back
+                    {t('back')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -83,7 +85,7 @@ export function ScanQuestions({
                     disabled={selectedOption === ''}
                     className="flex-1"
                   >
-                    Next
+                    {t('next')}
                     <ArrowRight className="size-4 ml-2" />
                   </Button>
                 </div>

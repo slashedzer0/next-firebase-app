@@ -59,42 +59,50 @@ const PaginationLink = ({
 );
 PaginationLink.displayName = "PaginationLink";
 
+import { useTranslations } from 'next-intl';
+
 const PaginationPrevious = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
-    aria-label="Go to previous page"
-    size="default"
-    className={cn(
-      "gap-1 pl-2.5 bg-background hover:bg-secondary hover:text-foreground",
-      className
-    )}
-    {...props}
-  >
-    <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
-  </PaginationLink>
-);
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const t = useTranslations('DashboardAdminPage');
+  return (
+    <PaginationLink
+      aria-label={t('previous')}
+      size="default"
+      className={cn(
+        "gap-1 pl-2.5 bg-background hover:bg-secondary hover:text-foreground",
+        className
+      )}
+      {...props}
+    >
+      <ChevronLeft className="h-4 w-4" />
+      <span>{t('previous')}</span>
+    </PaginationLink>
+  );
+};
 PaginationPrevious.displayName = "PaginationPrevious";
 
 const PaginationNext = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink
-    aria-label="Go to next page"
-    size="default"
-    className={cn(
-      "gap-1 pr-2.5 bg-background hover:bg-secondary hover:text-foreground",
-      className
-    )}
-    {...props}
-  >
-    <span>Next</span>
-    <ChevronRight className="h-4 w-4" />
-  </PaginationLink>
-);
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const t = useTranslations('DashboardAdminPage');
+  return (
+    <PaginationLink
+      aria-label={t('next')}
+      size="default"
+      className={cn(
+        "gap-1 pr-2.5 bg-background hover:bg-secondary hover:text-foreground",
+        className
+      )}
+      {...props}
+    >
+      <span>{t('next')}</span>
+      <ChevronRight className="h-4 w-4" />
+    </PaginationLink>
+  );
+};
 PaginationNext.displayName = "PaginationNext";
 
 const PaginationEllipsis = ({
@@ -107,7 +115,10 @@ const PaginationEllipsis = ({
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
+    <span className="sr-only">
+      {/* i18n: More pages */}
+      More pages
+    </span>
   </span>
 );
 PaginationEllipsis.displayName = "PaginationEllipsis";

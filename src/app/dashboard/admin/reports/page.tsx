@@ -46,26 +46,29 @@ import { ReportData, UserDetails } from '@/types/admin';
 import { handleError } from '@/utils';
 
 function LevelBadge({ level }: { level: string }) {
-  // Convert to capitalized format for badge display
+  const t = useTranslations('Common');
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
 
   switch (formattedLevel) {
     case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
+          {t('levelMild')}
         </Badge>
       );
     case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" />
+          {t('levelModerate')}
         </Badge>
       );
     case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" />
+          {t('levelSevere')}
         </Badge>
       );
     default:
@@ -73,7 +76,10 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
+import { useTranslations } from 'next-intl';
+
 export default function AdminDashboardReportsPage() {
+  const t = useTranslations('DashboardAdminPage');
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -100,23 +106,23 @@ export default function AdminDashboardReportsPage() {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserDetails({
-          email: userData.email || '-',
-          nim: userData.nim || '-',
-          phone: userData.phone || '-',
+          email: userData.email || t('noData'),
+          nim: userData.nim || t('noData'),
+          phone: userData.phone || t('noData'),
         });
       } else {
         setUserDetails({
-          email: 'User not found',
-          nim: 'User not found',
-          phone: 'User not found',
+          email: t('userNotFound'),
+          nim: t('userNotFound'),
+          phone: t('userNotFound'),
         });
       }
     } catch (error) {
-      handleError(error, 'Could not load user details', { showToast: false });
+      handleError(error, t('errorLoadingData'), { showToast: false });
       setUserDetails({
-        email: 'Error loading data',
-        nim: 'Error loading data',
-        phone: 'Error loading data',
+        email: t('errorLoadingData'),
+        nim: t('errorLoadingData'),
+        phone: t('errorLoadingData'),
       });
     } finally {
       setLoadingUserDetails(false);
@@ -144,14 +150,14 @@ export default function AdminDashboardReportsPage() {
       );
 
       // Success notification
-      toast.success('Assessment has been deleted');
+      toast.success(t('assessmentDeleted'));
 
       // Reset state
       setDeleteDialogOpen(false);
       setDeletingAssessment(null);
       setIsDeleting(false);
     } catch (error) {
-      handleError(error, 'Failed to delete assessment.');
+      handleError(error, t('failedDeleteAssessment'));
       setDeleteDialogOpen(false);
     }
   };
@@ -232,7 +238,7 @@ export default function AdminDashboardReportsPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Scan Reports</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">{t('scanReports')}</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4">
         <Card className="bg-background">
@@ -249,12 +255,14 @@ export default function AdminDashboardReportsPage() {
                     <TableHeader>
                       <TableRow className="[&>*]:whitespace-nowrap">
                         <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
-                          Name
+                          {t('name')}
                         </TableHead>
-                        <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
-                        <TableHead className="text-right">Confidence</TableHead>
-                        <TableHead className="text-right">Date</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">
+                          {t('level')}
+                        </TableHead>
+                        <TableHead className="text-right">{t('confidence')}</TableHead>
+                        <TableHead className="text-right">{t('date')}</TableHead>
+                        <TableHead className="text-right">{t('actions')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -296,7 +304,7 @@ export default function AdminDashboardReportsPage() {
                       ) : (
                         <TableRow>
                           <TableCell colSpan={5} className="h-24 text-center">
-                            No assessment reports found.
+                            {t('noAssessmentReports')}
                           </TableCell>
                         </TableRow>
                       )}
@@ -325,7 +333,7 @@ export default function AdminDashboardReportsPage() {
               </PaginationItem>
               <PaginationItem>
                 <span className="text-xs text-muted-foreground">
-                  Page {currentPage} of {totalPages || 1}
+                  {t('pageOf', { current: currentPage, total: totalPages || 1 })}
                 </span>
               </PaginationItem>
               <PaginationItem>
@@ -349,26 +357,24 @@ export default function AdminDashboardReportsPage() {
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t('areYouSure')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete{' '}
-                <span className="font-semibold">{deletingAssessment?.userName}</span>&apos;s
-                assessment record from the database.
+                {t('deleteAssessmentRecord', { name: deletingAssessment?.userName ?? '' })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <div className="flex justify-center md:justify-end gap-2 w-full">
                 <Button variant="outline" onClick={handleDeleteCancel} disabled={isDeleting}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button variant="destructive" onClick={handleDeleteConfirm} disabled={isDeleting}>
                   {isDeleting ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Deleting...
+                      {t('deleting')}
                     </>
                   ) : (
-                    'Delete'
+                    t('delete')
                   )}
                 </Button>
               </div>
@@ -380,8 +386,8 @@ export default function AdminDashboardReportsPage() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Student Details</DialogTitle>
-              <DialogDescription>Contact information for this student.</DialogDescription>
+              <DialogTitle>{t('studentDetails')}</DialogTitle>
+              <DialogDescription>{t('contactInfo')}</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               {loadingUserDetails ? (
@@ -392,7 +398,7 @@ export default function AdminDashboardReportsPage() {
                 <>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="email" className="text-right">
-                      Email
+                      {t('email')}
                     </Label>
                     <Input
                       id="email"
@@ -403,7 +409,7 @@ export default function AdminDashboardReportsPage() {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="nim" className="text-right">
-                      NIM
+                      {t('nim')}
                     </Label>
                     <Input
                       id="nim"
@@ -414,7 +420,7 @@ export default function AdminDashboardReportsPage() {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="phone" className="text-right">
-                      Phone
+                      {t('phone')}
                     </Label>
                     <Input
                       id="phone"

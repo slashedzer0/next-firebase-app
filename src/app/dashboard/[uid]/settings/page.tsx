@@ -20,7 +20,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import { useTranslations } from 'next-intl';
+
 export default function UserDashboardSettingsPage() {
+  const t = useTranslations('DashboardPage');
   const { user, updateProfile, loading } = useAuth();
 
   const form = useForm<SettingsFormValues>({
@@ -43,24 +46,24 @@ export default function UserDashboardSettingsPage() {
 
   // Live validation messages
   const getNameValidationMessage = (value: string, fieldName: string): string => {
-    if (!value) return `${fieldName} is required`;
-    if (!/^[a-zA-Z\s]*$/.test(value)) return `${fieldName} must only contain letters and spaces`;
+    if (!value) return t('required', { field: t(fieldName) });
+    if (!/^[a-zA-Z\s]*$/.test(value)) return t('onlyLetters', { field: t(fieldName) });
     return '';
   };
 
   const getNimValidationMessage = (value: string): string => {
     if (!value) return '';
-    if (!/^\d+$/.test(value)) return 'NIM must only contain numbers';
-    if (value.length < 8) return 'NIM must be at least 8 characters';
-    if (value.length > 20) return 'NIM must not exceed 20 characters';
+    if (!/^\d+$/.test(value)) return t('nimNumbers');
+    if (value.length < 8) return t('nimMin');
+    if (value.length > 20) return t('nimMax');
     return '';
   };
 
   const getPhoneValidationMessage = (value: string): string => {
     if (!value) return '';
-    if (!/^\d+$/.test(value)) return 'Phone number must only contain numbers';
-    if (value.length < 10) return 'Phone number must be at least 10 characters';
-    if (value.length > 20) return 'Phone number must not exceed 20 characters';
+    if (!/^\d+$/.test(value)) return t('phoneNumbers');
+    if (value.length < 10) return t('phoneMin');
+    if (value.length > 20) return t('phoneMax');
     return '';
   };
 
@@ -91,9 +94,9 @@ export default function UserDashboardSettingsPage() {
       });
 
       // Success notification
-      toast.success('Profile has been updated');
+      toast.success(t('profileUpdated'));
     } catch (error) {
-      handleError(error, 'Failed to update profile.');
+      handleError(error, t('failedUpdate'));
     }
   }
 
@@ -101,7 +104,7 @@ export default function UserDashboardSettingsPage() {
   if (loading.initial) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p>Loading...</p>
+        <p>{t('loading')}</p>
       </div>
     );
   }
@@ -110,7 +113,7 @@ export default function UserDashboardSettingsPage() {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p>Please sign in to access settings.</p>
+        <p>{t('pleaseSignIn')}</p>
       </div>
     );
   }
@@ -118,7 +121,7 @@ export default function UserDashboardSettingsPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Settings</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">{t('settingsTitle')}</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4">
         <Card className="bg-background">
@@ -134,7 +137,7 @@ export default function UserDashboardSettingsPage() {
                         name="firstName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>First name</FormLabel>
+                            <FormLabel>{t('firstName')}</FormLabel>
                             <FormControl>
                               <Input
                                 type="text"
@@ -147,7 +150,7 @@ export default function UserDashboardSettingsPage() {
                             </FormControl>
                             {field.value && (
                               <FormMessage className="text-xs">
-                                {getNameValidationMessage(field.value, 'First name')}
+                                {getNameValidationMessage(field.value, 'firstName')}
                               </FormMessage>
                             )}
                           </FormItem>
@@ -160,7 +163,7 @@ export default function UserDashboardSettingsPage() {
                         name="lastName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Last name</FormLabel>
+                            <FormLabel>{t('lastName')}</FormLabel>
                             <FormControl>
                               <Input
                                 type="text"
@@ -173,7 +176,7 @@ export default function UserDashboardSettingsPage() {
                             </FormControl>
                             {field.value && (
                               <FormMessage className="text-xs">
-                                {getNameValidationMessage(field.value, 'Last name')}
+                                {getNameValidationMessage(field.value, 'lastName')}
                               </FormMessage>
                             )}
                           </FormItem>
@@ -187,7 +190,7 @@ export default function UserDashboardSettingsPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('email')}</FormLabel>
                         <FormControl>
                           <Input type="email" disabled={true} {...field} />
                         </FormControl>
@@ -200,7 +203,7 @@ export default function UserDashboardSettingsPage() {
                     name="nim"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>NIM</FormLabel>
+                        <FormLabel>{t('nim')}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
@@ -225,7 +228,7 @@ export default function UserDashboardSettingsPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone number</FormLabel>
+                        <FormLabel>{t('phone')}</FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
@@ -247,16 +250,16 @@ export default function UserDashboardSettingsPage() {
 
                   <div className="grid grid-cols-2 md:flex gap-4">
                     <Button type="button" variant="outline" onClick={resetForm}>
-                      Reset
+                      {t('reset')}
                     </Button>
                     <Button type="submit" disabled={loading.overall || !form.formState.isValid}>
                       {loading.overall ? (
                         <>
                           <Spinner className="mr-2 h-4 w-4" />
-                          Saving...
+                          {t('saving')}
                         </>
                       ) : (
-                        'Save changes'
+                        t('saveChanges')
                       )}
                     </Button>
                   </div>

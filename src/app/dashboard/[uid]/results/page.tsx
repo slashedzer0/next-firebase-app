@@ -24,6 +24,7 @@ import { Spinner } from '@/components/spinner';
 import { useResultsStore } from '@/stores/use-results-store';
 
 function LevelBadge({ level }: { level: string }) {
+  const t = useTranslations('Common');
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
 
   switch (formattedLevel) {
@@ -31,21 +32,21 @@ function LevelBadge({ level }: { level: string }) {
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
-          {formattedLevel}
+          {t('levelMild')}
         </Badge>
       );
     case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" />
-          {formattedLevel}
+          {t('levelModerate')}
         </Badge>
       );
     case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
           <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" />
-          {formattedLevel}
+          {t('levelSevere')}
         </Badge>
       );
     default:
@@ -53,7 +54,10 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
+import { useTranslations } from 'next-intl';
+
 export default function UserDashboardResultsPage() {
+  const t = useTranslations('DashboardPage');
   const { assessments, loading, fetchUserAssessments } = useResultsStore();
   const { user } = useAuth();
   const { currentPage, itemsPerPage, setCurrentPage } = usePaginationWithReset();
@@ -74,7 +78,7 @@ export default function UserDashboardResultsPage() {
   return (
     <>
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Scan Results</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">{t('scanResults')}</h1>
       </div>
       <div className="flex flex-1 flex-col gap-4">
         <Card className="bg-background">
@@ -93,9 +97,11 @@ export default function UserDashboardResultsPage() {
                         <TableHead className="pl-4 sticky left-0 bg-background min-w-[100px]">
                           No
                         </TableHead>
-                        <TableHead className="sticky left-[100px] bg-background">Level</TableHead>
-                        <TableHead className="text-right">Confidence</TableHead>
-                        <TableHead className="text-right">Date</TableHead>
+                        <TableHead className="sticky left-[100px] bg-background">
+                          {t('level')}
+                        </TableHead>
+                        <TableHead className="text-right">{t('confidence')}</TableHead>
+                        <TableHead className="text-right">{t('date')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -117,7 +123,7 @@ export default function UserDashboardResultsPage() {
                       ) : (
                         <TableRow>
                           <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                            No assessment results found.
+                            {t('noAssessmentResults')}
                           </TableCell>
                         </TableRow>
                       )}
@@ -146,7 +152,7 @@ export default function UserDashboardResultsPage() {
               </PaginationItem>
               <PaginationItem>
                 <span className="text-xs text-muted-foreground">
-                  Page {currentPage} of {totalPages || 1}
+                  {t('pageOf', { current: currentPage, total: totalPages || 1 })}
                 </span>
               </PaginationItem>
               <PaginationItem>
