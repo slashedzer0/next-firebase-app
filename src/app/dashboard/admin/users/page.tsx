@@ -136,7 +136,7 @@ export default function AdminDashboardUsersPage() {
       });
       setDeleteDialogOpen(true);
     } catch (error) {
-      handleError(error, 'Could not prepare user for deletion');
+      handleError(error, t('errorLoadingData'));
     }
   };
 
@@ -280,11 +280,9 @@ export default function AdminDashboardUsersPage() {
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t('areYouSure')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete{' '}
-                <span className="font-semibold">{deletingUser?.fullName}</span>&apos;s account from
-                the database.
+                {t('cannotBeUndone', { name: deletingUser?.fullName ?? '' })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

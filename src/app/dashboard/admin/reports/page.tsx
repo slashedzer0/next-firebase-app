@@ -354,11 +354,9 @@ export default function AdminDashboardReportsPage() {
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t('areYouSure')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete{' '}
-                <span className="font-semibold">{deletingAssessment?.userName}</span>&apos;s
-                assessment record from the database.
+                {t('deleteAssessmentRecord', { name: deletingAssessment?.userName ?? '' })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
