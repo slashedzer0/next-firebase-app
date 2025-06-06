@@ -8,7 +8,10 @@ import { useAuth } from '@/stores/use-auth-store';
 import { useRouter } from 'next/navigation';
 import { handleError, toast } from '@/utils';
 
+import { useTranslations } from 'next-intl';
+
 export function ScanMain() {
+  const t = useTranslations('ScanPage');
   const {
     step,
     currentQuestion,
@@ -37,7 +40,7 @@ export function ScanMain() {
     try {
       await saveResult(user.uid, () => {
         // Success notification
-        toast.success('Assessment has been saved');
+        toast.success(t('assessmentSaved'));
 
         // Correctly redirect based on user role and username
         if (user.role === 'admin') {
