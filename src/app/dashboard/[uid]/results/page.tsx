@@ -54,8 +54,6 @@ function LevelBadge({ level }: { level: string }) {
   }
 }
 
-import { useTranslations } from 'next-intl';
-
 export default function UserDashboardResultsPage() {
   const t = useTranslations('DashboardPage');
   const { assessments, loading, fetchUserAssessments } = useResultsStore();
