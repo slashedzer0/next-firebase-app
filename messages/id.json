@@ -155,7 +155,7 @@
     "date": "Tanggal",
     "confidence": "Keyakinan",
     "noAssessments": "Tidak ada asesmen.",
-    "scanResults": "Riwayat",
+    "scanResults": "Riwayat Asesmen",
     "level": "Tingkat",
     "noAssessmentResults": "Tidak ada hasil asesmen.",
     "pageOf": "{current}/{total}",
@@ -227,5 +227,10 @@
     "deleteAssessmentRecord": "Aksi ini tidak dapat dibatalkan. Ini akan menghapus data asesmen {name} secara permanen dari sistem.",
     "active": "Aktif",
     "inactive": "Tidak aktif"
+  },
+  "Common": {
+    "levelMild": "Ringan",
+    "levelModerate": "Sedang",
+    "levelSevere": "Berat"
   }
 }

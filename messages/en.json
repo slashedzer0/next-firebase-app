@@ -227,5 +227,10 @@
     "deleteAssessmentRecord": "This will permanently delete {name}'s assessment record from the database.",
     "active": "Active",
     "inactive": "Inactive"
+  },
+  "Common": {
+    "levelMild": "Mild",
+    "levelModerate": "Moderate",
+    "levelSevere": "Severe"
   }
 }

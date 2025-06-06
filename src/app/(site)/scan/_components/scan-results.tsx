@@ -7,25 +7,27 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/stores/use-auth-store';
 import { useTranslations } from 'next-intl';
 
-// Add the LevelBadge component
 function LevelBadge({ level }: { level: string }) {
-  switch (level) {
+  const t = useTranslations('Common');
+  const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
+
+  switch (formattedLevel) {
     case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-          {level}
+          {t('levelMild')}
         </Badge>
       );
     case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
-          {level}
+          {t('levelModerate')}
         </Badge>
       );
     case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-          {level}
+          {t('levelSevere')}
         </Badge>
       );
     default:

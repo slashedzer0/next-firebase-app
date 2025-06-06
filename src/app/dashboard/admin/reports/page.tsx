@@ -46,26 +46,29 @@ import { ReportData, UserDetails } from '@/types/admin';
 import { handleError } from '@/utils';
 
 function LevelBadge({ level }: { level: string }) {
-  // Convert to capitalized format for badge display
+  const t = useTranslations('Common');
   const formattedLevel = level.charAt(0).toUpperCase() + level.slice(1);
 
   switch (formattedLevel) {
     case 'Mild':
       return (
         <Badge className="bg-emerald-600/10 dark:bg-emerald-600/20 hover:bg-emerald-600/10 text-emerald-500 border-emerald-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
+          {t('levelMild')}
         </Badge>
       );
     case 'Moderate':
       return (
         <Badge className="bg-amber-600/10 dark:bg-amber-600/20 hover:bg-amber-600/10 text-amber-500 border-amber-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mr-2" />
+          {t('levelModerate')}
         </Badge>
       );
     case 'Severe':
       return (
         <Badge className="bg-red-600/10 dark:bg-red-600/20 hover:bg-red-600/10 text-red-500 border-red-600/60 shadow-none rounded-full">
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" /> {formattedLevel}
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 mr-2" />
+          {t('levelSevere')}
         </Badge>
       );
     default:
